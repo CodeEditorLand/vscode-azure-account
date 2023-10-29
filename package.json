@@ -326,7 +326,7 @@
         "http-proxy-agent": "5.0.0",
         "https-proxy-agent": "5.0.1",
         "ms-rest-azure": "2.6.2",
-        "node-fetch": "2.6.1",
+        "node-fetch": "2.6.7",
         "request": "2.88.0",
         "request-promise": "4.2.2",
         "semver": "7.5.2",
