@@ -23,7 +23,7 @@
     "email": "nikola@nikolahristov.tech",
     "url": "https://nikolahristov.tech"
   },
-  "publisher": "ms-vscode-sample",
+  "publisher": "playform",
   "type": "module",
   "main": "./out/src/extension",
   "scripts": {
