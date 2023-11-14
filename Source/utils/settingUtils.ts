@@ -12,20 +12,11 @@ export function getSettingWithPrefix(settingName: string): string {
 }
 
 export function getSettingValue<T>(settingName: string): T | undefined {
-	const config: WorkspaceConfiguration =
-		workspace.getConfiguration(extensionPrefix);
+	const config: WorkspaceConfiguration = workspace.getConfiguration(extensionPrefix);
 	return config.get(settingName);
 }
 
-export async function updateSettingValue<T>(
-	settingName: string,
-	value: T
-): Promise<void> {
-	const config: WorkspaceConfiguration =
-		workspace.getConfiguration(extensionPrefix);
-	await config.update(
-		settingName,
-		value,
-		getCurrentTarget(config.inspect(settingName))
-	);
+export async function updateSettingValue<T>(settingName: string, value: T): Promise<void> {
+	const config: WorkspaceConfiguration = workspace.getConfiguration(extensionPrefix);
+	await config.update(settingName, value, getCurrentTarget(config.inspect(settingName)));
 }
