@@ -3,16 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { callWithTelemetryAndErrorHandling, IActionContext } from '@microsoft/vscode-azext-utils';
-import { Disposable, Event } from 'vscode';
-import * as types from '../azure-account.api';
-import { createCloudConsole, OSName } from '../cloudConsole/cloudConsole';
-import { AzureAccountLoginHelper } from './AzureAccountLoginHelper';
+import {
+	callWithTelemetryAndErrorHandling,
+	IActionContext,
+} from "@microsoft/vscode-azext-utils";
+import { Disposable, Event } from "vscode";
+import * as types from "../azure-account.api";
+import { createCloudConsole, OSName } from "../cloudConsole/cloudConsole";
+import { AzureAccountLoginHelper } from "./AzureAccountLoginHelper";
 
-export class AzureAccountExtensionApi implements types.AzureAccountExtensionApi {
-	public apiVersion: string = '1.0.0';
+export class AzureAccountExtensionApi
+	implements types.AzureAccountExtensionApi
+{
+	public apiVersion: string = "1.0.0";
 
-	public status: types.AzureLoginStatus = 'Initializing';
+	public status: types.AzureLoginStatus = "Initializing";
 	public filters: types.AzureResourceFilter[] = [];
 	public sessions: types.AzureSession[] = [];
 	public subscriptions: types.AzureSubscription[] = [];
@@ -30,51 +35,73 @@ export class AzureAccountExtensionApi implements types.AzureAccountExtensionApi 
 	}
 
 	public async waitForFilters(isLegacyApi?: boolean): Promise<boolean> {
-		return await callWithTelemetryAndErrorHandling('waitForFilters', async (context: IActionContext) => {
-			context.telemetry.properties.isLegacyApi = String(!!isLegacyApi);
+		return (
+			(await callWithTelemetryAndErrorHandling(
+				"waitForFilters",
+				async (context: IActionContext) => {
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi
+					);
 
-			if (!(await this.waitForSubscriptions())) {
-				return false;
-			}
-			await this.loginHelper.filtersTask;
-			return true;
-		}) || false;
+					if (!(await this.waitForSubscriptions())) {
+						return false;
+					}
+					await this.loginHelper.filtersTask;
+					return true;
+				}
+			)) || false
+		);
 	}
 
 	public async waitForLogin(isLegacyApi?: boolean): Promise<boolean> {
-		return await callWithTelemetryAndErrorHandling('waitForLogin', (context: IActionContext) => {
-			context.telemetry.properties.isLegacyApi = String(!!isLegacyApi);
+		return (
+			(await callWithTelemetryAndErrorHandling(
+				"waitForLogin",
+				(context: IActionContext) => {
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi
+					);
 
-			switch (this.status) {
-				case 'LoggedIn':
-					return true;
-				case 'LoggedOut':
-					return false;
-				case 'Initializing':
-				case 'LoggingIn':
-					return new Promise<boolean>(resolve => {
-						const subscription: Disposable = this.onStatusChanged(() => {
-							subscription.dispose();
-							resolve(this.waitForLogin());
-						});
-					});
-				default:
-					const status: never = this.status;
-					throw new Error(`Unexpected status '${status}'`);
-			}
-		}) || false;
+					switch (this.status) {
+						case "LoggedIn":
+							return true;
+						case "LoggedOut":
+							return false;
+						case "Initializing":
+						case "LoggingIn":
+							return new Promise<boolean>((resolve) => {
+								const subscription: Disposable =
+									this.onStatusChanged(() => {
+										subscription.dispose();
+										resolve(this.waitForLogin());
+									});
+							});
+						default:
+							const status: never = this.status;
+							throw new Error(`Unexpected status '${status}'`);
+					}
+				}
+			)) || false
+		);
 	}
 
 	public async waitForSubscriptions(isLegacyApi?: boolean): Promise<boolean> {
-		return await callWithTelemetryAndErrorHandling('waitForSubscriptions', async (context: IActionContext) => {
-			context.telemetry.properties.isLegacyApi = String(!!isLegacyApi);
+		return (
+			(await callWithTelemetryAndErrorHandling(
+				"waitForSubscriptions",
+				async (context: IActionContext) => {
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi
+					);
 
-			if (!(await this.waitForLogin())) {
-				return false;
-			}
-			await this.loginHelper.subscriptionsTask;
-			return true;
-		}) || false;
+					if (!(await this.waitForLogin())) {
+						return false;
+					}
+					await this.loginHelper.subscriptionsTask;
+					return true;
+				}
+			)) || false
+		);
 	}
 
 	public createCloudShell(os: OSName): types.CloudShell {
