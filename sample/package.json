@@ -1,25 +1,26 @@
 {
   "name": "azure-account-sample",
   "displayName": "Azure Account Sample",
-  "version": "0.0.1",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "url": "https://github.com/microsoft/vscode-azure-account.git"
+  },
+  "version": "0.2.0",
+  "publisher": "ms-vscode-sample",
+  "engines": {
+    "vscode": "^1.58.0"
+  },
   "categories": [
     "Other"
   ],
   "keywords": [
     "azure"
   ],
-  "repository": {
-    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git",
-    "type": "git"
-  },
-  "license": "MIT",
-  "publisher": "playform",
+  "activationEvents": [
+    "onCommand:azure-account-sample.showSubscriptions",
+    "onCommand:azure-account-sample.showAppServices"
+  ],
   "main": "./out/src/extension",
-  "scripts": {
-    "compile": "tsc -watch -p ./",
-    "vscode:prepublish": "tsc -p ./",
-    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'"
-  },
   "contributes": {
     "commands": [
       {
@@ -34,37 +35,22 @@
       }
     ]
   },
-  "activationEvents": [
-    "onCommand:azure-account-sample.showSubscriptions",
-    "onCommand:azure-account-sample.showAppServices"
-  ],
-  "dependencies": {
-    "@azure/arm-appservice": "14.0.0",
-    "@azure/arm-resources": "5.2.0",
-    "@azure/arm-subscriptions": "5.1.0"
-  },
-  "devDependencies": {
-    "@microsoft/vscode-azext-utils": "2.1.3",
-    "@types/node": "20.9.2",
-    "@types/vscode": "1.84.1",
-    "typescript": "5.2.2",
-    "typescript-esbuild": "0.3.1"
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./"
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"
   ],
-  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-  "bugs": {
-    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  "devDependencies": {
+    "@microsoft/vscode-azext-utils": "^0.1.0",
+    "@types/node": "^14.0.0",
+    "@types/vscode": "1.58.0",
+    "typescript": "^4.0.2"
   },
-  "type": "module",
-  "private": "false",
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": {
-    "name": "Nikola Hristov",
-    "email": "nikola@nikolahristov.tech",
-    "url": "https://nikolahristov.tech"
+  "dependencies": {
+    "@azure/arm-appservice": "^9.0.0",
+    "@azure/arm-resources": "^4.2.2",
+    "@azure/arm-subscriptions": "^3.1.2"
   }
 }
