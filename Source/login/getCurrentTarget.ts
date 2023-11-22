@@ -5,7 +5,17 @@
 
 import { ConfigurationTarget } from "vscode";
 
-export function getCurrentTarget(config: { key: string; defaultValue?: unknown; globalValue?: unknown; workspaceValue?: unknown, workspaceFolderValue?: unknown } | undefined): ConfigurationTarget {
+export function getCurrentTarget(
+	config:
+		| {
+				key: string;
+				defaultValue?: unknown;
+				globalValue?: unknown;
+				workspaceValue?: unknown;
+				workspaceFolderValue?: unknown;
+		  }
+		| undefined
+): ConfigurationTarget {
 	if (config) {
 		if (config.workspaceFolderValue) {
 			return ConfigurationTarget.WorkspaceFolder;
