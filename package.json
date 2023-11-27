@@ -290,7 +290,7 @@
     "@types/form-data": "2.2.1",
     "@types/fs-extra": "11.0.4",
     "@types/gulp": "4.0.17",
-    "@types/node": "20.9.4",
+    "@types/node": "20.10.0",
     "@types/node-fetch": "2.6.9",
     "@types/request": "2.48.12",
     "@types/request-promise": "4.1.51",
