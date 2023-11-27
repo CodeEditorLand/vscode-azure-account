@@ -107,9 +107,8 @@ async function loadTenants(
 			environment.resourceManagerEndpointUrl.endsWith("/")
 				? environment.resourceManagerEndpointUrl
 				: `${environment.resourceManagerEndpointUrl}/`;
-		let url:
-			| string
-			| undefined = `${resourceManagerEndpointUrl}tenants?api-version=2020-01-01`;
+		let url: string | undefined =
+			`${resourceManagerEndpointUrl}tenants?api-version=2020-01-01`;
 
 		while (url) {
 			const options: RequestPrepareOptions = {
