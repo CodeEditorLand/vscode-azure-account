@@ -309,7 +309,7 @@
 		"ts-loader": "9.5.1",
 		"ts-node": "10.9.2",
 		"typescript": "5.3.3",
-		"typescript-esbuild": "0.3.2",
+		"typescript-esbuild": "0.3.3",
 		"vsce": "2.6.7",
 		"vscode-azureextensiondev": "0.10.4",
 		"webpack": "5.89.0",

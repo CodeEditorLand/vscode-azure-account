@@ -53,7 +53,7 @@
 		"@types/node": "20.10.4",
 		"@types/vscode": "1.85.0",
 		"typescript": "5.3.3",
-		"typescript-esbuild": "0.3.2"
+		"typescript-esbuild": "0.3.3"
 	},
 	"extensionDependencies": [
 		"ms-vscode.azure-account"
