@@ -1,64 +1,64 @@
 {
-	"name": "azure-account-sample",
-	"displayName": "Azure Account Sample",
-	"version": "0.0.1",
-	"private": "false",
-	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
-	"bugs": {
-		"url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "Nikola Hristov",
-		"email": "nikola@nikolahristov.tech",
-		"url": "https://nikolahristov.tech"
-	},
-	"publisher": "playform",
-	"type": "module",
-	"main": "./out/src/extension",
-	"scripts": {
-		"compile": "tsc -watch -p ./",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"vscode:prepublish": "tsc -p ./"
-	},
-	"contributes": {
-		"commands": [
-			{
-				"command": "azure-account-sample.showSubscriptions",
-				"title": "Show Subscriptions",
-				"category": "Azure Example"
-			},
-			{
-				"command": "azure-account-sample.showAppServices",
-				"title": "Show AppServices",
-				"category": "Azure Example"
-			}
-		]
-	},
-	"activationEvents": [
-		"onCommand:azure-account-sample.showSubscriptions",
-		"onCommand:azure-account-sample.showAppServices"
-	],
-	"dependencies": {
-		"@azure/arm-appservice": "14.1.0",
-		"@azure/arm-resources": "5.2.0",
-		"@azure/arm-subscriptions": "5.1.0"
-	},
-	"devDependencies": {
-		"@microsoft/vscode-azext-utils": "2.1.4",
-		"@types/node": "20.10.4",
-		"@types/vscode": "1.85.0",
-		"typescript": "5.3.3",
-		"typescript-esbuild": "0.3.3"
-	},
-	"extensionDependencies": [
-		"ms-vscode.azure-account"
-	],
-	"publishConfig": {
-		"access": "public"
-	}
+  "name": "azure-account-sample",
+  "displayName": "Azure Account Sample",
+  "version": "0.0.1",
+  "private": "false",
+  "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
+  "bugs": {
+    "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeEditorLand/CodeEditorLand.git"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Nikola Hristov",
+    "email": "nikola@nikolahristov.tech",
+    "url": "https://nikolahristov.tech"
+  },
+  "publisher": "playform",
+  "type": "module",
+  "main": "./out/src/extension",
+  "scripts": {
+    "compile": "tsc -watch -p ./",
+    "prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+    "vscode:prepublish": "tsc -p ./"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "azure-account-sample.showSubscriptions",
+        "title": "Show Subscriptions",
+        "category": "Azure Example"
+      },
+      {
+        "command": "azure-account-sample.showAppServices",
+        "title": "Show AppServices",
+        "category": "Azure Example"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onCommand:azure-account-sample.showSubscriptions",
+    "onCommand:azure-account-sample.showAppServices"
+  ],
+  "dependencies": {
+    "@azure/arm-appservice": "14.1.0",
+    "@azure/arm-resources": "5.2.0",
+    "@azure/arm-subscriptions": "5.1.0"
+  },
+  "devDependencies": {
+    "@microsoft/vscode-azext-utils": "2.1.4",
+    "@types/node": "20.10.4",
+    "@types/vscode": "1.85.0",
+    "typescript": "5.3.3",
+    "typescript-esbuild": "0.3.3"
+  },
+  "extensionDependencies": [
+    "ms-vscode.azure-account"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
