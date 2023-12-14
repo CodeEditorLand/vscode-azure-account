@@ -281,7 +281,7 @@
     "semver": "7.5.4",
     "uuid": "9.0.1",
     "vscode-nls": "5.2.0",
-    "ws": "8.15.0"
+    "ws": "8.15.1"
   },
   "devDependencies": {
     "@microsoft/eslint-config-azuretools": "0.2.2",
