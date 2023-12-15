@@ -154,7 +154,7 @@ async function getCustomCloudEnvironment(
 							? endpoints.authentication.loginEndpoint
 							: endpoints.authentication.loginEndpoint.concat(
 									"/"
-							  ),
+								),
 					activeDirectoryGraphResourceId: endpoints.graphEndpoint,
 					activeDirectoryResourceId:
 						endpoints.authentication.audiences[0],

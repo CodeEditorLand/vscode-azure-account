@@ -670,14 +670,14 @@ export function createCloudConsole(
 
 				const keyVaultToken = session.environment.keyVaultDnsSuffix
 					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					  await tokenFromRefreshToken(
+						await tokenFromRefreshToken(
 							session.environment,
 							result.token.refreshToken,
 							session.tenantId,
 							`https://${session.environment.keyVaultDnsSuffix!.substr(
 								1
 							)}`
-					  )
+						)
 					: undefined;
 				const accessTokens: AccessTokens = {
 					resource: accessToken,
@@ -1094,7 +1094,7 @@ async function createTerminal(
 					properties: {
 						osType,
 					},
-			  }
+				}
 			: undefined,
 	});
 }

@@ -303,13 +303,13 @@ export class AzureAccountLoginHelper {
 								openUri,
 								redirectTimeout,
 								cancellationToken
-						  )
+							)
 						: await this.authProvider.loginWithDeviceCode(
 								context,
 								environment,
 								tenantId,
 								cancellationToken
-						  );
+							);
 					await this.updateSessions(
 						this.authProvider,
 						environment,

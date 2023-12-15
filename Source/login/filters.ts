@@ -52,6 +52,6 @@ export function getNewFilters(
 					filters[
 						`${s.session.tenantId}/${s.subscription.subscriptionId}`
 					]
-		  )
+			)
 		: subscriptions;
 }

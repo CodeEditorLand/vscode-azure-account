@@ -349,11 +349,11 @@ function createStatusBarItem(
 								"azure-account.loggedIn",
 								"Azure: {0}",
 								api.sessions[0].userId
-						  )
+							)
 						: localize(
 								"azure-account.loggedIn",
 								"Azure: Signed In"
-						  );
+							);
 					statusBarItem.show();
 				}
 				break;
