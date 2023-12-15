@@ -57,12 +57,12 @@ export class AxiosNormalizer
 
 export function setupAxiosLogging(
 	axios: AxiosStatic,
-	logOutputChannel: LogOutputChannel
+	logOutputChannel: LogOutputChannel,
 ): void {
 	const axiosLogger = new HttpLogger(
 		logOutputChannel,
 		"Axios",
-		new AxiosNormalizer()
+		new AxiosNormalizer(),
 	);
 
 	axios.interceptors.request.use((requestConfig) => {

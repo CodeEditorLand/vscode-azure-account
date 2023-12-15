@@ -18,7 +18,7 @@ import {
 export async function checkSettingsOnStartup(
 	extensionContext: ExtensionContext,
 	actionContext: IActionContext,
-	loginHelper: AzureAccountLoginHelper
+	loginHelper: AzureAccountLoginHelper,
 ): Promise<void> {
 	const numSettings = cachedSettingKeys.length;
 
@@ -34,7 +34,7 @@ export async function checkSettingsOnStartup(
 	lastSeenSettingsCacheVerified.values.splice(
 		0,
 		numSettings,
-		...valuesToCopy
+		...valuesToCopy,
 	);
 
 	const lastSeenSettingsCacheNew: SettingsCacheVerified = {
@@ -53,7 +53,7 @@ export async function checkSettingsOnStartup(
 			actionContext,
 			settingKey,
 			"OnStartup",
-			settingValueOnStartup
+			settingValueOnStartup,
 		);
 
 		const lastSeenSettingValue: string | undefined =
@@ -62,7 +62,7 @@ export async function checkSettingsOnStartup(
 			actionContext,
 			settingKey,
 			"LastSeen",
-			lastSeenSettingValue
+			lastSeenSettingValue,
 		);
 
 		if (
@@ -77,7 +77,7 @@ export async function checkSettingsOnStartup(
 
 	await extensionContext.globalState.update(
 		settingsCacheKey,
-		lastSeenSettingsCacheNew
+		lastSeenSettingsCacheNew,
 	);
 
 	if (shouldSignOutAndReload) {
@@ -88,17 +88,17 @@ export async function checkSettingsOnStartup(
 export async function askThenSignOutAndReload(
 	actionContext: IActionContext,
 	loginHelper: AzureAccountLoginHelper,
-	forceLogout?: boolean
+	forceLogout?: boolean,
 ): Promise<void> {
 	actionContext.telemetry.properties.askThenSignOutAndReload = "true";
 
 	const signOutAndReloadRequired: string = localize(
 		"azure-account.signOutAndReloadRequired",
-		"Signing out and reloading the window is required for the modified setting(s) to take effect."
+		"Signing out and reloading the window is required for the modified setting(s) to take effect.",
 	);
 	const signOutAndReload: string = localize(
 		"azure-account.signOutAndReload",
-		"Sign Out and Reload Window"
+		"Sign Out and Reload Window",
 	);
 
 	// Purposefully await this message to block whatever command caused the extension to activate.
@@ -114,13 +114,13 @@ export async function askThenSignOutAndReload(
 }
 
 export async function askForSignIn(
-	actionContext: IActionContext
+	actionContext: IActionContext,
 ): Promise<void> {
 	actionContext.telemetry.properties.askForSignIn = "true";
 
 	const signInAgainRequired: string = localize(
 		"azure-account.signInAgainRequired",
-		"Signing in again is required for the modified setting(s) to take effect."
+		"Signing in again is required for the modified setting(s) to take effect.",
 	);
 	const signIn: string = localize("azure-account.signIn", "Sign In");
 
@@ -139,7 +139,7 @@ function addPropertyToTelemetry(
 	actionContext: IActionContext,
 	eventPrefix: string,
 	eventSuffix: string,
-	value: string | undefined
+	value: string | undefined,
 ): void {
 	actionContext.telemetry.properties[eventPrefix + eventSuffix] =
 		String(value);

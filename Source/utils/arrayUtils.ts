@@ -9,7 +9,7 @@ interface IPartialList<T> extends Array<T> {
 
 export async function listAll<T>(
 	client: { listNext(nextPageLink: string): Promise<IPartialList<T>> },
-	first: Promise<IPartialList<T>>
+	first: Promise<IPartialList<T>>,
 ): Promise<T[]> {
 	const all: T[] = [];
 	for (

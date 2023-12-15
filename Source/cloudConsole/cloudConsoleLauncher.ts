@@ -58,9 +58,9 @@ async function resize(accessTokens: AccessTokens, terminalUri: string) {
 			uri: `${terminalUri}/size?cols=${cols}&rows=${rows}`,
 			method: "POST",
 			headers: {
-				"Accept": "application/json",
+				Accept: "application/json",
 				"Content-Type": "application/json",
-				"Authorization": `Bearer ${accessTokens.resource}`,
+				Authorization: `Bearer ${accessTokens.resource}`,
 			},
 			simple: false,
 			resolveWithFullResponse: true,
@@ -83,13 +83,13 @@ async function resize(accessTokens: AccessTokens, terminalUri: string) {
 					response.body.error.message
 				) {
 					console.log(
-						`${response.body.error.message} (${response.statusCode})`
+						`${response.body.error.message} (${response.statusCode})`,
 					);
 				} else {
 					console.log(
 						response.statusCode,
 						response.headers,
-						response.body
+						response.body,
 					);
 				}
 				break;
@@ -127,7 +127,7 @@ function connectSocket(ipcHandle: string, url: string) {
 		startKeepAlive();
 		sendData(
 			ipcHandle,
-			JSON.stringify([{ type: "status", status: "Connected" }])
+			JSON.stringify([{ type: "status", status: "Connected" }]),
 		).catch((err) => {
 			console.error(err);
 		});
@@ -147,7 +147,7 @@ function connectSocket(ipcHandle: string, url: string) {
 		console.log("Socket closed");
 		sendData(
 			ipcHandle,
-			JSON.stringify([{ type: "status", status: "Disconnected" }])
+			JSON.stringify([{ type: "status", status: "Disconnected" }]),
 		).catch((err) => {
 			console.error(err);
 		});
@@ -187,14 +187,14 @@ export function main() {
 	(async () => {
 		void sendData(
 			ipcHandle,
-			JSON.stringify([{ type: "size", size: getWindowSize() }])
+			JSON.stringify([{ type: "size", size: getWindowSize() }]),
 		);
 		let res: http.IncomingMessage;
 		// eslint-disable-next-line no-cond-assign
 		while (
 			(res = await sendData(
 				ipcHandle,
-				JSON.stringify([{ type: "poll" }])
+				JSON.stringify([{ type: "poll" }]),
 			))
 		) {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -209,7 +209,7 @@ export function main() {
 						connectSocket(ipcHandle, consoleUris.socketUri);
 						process.stdout.on("resize", () => {
 							resize(accessTokens, consoleUris.terminalUri).catch(
-								console.error
+								console.error,
 							);
 						});
 					} catch (err) {
@@ -218,7 +218,7 @@ export function main() {
 							ipcHandle,
 							JSON.stringify([
 								{ type: "status", status: "Disconnected" },
-							])
+							]),
 						).catch((err) => {
 							console.error(err);
 						});

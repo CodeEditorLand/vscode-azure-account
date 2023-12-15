@@ -21,13 +21,13 @@ export class LogRequestPolicy extends BaseRequestPolicy {
 		outputChannel: LogOutputChannel,
 		clientName: string,
 		nextPolicy: RequestPolicy,
-		options: RequestPolicyOptionsLike
+		options: RequestPolicyOptionsLike,
 	) {
 		super(nextPolicy, options);
 		this.logger = new HttpLogger(
 			outputChannel,
 			clientName,
-			new MsRestNormalizer()
+			new MsRestNormalizer(),
 		);
 	}
 

@@ -11,7 +11,7 @@ import { getNewFilters } from "./filters";
 
 export function updateFilters(configChange = false): void {
 	const resourceFilter: string[] | undefined = getSettingValue(
-		resourceFilterSetting
+		resourceFilterSetting,
 	);
 	if (
 		configChange &&
@@ -26,12 +26,12 @@ export function updateFilters(configChange = false): void {
 		ext.loginHelper.oldResourceFilter = JSON.stringify(resourceFilter);
 		const newFilters: AzureResourceFilter[] = getNewFilters(
 			subscriptions,
-			resourceFilter
+			resourceFilter,
 		);
 		ext.loginHelper.api.filters.splice(
 			0,
 			ext.loginHelper.api.filters.length,
-			...newFilters
+			...newFilters,
 		);
 		ext.loginHelper.onFiltersChanged.fire();
 		return ext.loginHelper.api.filters;

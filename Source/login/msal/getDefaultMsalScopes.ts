@@ -11,7 +11,7 @@ export function getDefaultMsalScopes(environment: Environment): string[] {
 
 function createMsalScope(
 	authority: string,
-	scope: string = ".default"
+	scope: string = ".default",
 ): string {
 	return authority.endsWith("/")
 		? `${authority}${scope}`
