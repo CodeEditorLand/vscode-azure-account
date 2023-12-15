@@ -2,7 +2,7 @@
 	"name": "azure-account",
 	"displayName": "Azure Account",
 	"version": "0.0.1",
-	"private": "false",
+	"private": false,
 	"description": "A common Sign In and Subscription management extension for VS Code.",
 	"homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
 	"bugs": {

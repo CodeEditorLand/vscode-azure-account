@@ -2,7 +2,7 @@
   "name": "azure-account-sample",
   "displayName": "Azure Account Sample",
   "version": "0.0.1",
-  "private": "false",
+  "private": false,
   "homepage": "https://github.com/CodeEditorLand/CodeEditorLand#readme",
   "bugs": {
     "url": "https://github.com/CodeEditorLand/CodeEditorLand/issues"
