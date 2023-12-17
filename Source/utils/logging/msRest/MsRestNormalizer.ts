@@ -25,7 +25,7 @@ export class MsRestNormalizer
 						username: request.proxySettings.username,
 						host: request.proxySettings.host,
 						port: String(request.proxySettings.port),
-				  }
+					}
 				: undefined,
 		};
 	}

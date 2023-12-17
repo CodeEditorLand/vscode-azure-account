@@ -6,7 +6,7 @@
 export function getKey(
 	environment: string,
 	userId: string,
-	tenantId: string,
+	tenantId: string
 ): string {
 	return `${environment} ${userId} ${tenantId}`;
 }

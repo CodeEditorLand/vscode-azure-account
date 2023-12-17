@@ -14,7 +14,7 @@ export function getCurrentTarget(
 				workspaceValue?: unknown;
 				workspaceFolderValue?: unknown;
 		  }
-		| undefined,
+		| undefined
 ): ConfigurationTarget {
 	if (config) {
 		if (config.workspaceFolderValue) {

@@ -24,6 +24,6 @@ export function getAuthLibrary(): AuthLibrary {
 
 			context.telemetry.properties.authLibrarySetting = authLibrary;
 			return authLibrary;
-		},
+		}
 	) as AuthLibrary;
 }

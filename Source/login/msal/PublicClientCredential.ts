@@ -26,14 +26,14 @@ export class PublicClientCredential
 
 	constructor(
 		publicClientApp: PublicClientApplication,
-		accountInfo: AccountInfo,
+		accountInfo: AccountInfo
 	) {
 		this.publicClientApp = publicClientApp;
 		this.accountInfo = accountInfo;
 	}
 
 	public async getToken(
-		scopes?: string | string[],
+		scopes?: string | string[]
 	): Promise<AccessToken | null> {
 		if (scopes) {
 			scopes = Array.isArray(scopes) ? scopes : [scopes];
@@ -72,15 +72,15 @@ export class PublicClientCredential
 	}
 
 	public async signRequest(
-		webResource: WebResource,
+		webResource: WebResource
 	): Promise<WebResource | undefined> {
 		const tokenResponse: AccessToken | null = await this.getToken(
-			getDefaultMsalScopes(await getSelectedEnvironment()),
+			getDefaultMsalScopes(await getSelectedEnvironment())
 		);
 		if (tokenResponse) {
 			webResource.headers.set(
 				MSRestConstants.HeaderConstants.AUTHORIZATION,
-				`${MSRestConstants.HeaderConstants.AUTHORIZATION_SCHEME} ${tokenResponse.token}`,
+				`${MSRestConstants.HeaderConstants.AUTHORIZATION_SCHEME} ${tokenResponse.token}`
 			);
 			return webResource;
 		}

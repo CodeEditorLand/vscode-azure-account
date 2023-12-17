@@ -17,9 +17,9 @@ export async function askForLogin(): Promise<unknown> {
 	const result: MessageItem | undefined = await window.showInformationMessage(
 		localize(
 			"azure-account.loginFirst",
-			"You are not signed in. Sign in to continue.",
+			"You are not signed in. Sign in to continue."
 		),
-		login,
+		login
 	);
 	return result === login && commands.executeCommand("azure-account.login");
 }

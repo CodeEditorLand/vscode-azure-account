@@ -14,12 +14,12 @@ import { delay } from "../utils/timeUtils";
 export async function waitUntilOnline(
 	environment: Environment,
 	interval: number,
-	token = new CancellationTokenSource().token,
+	token = new CancellationTokenSource().token
 ): Promise<void> {
 	let checkIsOnlineTask: Promise<boolean> = checkIsOnline(environment);
 	let delayTask: Promise<false | PromiseLike<false> | undefined> = delay(
 		interval,
-		false,
+		false
 	);
 	while (
 		!token.isCancellationRequested &&
@@ -28,7 +28,7 @@ export async function waitUntilOnline(
 		await delayTask;
 		checkIsOnlineTask = asyncOr(
 			checkIsOnlineTask,
-			checkIsOnline(environment),
+			checkIsOnline(environment)
 		);
 		delayTask = delay(interval, false);
 	}

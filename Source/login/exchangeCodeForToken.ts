@@ -21,7 +21,7 @@ export async function exchangeCodeForToken<TLoginResult>(
 	environment: Environment,
 	tenantId: string,
 	callbackUri: string,
-	nonce: string,
+	nonce: string
 ): Promise<TLoginResult> {
 	let uriEventListener: Disposable;
 	return new Promise((resolve: (value: TLoginResult) => void, reject) => {
@@ -39,8 +39,8 @@ export async function exchangeCodeForToken<TLoginResult>(
 					throw new Error(
 						localize(
 							"azure-account.nonceDoesNotMatch",
-							"Nonce does not match.",
-						),
+							"Nonce does not match."
+						)
 					);
 				}
 				/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
@@ -51,8 +51,8 @@ export async function exchangeCodeForToken<TLoginResult>(
 						callbackUri,
 						clientId,
 						environment,
-						tenantId,
-					),
+						tenantId
+					)
 				);
 			} catch (err) {
 				reject(err);

@@ -39,16 +39,15 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForFilters",
 				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+					context.telemetry.properties.isLegacyApi =
+						String(!!isLegacyApi);
 
 					if (!(await this.waitForSubscriptions())) {
 						return false;
 					}
 					await this.loginHelper.filtersTask;
 					return true;
-				},
+				}
 			)) || false
 		);
 	}
@@ -58,9 +57,8 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForLogin",
 				(context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+					context.telemetry.properties.isLegacyApi =
+						String(!!isLegacyApi);
 
 					switch (this.status) {
 						case "LoggedIn":
@@ -80,7 +78,7 @@ export class AzureAccountExtensionApi
 							const status: never = this.status;
 							throw new Error(`Unexpected status '${status}'`);
 					}
-				},
+				}
 			)) || false
 		);
 	}
@@ -90,16 +88,15 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForSubscriptions",
 				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+					context.telemetry.properties.isLegacyApi =
+						String(!!isLegacyApi);
 
 					if (!(await this.waitForLogin())) {
 						return false;
 					}
 					await this.loginHelper.subscriptionsTask;
 					return true;
-				},
+				}
 			)) || false
 		);
 	}

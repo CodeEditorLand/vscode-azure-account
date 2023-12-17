@@ -100,13 +100,13 @@ export class AzureAccountLoginHelper {
 		new EventEmitter<void>();
 
 	public filtersTask: Promise<AzureResourceFilter[]> = Promise.resolve(
-		<AzureResourceFilter[]>[],
+		<AzureResourceFilter[]>[]
 	);
 	public subscriptionsTask: Promise<AzureSubscription[]> = Promise.resolve(
-		<AzureSubscription[]>[],
+		<AzureSubscription[]>[]
 	);
 	public tenantsTask: Promise<TenantIdDescription[]> = Promise.resolve(
-		<TenantIdDescription[]>[],
+		<TenantIdDescription[]>[]
 	);
 
 	public api: AzureAccountExtensionApi;
@@ -114,7 +114,7 @@ export class AzureAccountLoginHelper {
 
 	constructor(
 		public context: ExtensionContext,
-		actionContext: IActionContext,
+		actionContext: IActionContext
 	) {
 		this.adalAuthProvider = new AdalAuthProvider();
 		this.msalAuthProvider = new MsalAuthProvider();
@@ -130,23 +130,23 @@ export class AzureAccountLoginHelper {
 			"azure-account.login",
 			(context: IActionContext) =>
 				this.login(context, "login").catch(logErrorMessage),
-			1000,
+			1000
 		);
 		registerCommand(
 			"azure-account.loginWithDeviceCode",
 			(context: IActionContext) =>
 				this.login(context, "loginWithDeviceCode").catch(
-					logErrorMessage,
-				),
+					logErrorMessage
+				)
 		);
 		registerCommand("azure-account.logout", () =>
-			this.logout().catch(logErrorMessage),
+			this.logout().catch(logErrorMessage)
 		);
 		context.subscriptions.push(
 			workspace.onDidChangeConfiguration(async (e) => {
 				if (
 					e.affectsConfiguration(
-						getSettingWithPrefix(resourceFilterSetting),
+						getSettingWithPrefix(resourceFilterSetting)
 					)
 				) {
 					actionContext.telemetry.properties.changeResourceFilter =
@@ -154,7 +154,7 @@ export class AzureAccountLoginHelper {
 					updateFilters(true);
 				} else if (
 					cachedSettingKeys.some((k) =>
-						e.affectsConfiguration(getSettingWithPrefix(k)),
+						e.affectsConfiguration(getSettingWithPrefix(k))
 					)
 				) {
 					const numSettings = cachedSettingKeys.length;
@@ -164,18 +164,18 @@ export class AzureAccountLoginHelper {
 
 					for (let index = 0; index < numSettings; index++) {
 						settingsCacheNew.values[index] = getSettingValue(
-							cachedSettingKeys[index],
+							cachedSettingKeys[index]
 						);
 					}
 
 					await this.context.globalState.update(
 						settingsCacheKey,
-						settingsCacheNew,
+						settingsCacheNew
 					);
 
 					if (
 						e.affectsConfiguration(
-							getSettingWithPrefix(authLibrarySetting),
+							getSettingWithPrefix(authLibrarySetting)
 						)
 					) {
 						actionContext.telemetry.properties.changeAuthLibrary =
@@ -186,14 +186,14 @@ export class AzureAccountLoginHelper {
 						await askThenSignOutAndReload(
 							actionContext,
 							ext.loginHelper,
-							true /* forceLogout */,
+							true /* forceLogout */
 						);
 					} else if (
 						e.affectsConfiguration(
-							getSettingWithPrefix(cloudSetting),
+							getSettingWithPrefix(cloudSetting)
 						) ||
 						e.affectsConfiguration(
-							getSettingWithPrefix(tenantSetting),
+							getSettingWithPrefix(tenantSetting)
 						)
 					) {
 						if (ext.loginHelper.api.status !== "LoggedOut") {
@@ -201,14 +201,14 @@ export class AzureAccountLoginHelper {
 						}
 					}
 				}
-			}),
+			})
 		);
 		this.initialize("activation").catch(logErrorMessage);
 	}
 
 	public async login(
 		context: IActionContext,
-		trigger: LoginTrigger,
+		trigger: LoginTrigger
 	): Promise<void> {
 		await ext.loginHelper.logout(true /* forceLogout */);
 
@@ -228,7 +228,7 @@ export class AzureAccountLoginHelper {
 					title: localize(
 						"azure-account.signingIn",
 						"Signing in to {0}...",
-						environmentLabel,
+						environmentLabel
 					),
 					location: ProgressLocation.Notification,
 					cancellable: true,
@@ -240,15 +240,15 @@ export class AzureAccountLoginHelper {
 						ext.outputChannel.appendLog(
 							localize(
 								"azure-account.signInCancelled",
-								"Sign in cancelled.",
-							),
+								"Sign in cancelled."
+							)
 						);
 					});
 
 					const onlineTask: Promise<void> = waitUntilOnline(
 						environment,
 						2000,
-						cancelSource.token,
+						cancelSource.token
 					);
 					const timerTask: Promise<
 						boolean | PromiseLike<boolean> | undefined
@@ -264,17 +264,17 @@ export class AzureAccountLoginHelper {
 								.showInformationMessage(
 									localize(
 										"azure-account.checkNetwork",
-										"You appear to be offline. Please check your network connection.",
+										"You appear to be offline. Please check your network connection."
 									),
-									cancel,
+									cancel
 								)
 								.then((result) => {
 									if (result === cancel) {
 										throw new AzureLoginError(
 											localize(
 												"azure-account.offline",
-												"Offline",
-											),
+												"Offline"
+											)
 										);
 									}
 								}),
@@ -302,18 +302,18 @@ export class AzureAccountLoginHelper {
 								tenantId,
 								openUri,
 								redirectTimeout,
-								cancellationToken,
-						  )
+								cancellationToken
+							)
 						: await this.authProvider.loginWithDeviceCode(
 								context,
 								environment,
 								tenantId,
-								cancellationToken,
-						  );
+								cancellationToken
+							);
 					await this.updateSessions(
 						this.authProvider,
 						environment,
-						loginResult,
+						loginResult
 					);
 					void this.sendLoginTelemetry(context, {
 						trigger,
@@ -321,7 +321,7 @@ export class AzureAccountLoginHelper {
 						environmentName,
 						outcome: "success",
 					});
-				},
+				}
 			);
 		} catch (err) {
 			if (err instanceof AzureLoginError && err.reason) {
@@ -359,7 +359,7 @@ export class AzureAccountLoginHelper {
 			environmentName: string;
 			outcome: string;
 			message?: string;
-		},
+		}
 	) {
 		context.telemetry.properties = {
 			...context.telemetry.properties,
@@ -393,12 +393,12 @@ export class AzureAccountLoginHelper {
 					this.beginLoggingIn();
 					const loginResult = await this.authProvider.loginSilent(
 						environment,
-						tenantId,
+						tenantId
 					);
 					await this.updateSessions(
 						this.authProvider,
 						environment,
-						loginResult,
+						loginResult
 					);
 					void this.sendLoginTelemetry(context, {
 						trigger,
@@ -430,7 +430,7 @@ export class AzureAccountLoginHelper {
 				} finally {
 					this.updateLoginStatus();
 				}
-			},
+			}
 		);
 	}
 
@@ -449,25 +449,25 @@ export class AzureAccountLoginHelper {
 						const key: string = getKey(
 							environment,
 							userId,
-							tenantId,
+							tenantId
 						);
 						return {
 							session: sessions[key],
 							subscription,
 						};
-					},
+					}
 				);
 			this.subscriptionsTask = Promise.resolve(subscriptions);
 			this.api.subscriptions.push(...subscriptions);
 			this.tenantsTask = Promise.resolve(cache.tenants);
 
 			const resourceFilter: string[] | undefined = getSettingValue(
-				resourceFilterSetting,
+				resourceFilterSetting
 			);
 			this.oldResourceFilter = JSON.stringify(resourceFilter);
 			const newFilters: AzureResourceFilter[] = getNewFilters(
 				subscriptions,
-				resourceFilter,
+				resourceFilter
 			);
 			this.filtersTask = Promise.resolve(newFilters);
 			this.api.filters.push(...newFilters);
@@ -494,12 +494,12 @@ export class AzureAccountLoginHelper {
 	private async updateSessions<TLoginResult>(
 		authProvider: AuthProviderBase<TLoginResult>,
 		environment: Environment,
-		loginResult: TLoginResult,
+		loginResult: TLoginResult
 	): Promise<void> {
 		await authProvider.updateSessions(
 			environment,
 			loginResult,
-			this.api.sessions,
+			this.api.sessions
 		);
 		this.onSessionsChanged.fire();
 	}
@@ -524,17 +524,17 @@ function promptToClearTenant(): void {
 				const clearTenantPrompt: string = localize(
 					"azure-account.clearTenantPrompt",
 					'You have been successfully signed out but your tenant ID is still set to "{0}". Would you like to clear it?',
-					tenant,
+					tenant
 				);
 				const clearTenant: string = localize(
 					"azure-account.clearTenant",
-					"Clear tenant ID",
+					"Clear tenant ID"
 				);
 				void window
 					.showInformationMessage(
 						clearTenantPrompt,
 						clearTenant,
-						DialogResponses.cancel.title,
+						DialogResponses.cancel.title
 					)
 					.then(async (response) => {
 						if (response === clearTenant) {
@@ -544,22 +544,22 @@ function promptToClearTenant(): void {
 						}
 					});
 			}
-		},
+		}
 	);
 }
 
 async function redirectTimeout(): Promise<void> {
 	const message: string = localize(
 		"azure-account.browserDidNotConnect",
-		"Browser did not connect to local server within 10 seconds. Do you want to try the alternate sign in using a device code instead?",
+		"Browser did not connect to local server within 10 seconds. Do you want to try the alternate sign in using a device code instead?"
 	);
 	const useDeviceCode: string = localize(
 		"azure-account.useDeviceCode",
-		"Use Device Code",
+		"Use Device Code"
 	);
 	const response: string | undefined = await window.showInformationMessage(
 		message,
-		useDeviceCode,
+		useDeviceCode
 	);
 	if (response) {
 		await commands.executeCommand("azure-account.loginWithDeviceCode");

@@ -5,7 +5,10 @@
 
 export class AzureLoginError extends Error {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-	constructor(message: string, public reason?: any) {
+	constructor(
+		message: string,
+		public reason?: any
+	) {
 		super(message);
 	}
 }

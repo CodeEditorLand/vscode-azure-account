@@ -8,21 +8,21 @@ import { ext } from "../../extensionVariables";
 import { getSelectedEnvironment } from "../environments";
 
 const beforeCacheAccess = async (
-	cacheContext: TokenCacheContext,
+	cacheContext: TokenCacheContext
 ): Promise<void> => {
 	const cachedValue: string | undefined = await ext.context.secrets.get(
-		(await getSelectedEnvironment()).name,
+		(await getSelectedEnvironment()).name
 	);
 	cachedValue && cacheContext.tokenCache.deserialize(cachedValue);
 };
 
 const afterCacheAccess = async (
-	cacheContext: TokenCacheContext,
+	cacheContext: TokenCacheContext
 ): Promise<void> => {
 	if (cacheContext.cacheHasChanged) {
 		await ext.context.secrets.store(
 			(await getSelectedEnvironment()).name,
-			cacheContext.tokenCache.serialize(),
+			cacheContext.tokenCache.serialize()
 		);
 	}
 };

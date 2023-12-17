@@ -8,7 +8,7 @@ import { ISubscriptionItem } from "./subscriptionTypes";
 
 export function addFilter(
 	resourceFilter: string[],
-	item: ISubscriptionItem,
+	item: ISubscriptionItem
 ): void {
 	const { session, subscription } = item.subscription;
 	resourceFilter.push(`${session.tenantId}/${subscription.subscriptionId}`);
@@ -17,11 +17,11 @@ export function addFilter(
 
 export function removeFilter(
 	resourceFilter: string[],
-	item: ISubscriptionItem,
+	item: ISubscriptionItem
 ): void {
 	const { session, subscription } = item.subscription;
 	const indexToRemove: number = resourceFilter.indexOf(
-		`${session.tenantId}/${subscription.subscriptionId}`,
+		`${session.tenantId}/${subscription.subscriptionId}`
 	);
 	resourceFilter.splice(indexToRemove, 1);
 	item.picked = false;
@@ -29,7 +29,7 @@ export function removeFilter(
 
 export function getNewFilters(
 	subscriptions: AzureSubscription[],
-	resourceFilter: string[] | undefined,
+	resourceFilter: string[] | undefined
 ): AzureResourceFilter[] {
 	if (resourceFilter && !Array.isArray(resourceFilter)) {
 		resourceFilter = [];
@@ -43,7 +43,7 @@ export function getNewFilters(
 				}
 				return f;
 			},
-			<Record<string, boolean>>{},
+			<Record<string, boolean>>{}
 		);
 
 	return filters
@@ -51,7 +51,7 @@ export function getNewFilters(
 				(s) =>
 					filters[
 						`${s.session.tenantId}/${s.subscription.subscriptionId}`
-					],
-		  )
+					]
+			)
 		: subscriptions;
 }

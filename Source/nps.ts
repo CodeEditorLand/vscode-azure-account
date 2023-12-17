@@ -38,7 +38,7 @@ export function survey({ globalState }: ExtensionContext): void {
 			const date = new Date().toDateString();
 			const lastSessionDate = globalState.get(
 				LAST_SESSION_DATE_KEY,
-				new Date(0).toDateString(),
+				new Date(0).toDateString()
 			);
 
 			if (date === lastSessionDate) {
@@ -75,16 +75,16 @@ export function survey({ globalState }: ExtensionContext): void {
 					void env.openExternal(
 						Uri.parse(
 							`${NPS_SURVEY_URL}?o=${encodeURIComponent(
-								process.platform,
+								process.platform
 							)}&v=${encodeURIComponent(
-								extensionVersion,
-							)}&m=${encodeURIComponent(env.machineId)}`,
-						),
+								extensionVersion
+							)}&m=${encodeURIComponent(env.machineId)}`
+						)
 					);
 					await globalState.update(IS_CANDIDATE_KEY, false);
 					await globalState.update(
 						SKIP_VERSION_KEY,
-						extensionVersion,
+						extensionVersion
 					);
 				},
 			};
@@ -94,7 +94,7 @@ export function survey({ globalState }: ExtensionContext): void {
 					context.telemetry.properties.remindMeLater = "true";
 					await globalState.update(
 						SESSION_COUNT_KEY,
-						sessionCount - 3,
+						sessionCount - 3
 					);
 				},
 			};
@@ -106,7 +106,7 @@ export function survey({ globalState }: ExtensionContext): void {
 					await globalState.update(IS_CANDIDATE_KEY, false);
 					await globalState.update(
 						SKIP_VERSION_KEY,
-						extensionVersion,
+						extensionVersion
 					);
 				},
 			};
@@ -115,13 +115,13 @@ export function survey({ globalState }: ExtensionContext): void {
 			const button = await window.showInformationMessage(
 				localize(
 					"azure-account.surveyQuestion",
-					"Do you mind taking a quick feedback survey about the Azure Extensions for VS Code?",
+					"Do you mind taking a quick feedback survey about the Azure Extensions for VS Code?"
 				),
 				take,
 				remind,
-				never,
+				never
 			);
 			await (button || remind).run();
-		},
+		}
 	);
 }

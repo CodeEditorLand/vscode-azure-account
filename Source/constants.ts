@@ -30,7 +30,7 @@ export const portADFS: number = 19472;
 export const redirectUrlAAD: string = "https://vscode.dev/redirect";
 export const stoppedAuthTaskMessage: string = localize(
 	"azure-account.stoppedAuthTask",
-	"Stopped authentication task.",
+	"Stopped authentication task."
 );
 
 export const staticEnvironments: Environment[] = [
@@ -45,15 +45,15 @@ export const environmentLabels: Record<string, string> = {
 	AzureChinaCloud: localize("azure-account.azureChinaCloud", "Azure China"),
 	AzureGermanCloud: localize(
 		"azure-account.azureGermanyCloud",
-		"Azure Germany",
+		"Azure Germany"
 	),
 	AzureUSGovernment: localize(
 		"azure-account.azureUSCloud",
-		"Azure US Government",
+		"Azure US Government"
 	),
 	[azureCustomCloud]: localize(
 		"azure-account.azureCustomCloud",
-		"Azure Custom Cloud",
+		"Azure Custom Cloud"
 	),
 	[azurePPE]: localize("azure-account.azurePPE", "Azure PPE"),
 };

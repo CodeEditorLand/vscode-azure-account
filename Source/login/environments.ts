@@ -55,7 +55,7 @@ export async function getSelectedEnvironment(): Promise<Environment> {
 	const envSetting: string | undefined = getSettingValue(cloudSetting);
 	return (
 		(await getEnvironments()).find(
-			(environment) => environment.name === envSetting,
+			(environment) => environment.name === envSetting
 		) || Environment.AzureCloud
 	);
 }
@@ -64,7 +64,7 @@ export async function getSelectedEnvironment(): Promise<Environment> {
  * @param includePartial Include partial environments for the sake of UI (i.e. Azure Stack). Endpoint data will be filled in later
  */
 export async function getEnvironments(
-	includePartial: boolean = false,
+	includePartial: boolean = false
 ): Promise<Environment[]> {
 	const metadataDiscoveryUrl: string | undefined =
 		process.env["ARM_CLOUD_METADATA_URL"];
@@ -112,7 +112,7 @@ export async function getEnvironments(
 			...ppe,
 			name: azurePPE,
 			validateAuthority: getValidateAuthority(
-				ppe.activeDirectoryEndpointUrl,
+				ppe.activeDirectoryEndpointUrl
 			),
 		});
 	}
@@ -134,7 +134,7 @@ export function isADFS(environment: Environment): boolean {
 
 async function getCustomCloudEnvironment(
 	config: WorkspaceConfiguration,
-	includePartial: boolean,
+	includePartial: boolean
 ): Promise<Environment | undefined> {
 	const armUrl: string | undefined = config.get(customCloudArmUrlSetting);
 	if (armUrl) {
@@ -153,44 +153,44 @@ async function getCustomCloudEnvironment(
 						endpoints.authentication.loginEndpoint.endsWith("/")
 							? endpoints.authentication.loginEndpoint
 							: endpoints.authentication.loginEndpoint.concat(
-									"/",
-							  ),
+									"/"
+								),
 					activeDirectoryGraphResourceId: endpoints.graphEndpoint,
 					activeDirectoryResourceId:
 						endpoints.authentication.audiences[0],
 					portalUrl: endpoints.portalEndpoint,
 					galleryEndpointUrl: endpoints.galleryEndpoint,
 					storageEndpointSuffix: armUrl.substring(
-						armUrl.indexOf("."),
+						armUrl.indexOf(".")
 					),
 					keyVaultDnsSuffix: ".vault".concat(
-						armUrl.substring(armUrl.indexOf(".")),
+						armUrl.substring(armUrl.indexOf("."))
 					),
 					managementEndpointUrl:
 						endpoints.authentication.audiences[0],
 					validateAuthority: getValidateAuthority(
-						endpoints.authentication.loginEndpoint,
+						endpoints.authentication.loginEndpoint
 					),
 				};
 			}
 		} catch {
 			const openSettings: string = localize(
 				"openSettings",
-				"Open Settings",
+				"Open Settings"
 			);
 			void window
 				.showErrorMessage(
 					localize(
 						"azure-account.armUrlFetchFailed",
-						"Fetching custom cloud environment data failed. Please check your custom cloud settings.",
+						"Fetching custom cloud environment data failed. Please check your custom cloud settings."
 					),
-					openSettings,
+					openSettings
 				)
 				.then((result) => {
 					if (result === openSettings) {
 						void commands.executeCommand(
 							"workbench.action.openSettings",
-							"@ext:ms-vscode.azure-account customCloud",
+							"@ext:ms-vscode.azure-account customCloud"
 						);
 					}
 				});
@@ -205,7 +205,7 @@ function getValidateAuthority(activeDirectoryEndpointUrl: string): boolean {
 	let validateAuthority: boolean = true;
 	if (activeDirectoryEndpointUrl) {
 		const activeDirectoryUrl: string = activeDirectoryEndpointUrl.endsWith(
-			"/",
+			"/"
 		)
 			? activeDirectoryEndpointUrl.slice(0, -1)
 			: activeDirectoryEndpointUrl;

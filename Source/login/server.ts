@@ -38,21 +38,21 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 		const req: http.ClientRequest = https.get(
 			{
 				...url.parse(
-					`${redirectUrlAAD}?state=${testCallbackUrl}?nonce=cccc`,
+					`${redirectUrlAAD}?state=${testCallbackUrl}?nonce=cccc`
 				),
 			},
 			(res) => {
 				const key: string | undefined = Object.keys(res.headers).find(
-					(key) => key.toLowerCase() === "location",
+					(key) => key.toLowerCase() === "location"
 				);
 				const location: string | string[] | undefined =
 					key && res.headers[key];
 				resolve(
 					res.statusCode === 302 &&
 						typeof location === "string" &&
-						location.startsWith(testCallbackUrl),
+						location.startsWith(testCallbackUrl)
 				);
-			},
+			}
 		);
 		req.on("error", (error) => {
 			logErrorMessage(error);
@@ -77,7 +77,7 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 
 export function createServer(
 	context: IActionContext,
-	nonce: string,
+	nonce: string
 ): {
 	server: http.Server;
 	redirectPromise: Promise<RedirectResult>;
@@ -86,19 +86,19 @@ export function createServer(
 } {
 	let deferredRedirect: Deferred<RedirectResult>;
 	const redirectPromise = new Promise<RedirectResult>(
-		(resolve, reject) => (deferredRedirect = { resolve, reject }),
+		(resolve, reject) => (deferredRedirect = { resolve, reject })
 	);
 
 	let deferredCode: Deferred<CodeResult>;
 	const codePromise = new Promise<CodeResult>(
-		(resolve, reject) => (deferredCode = { resolve, reject }),
+		(resolve, reject) => (deferredCode = { resolve, reject })
 	);
 
 	const codeTimer = setTimeout(() => {
 		context.errorHandling.suppressDisplay = true;
 		const message: string = localize(
 			"azure-account.timeoutWaitingForCode",
-			"Timeout waiting for code.",
+			"Timeout waiting for code."
 		);
 		deferredCode.reject(new Error(message));
 	}, authTimeoutMs);
@@ -111,7 +111,7 @@ export function createServer(
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const reqUrl: url.UrlWithParsedQuery = url.parse(
 			req.url!,
-			/* parseQueryString */ true,
+			/* parseQueryString */ true
 		);
 		switch (reqUrl.pathname) {
 			case "/signin":
@@ -130,9 +130,9 @@ export function createServer(
 					res,
 					path.join(
 						ext.context.asAbsolutePath("codeFlowResult"),
-						"index.html",
+						"index.html"
 					),
-					"text/html; charset=utf-8",
+					"text/html; charset=utf-8"
 				);
 				break;
 			case "/main.css":
@@ -140,9 +140,9 @@ export function createServer(
 					res,
 					path.join(
 						ext.context.asAbsolutePath("codeFlowResult"),
-						"main.css",
+						"main.css"
 					),
-					"text/css; charset=utf-8",
+					"text/css; charset=utf-8"
 				);
 				break;
 			case "/callback":
@@ -151,8 +151,8 @@ export function createServer(
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 						.then(
 							(code) => ({ code, res }),
-							(err) => ({ err, res }),
-						),
+							(err) => ({ err, res })
+						)
 				);
 				break;
 			default:
@@ -171,7 +171,7 @@ export function createServer(
 }
 
 export function createTerminateServer(
-	server: http.Server,
+	server: http.Server
 ): () => Promise<void> {
 	const sockets: Record<number, net.Socket> = {};
 	let socketCount = 0;
@@ -184,7 +184,7 @@ export function createTerminateServer(
 	});
 	return async () => {
 		const result = new Promise<void>((resolve: () => void) =>
-			server.close(resolve),
+			server.close(resolve)
 		);
 		for (const id in sockets) {
 			sockets[id].destroy();
@@ -195,7 +195,7 @@ export function createTerminateServer(
 
 export async function startServer(
 	server: http.Server,
-	adfs: boolean,
+	adfs: boolean
 ): Promise<number> {
 	let portTimer: NodeJS.Timer;
 	function cancelPortTimer() {
@@ -226,7 +226,7 @@ export async function startServer(
 function sendFile(
 	res: http.ServerResponse,
 	filepath: string,
-	contentType: string,
+	contentType: string
 ): void {
 	fs.readFile(filepath, (err, body) => {
 		if (err) {
@@ -259,7 +259,7 @@ async function callback(nonce: string, reqUrl: url.Url): Promise<string> {
 		if (!error) {
 			const receivedNonce: string = getQueryProp(query, "nonce").replace(
 				/ /g,
-				"+",
+				"+"
 			);
 			if (receivedNonce !== nonce) {
 				error = "Nonce does not match.";

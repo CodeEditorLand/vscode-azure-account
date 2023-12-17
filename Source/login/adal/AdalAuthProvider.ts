@@ -59,7 +59,7 @@ const ADALLogLevel: Record<string, LoggingLevel> = {
 export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	private tokenCache: MemoryCache = new MemoryCache();
 	private delayedTokenCache: ProxyTokenCache = new ProxyTokenCache(
-		this.tokenCache,
+		this.tokenCache
 	);
 
 	constructor() {
@@ -93,7 +93,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		redirectUrl: string,
 		clientId: string,
 		environment: Environment,
-		tenantId: string,
+		tenantId: string
 	): Promise<TokenResponse[]> {
 		const tokenResponse: TokenResponse =
 			await getTokenWithAuthorizationCode(
@@ -101,7 +101,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				environment,
 				redirectUrl,
 				tenantId,
-				code,
+				code
 			);
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -113,12 +113,12 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		context: IActionContext,
 		environment: Environment,
 		tenantId: string,
-		cancellationToken: CancellationToken,
+		cancellationToken: CancellationToken
 	): Promise<TokenResponse[]> {
 		// Used for prematurely ending the `tokenResponseTask`.
 		let deferredTaskRegulator: Deferred<TokenResponse>;
 		const taskRegulator = new Promise<TokenResponse>(
-			(resolve, reject) => (deferredTaskRegulator = { resolve, reject }),
+			(resolve, reject) => (deferredTaskRegulator = { resolve, reject })
 		);
 
 		const timeout = setTimeout(() => {
@@ -127,9 +127,9 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				new Error(
 					localize(
 						"azure-account.timeoutWaitingForDeviceCode",
-						"Timeout waiting for device code.",
-					),
-				),
+						"Timeout waiting for device code."
+					)
+				)
 			);
 		}, authTimeoutMs);
 
@@ -142,17 +142,17 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		const messageTask: Promise<void> = this.showDeviceCodeMessage(
 			userCode.message,
 			userCode.userCode,
-			userCode.verificationUrl,
+			userCode.verificationUrl
 		);
 		const tokenResponseTask: Promise<TokenResponse> = getTokenResponse(
 			environment,
 			tenantId,
-			userCode,
+			userCode
 		);
 		const tokenResponse: TokenResponse = await Promise.race([
 			tokenResponseTask,
 			messageTask.then(() =>
-				Promise.race([tokenResponseTask, taskRegulator]),
+				Promise.race([tokenResponseTask, taskRegulator])
 			),
 		]);
 
@@ -165,13 +165,13 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 	public async loginSilent(
 		environment: Environment,
-		tenantId: string,
+		tenantId: string
 	): Promise<TokenResponse[]> {
 		const storedCreds: string | undefined =
 			await getStoredCredentials(environment);
 		if (!storedCreds) {
 			throw new AzureLoginError(
-				localize("azure-account.refreshTokenMissing", "Not signed in"),
+				localize("azure-account.refreshTokenMissing", "Not signed in")
 			);
 		}
 
@@ -186,7 +186,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 			tokenResponse = await tokenFromRefreshToken(
 				environment,
 				storedCreds,
-				tenantId,
+				tenantId
 			);
 		}
 
@@ -197,8 +197,8 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				throw new AzureLoginError(
 					localize(
 						"azure-account.malformedCredentials",
-						"Stored credentials are invalid",
-					),
+						"Stored credentials are invalid"
+					)
 				);
 			}
 
@@ -207,7 +207,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				Environment.AzureCloud,
 				redirectionUrl,
 				tenantId,
-				code,
+				code
 			);
 		}
 
@@ -215,8 +215,8 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 			throw new AzureLoginError(
 				localize(
 					"azure-account.missingTokenResponse",
-					"Using stored credentials failed",
-				),
+					"Using stored credentials failed"
+				)
 			);
 		}
 
@@ -226,7 +226,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	public getCredentials(
 		environment: string,
 		userId: string,
-		tenantId: string,
+		tenantId: string
 	): AbstractCredentials {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 		return new DeviceTokenCredentials({
@@ -241,7 +241,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	public getCredentials2(
 		environment: Environment,
 		userId: string,
-		tenantId: string,
+		tenantId: string
 	): DeviceTokenCredentials2 {
 		return new DeviceTokenCredentials2(
 			clientId,
@@ -249,14 +249,14 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 			userId,
 			undefined,
 			environment,
-			this.delayedTokenCache,
+			this.delayedTokenCache
 		);
 	}
 
 	public async updateSessions(
 		environment: Environment,
 		loginResult: TokenResponse[],
-		sessions: AzureSession[],
+		sessions: AzureSession[]
 	): Promise<void> {
 		await clearTokenCache(this.tokenCache);
 
@@ -278,14 +278,14 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				credentials: this.getCredentials(
 					<any>environment,
 					tokenResponse.userId!,
-					tokenResponse.tenantId!,
+					tokenResponse.tenantId!
 				),
 				credentials2: this.getCredentials2(
 					environment,
 					tokenResponse.userId!,
-					tokenResponse.tenantId!,
+					tokenResponse.tenantId!
 				),
-			})),
+			}))
 		);
 		/* eslint-enable @typescript-eslint/no-non-null-assertion */
 	}

@@ -19,7 +19,7 @@ export interface HttpStringifier {
 function stringifyRequest(
 	request: NormalizedHttpRequest,
 	source: string,
-	verbose?: boolean,
+	verbose?: boolean
 ): string {
 	let message = `[${source} Request]`;
 	message = `\n┌────── ${source} Request ${request.method} ${request.url}`;
@@ -30,7 +30,7 @@ function stringifyRequest(
 	message += stringifyRecord(
 		request.proxy ?? {},
 		"Proxy configuration",
-		true,
+		true
 	);
 	message += `\n└───────────────────────────────────────────────────`;
 	return message;
@@ -46,7 +46,7 @@ function stringifyRequest(
 function stringifyResponse(
 	response: NormalizedHttpResponse,
 	source: string,
-	hideBody?: string,
+	hideBody?: string
 ): string {
 	let message = `[${source} Response]`;
 	message += `\n┌────── ${source} Response ${response.request.method} - ${response.request.url}`;
@@ -62,7 +62,7 @@ function stringifyResponse(
 function stringifyRecord(
 	record: Record<string, unknown>,
 	label: string,
-	hideCount?: boolean,
+	hideCount?: boolean
 ): string {
 	const entries = Object.entries(record)
 		.sort()
@@ -74,7 +74,7 @@ function stringifyRecord(
 				([name, value]) =>
 					`${name}: "${
 						Array.isArray(value) ? value.join(", ") : String(value)
-					}"`,
+					}"`
 			)
 			.join("\n\t└ ");
 	return `\n\t${label}${
@@ -89,7 +89,7 @@ export class SimpleHttpStringifier implements HttpStringifier {
 
 	stringifyResponse(
 		response: NormalizedHttpResponse,
-		source: string,
+		source: string
 	): string {
 		return `[${source} Response] ${response.status} - ${response.request.method} ${response.request.url}`;
 	}
@@ -102,19 +102,19 @@ export class DebugHttpStringifier implements HttpStringifier {
 
 	stringifyResponse(
 		response: NormalizedHttpResponse,
-		source: string,
+		source: string
 	): string {
 		return stringifyResponse(
 			response,
 			source,
-			"Hidden. Set log level to 'Trace' to see body.",
+			"Hidden. Set log level to 'Trace' to see body."
 		);
 	}
 
 	protected stringifyRecord(
 		record: Record<string, unknown>,
 		label: string,
-		hideCount?: boolean,
+		hideCount?: boolean
 	): string {
 		const entries = Object.entries(record)
 			.sort()
@@ -128,7 +128,7 @@ export class DebugHttpStringifier implements HttpStringifier {
 							Array.isArray(value)
 								? value.join(", ")
 								: String(value)
-						}"`,
+						}"`
 				)
 				.join("\n\t└ ");
 		return `\n\t${label}${
@@ -144,7 +144,7 @@ export class TraceHttpStringifier implements HttpStringifier {
 
 	stringifyResponse(
 		response: NormalizedHttpResponse,
-		source: string,
+		source: string
 	): string {
 		return stringifyResponse(response, source);
 	}

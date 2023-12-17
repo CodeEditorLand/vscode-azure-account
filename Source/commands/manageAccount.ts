@@ -19,10 +19,10 @@ export async function manageAccount(context: IActionContext): Promise<void> {
 			placeHolder: localize(
 				"signedInAs",
 				"Signed in as {0}",
-				ext.loginHelper.api.sessions[0].userId,
+				ext.loginHelper.api.sessions[0].userId
 			),
 			canPickMany: false,
-		},
+		}
 	);
 
 	if (result === signOutPick) {
