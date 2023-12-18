@@ -5,7 +5,7 @@
 
 export function delay<T = void>(
 	ms: number,
-	result?: T | PromiseLike<T>
+	result?: T | PromiseLike<T>,
 ): Promise<T | PromiseLike<T> | undefined> {
 	return new Promise((resolve) => setTimeout(() => resolve(result), ms));
 }

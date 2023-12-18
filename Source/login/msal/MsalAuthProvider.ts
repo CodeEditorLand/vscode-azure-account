@@ -54,7 +54,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 					loggerCallback: (
 						_level: LogLevel,
 						message: string,
-						_containsPii: boolean
+						_containsPii: boolean,
 					) => {
 						message = "MSAL: " + message;
 						switch (_level) {
@@ -88,7 +88,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 		redirectUrl: string,
 		_clientId: string,
 		environment: Environment,
-		tenantId: string
+		tenantId: string,
 	): Promise<AuthenticationResult> {
 		const authResult: AuthenticationResult | null =
 			await this.publicClientApp.acquireTokenByCode({
@@ -105,8 +105,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 			throw new Error(
 				localize(
 					"azure-account.msalAuthCodeFailed",
-					"MSAL authentication code login failed."
-				)
+					"MSAL authentication code login failed.",
+				),
 			);
 		}
 
@@ -117,12 +117,12 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 		context: IActionContext,
 		environment: Environment,
 		tenantId: string,
-		cancellationToken: CancellationToken
+		cancellationToken: CancellationToken,
 	): Promise<AuthenticationResult> {
 		// Used for prematurely ending the `authResultTask`.
 		let deferredTaskRegulator: Deferred<AuthenticationResult>;
 		const taskRegulator = new Promise<AuthenticationResult>(
-			(resolve, reject) => (deferredTaskRegulator = { resolve, reject })
+			(resolve, reject) => (deferredTaskRegulator = { resolve, reject }),
 		);
 
 		cancellationToken.onCancellationRequested(() => {
@@ -137,7 +137,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 						this.showDeviceCodeMessage(
 							response.message,
 							response.userCode,
-							response.verificationUri
+							response.verificationUri,
 						),
 					azureCloudOptions: {
 						azureCloudInstance: getAzureCloudInstance(environment),
@@ -175,8 +175,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 			throw new Error(
 				localize(
 					"azure-account.msalDeviceCodeFailed",
-					"MSAL device code login failed."
-				)
+					"MSAL device code login failed.",
+				),
 			);
 		}
 
@@ -185,7 +185,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 
 	public async loginSilent(
 		environment: Environment,
-		tenantId: string
+		tenantId: string,
 	): Promise<AuthenticationResult> {
 		const msalTokenCache: TokenCache = this.publicClientApp.getTokenCache();
 		const accountInfo: AccountInfo[] =
@@ -206,8 +206,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 				throw new AzureLoginError(
 					localize(
 						"azure-account.loginSilentFailed",
-						"Silent login failed."
-					)
+						"Silent login failed.",
+					),
 				);
 			}
 
@@ -216,15 +216,15 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 			throw new Error(
 				localize(
 					"azure-account.expectedSingleAccount",
-					"Expected a single account when reading cache but multiple were found."
-				)
+					"Expected a single account when reading cache but multiple were found.",
+				),
 			);
 		} else {
 			throw new Error(
 				localize(
 					"azure-account.noAccountFound",
-					"No account was found when reading cache."
-				)
+					"No account was found when reading cache.",
+				),
 			);
 		}
 	}
@@ -233,8 +233,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 		throw new Error(
 			localize(
 				"azure-account.deprecatedCredentials",
-				'MSAL does not support this credentials type. As a workaround, revert the "azure.authenticationLibrary" setting to "ADAL" and consider filing an issue on the extension author.'
-			)
+				'MSAL does not support this credentials type. As a workaround, revert the "azure.authenticationLibrary" setting to "ADAL" and consider filing an issue on the extension author.',
+			),
 		);
 	}
 
@@ -242,7 +242,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 		_env: Environment,
 		_userId: string,
 		_tenantId: string,
-		accountInfo?: AccountInfo
+		accountInfo?: AccountInfo,
 	): AbstractCredentials2 {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		return new PublicClientCredential(this.publicClientApp, accountInfo!);
@@ -251,7 +251,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 	public async updateSessions(
 		environment: Environment,
 		loginResult: AuthenticationResult,
-		sessions: AzureSession[]
+		sessions: AzureSession[],
 	): Promise<void> {
 		/* eslint-disable @typescript-eslint/no-non-null-assertion */
 		sessions.splice(
@@ -262,8 +262,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 				loginResult.account!.username,
 				loginResult.account!.tenantId,
 				loginResult.account!,
-				this
-			)
+				this,
+			),
 		);
 		/* eslint-enable @typescript-eslint/no-non-null-assertion */
 	}

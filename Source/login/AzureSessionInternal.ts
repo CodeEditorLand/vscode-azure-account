@@ -18,14 +18,14 @@ export class AzureSessionInternal implements AzureSession {
 		public userId: string,
 		public tenantId: string,
 		public accountInfo: AccountInfo | undefined,
-		private _authProvider: AuthProviderBase<unknown>
+		private _authProvider: AuthProviderBase<unknown>,
 	) {}
 
 	public get credentials(): AbstractCredentials {
 		return this._authProvider.getCredentials(
 			this.environment.name,
 			this.userId,
-			this.tenantId
+			this.tenantId,
 		);
 	}
 
@@ -34,7 +34,7 @@ export class AzureSessionInternal implements AzureSession {
 			this.environment,
 			this.userId,
 			this.tenantId,
-			this.accountInfo
+			this.accountInfo,
 		);
 	}
 }

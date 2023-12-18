@@ -7,9 +7,9 @@ import { Environment } from "@azure/ms-rest-azure-env";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import {
 	QuickPickItem,
+	WorkspaceConfiguration,
 	window,
 	workspace,
-	WorkspaceConfiguration,
 } from "vscode";
 import {
 	azureCustomCloud,
@@ -37,18 +37,18 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 						environment.name === current.name
 							? localize(
 									"azure-account.currentCloud",
-									"(Current)"
-								)
+									"(Current)",
+							  )
 							: undefined,
 					environment,
-				}))
+				})),
 			),
 			{
 				placeHolder: localize(
 					"azure-account.chooseCloudToLogin",
-					"Choose cloud to sign in to"
+					"Choose cloud to sign in to",
 				),
-			}
+			},
 		);
 
 	if (selected) {
@@ -60,7 +60,7 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 				armUrl = await window.showInputBox({
 					prompt: localize(
 						"azure-account.enterArmUrl",
-						"Enter the Azure Resource Manager endpoint"
+						"Enter the Azure Resource Manager endpoint",
 					),
 					placeHolder: "https://management.local.azurestack.external",
 					ignoreFocusOut: true,
@@ -73,11 +73,11 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 			const tenantId: string | undefined = await window.showInputBox({
 				prompt: localize(
 					"azure-account.enterTenantId",
-					"Enter the tenant id"
+					"Enter the tenant id",
 				),
 				placeHolder: localize(
 					"azure-account.tenantIdPlaceholder",
-					"Enter your tenant id or leave it blank to use the default tenant"
+					"Enter your tenant id or leave it blank to use the default tenant",
 				),
 				ignoreFocusOut: true,
 			});
@@ -90,20 +90,20 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 						customCloudArmUrlSetting,
 						armUrl,
 						getCurrentTarget(
-							config.inspect(customCloudArmUrlSetting)
-						)
+							config.inspect(customCloudArmUrlSetting),
+						),
 					);
 				}
 				await config.update(
 					tenantSetting,
 					tenantId,
-					getCurrentTarget(config.inspect(tenantSetting))
+					getCurrentTarget(config.inspect(tenantSetting)),
 				);
 				// if outside of normal range, set ppe setting
 				await config.update(
 					cloudSetting,
 					selected.environment.name,
-					getCurrentTarget(config.inspect(cloudSetting))
+					getCurrentTarget(config.inspect(cloudSetting)),
 				);
 				context.telemetry.properties.newCloudSetting =
 					selected.environment.name;

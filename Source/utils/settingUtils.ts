@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { workspace, WorkspaceConfiguration } from "vscode";
+import { WorkspaceConfiguration, workspace } from "vscode";
 import { extensionPrefix } from "../constants";
 import { getCurrentTarget } from "../login/getCurrentTarget";
 
@@ -19,13 +19,13 @@ export function getSettingValue<T>(settingName: string): T | undefined {
 
 export async function updateSettingValue<T>(
 	settingName: string,
-	value: T
+	value: T,
 ): Promise<void> {
 	const config: WorkspaceConfiguration =
 		workspace.getConfiguration(extensionPrefix);
 	await config.update(
 		settingName,
 		value,
-		getCurrentTarget(config.inspect(settingName))
+		getCurrentTarget(config.inspect(settingName)),
 	);
 }

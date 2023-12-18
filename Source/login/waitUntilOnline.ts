@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Environment } from "@azure/ms-rest-azure-env";
 import * as http from "http";
 import * as https from "https";
+import { Environment } from "@azure/ms-rest-azure-env";
 import { CancellationTokenSource } from "vscode";
 import { logAttemptingToReachUrlMessage } from "../logAttemptingToReachUrlMessage";
 import { logErrorMessage } from "../utils/logErrorMessage";
@@ -14,12 +14,12 @@ import { delay } from "../utils/timeUtils";
 export async function waitUntilOnline(
 	environment: Environment,
 	interval: number,
-	token = new CancellationTokenSource().token
+	token = new CancellationTokenSource().token,
 ): Promise<void> {
 	let checkIsOnlineTask: Promise<boolean> = checkIsOnline(environment);
 	let delayTask: Promise<false | PromiseLike<false> | undefined> = delay(
 		interval,
-		false
+		false,
 	);
 	while (
 		!token.isCancellationRequested &&
@@ -28,7 +28,7 @@ export async function waitUntilOnline(
 		await delayTask;
 		checkIsOnlineTask = asyncOr(
 			checkIsOnlineTask,
-			checkIsOnline(environment)
+			checkIsOnline(environment),
 		);
 		delayTask = delay(interval, false);
 	}

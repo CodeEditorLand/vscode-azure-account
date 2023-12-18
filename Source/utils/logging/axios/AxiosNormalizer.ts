@@ -40,7 +40,7 @@ export class AxiosNormalizer
 						protocol: request.proxy.protocol,
 						password: request.proxy.auth?.password,
 						username: request.proxy.auth?.username,
-					}
+				  }
 				: undefined,
 		};
 	}
@@ -57,12 +57,12 @@ export class AxiosNormalizer
 
 export function setupAxiosLogging(
 	axios: AxiosStatic,
-	logOutputChannel: LogOutputChannel
+	logOutputChannel: LogOutputChannel,
 ): void {
 	const axiosLogger = new HttpLogger(
 		logOutputChannel,
 		"Axios",
-		new AxiosNormalizer()
+		new AxiosNormalizer(),
 	);
 
 	axios.interceptors.request.use((requestConfig) => {

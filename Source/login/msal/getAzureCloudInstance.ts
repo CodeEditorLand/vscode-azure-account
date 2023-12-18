@@ -6,13 +6,13 @@
 import { Environment } from "@azure/ms-rest-azure-env";
 import { AzureCloudInstance } from "@azure/msal-node";
 import {
-	callWithTelemetryAndErrorHandlingSync,
 	IActionContext,
+	callWithTelemetryAndErrorHandlingSync,
 } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../utils/localize";
 
 export function getAzureCloudInstance(
-	environment: Environment
+	environment: Environment,
 ): AzureCloudInstance {
 	const azureCloudInstance: AzureCloudInstance | undefined =
 		callWithTelemetryAndErrorHandlingSync(
@@ -41,7 +41,7 @@ export function getAzureCloudInstance(
 				context.telemetry.properties.azureCloudInstance =
 					String(azureCloudInstance);
 				return azureCloudInstance;
-			}
+			},
 		);
 
 	if (!azureCloudInstance) {
@@ -49,8 +49,8 @@ export function getAzureCloudInstance(
 			localize(
 				"azure-account.failedToGetAzureCloudInstance",
 				`Failed to get Azure Cloud Instance for cloud "{0}".`,
-				environment.name
-			)
+				environment.name,
+			),
 		);
 	}
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { commands, MessageItem, window } from "vscode";
+import { MessageItem, commands, window } from "vscode";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../utils/localize";
 
@@ -17,9 +17,9 @@ export async function askForLogin(): Promise<unknown> {
 	const result: MessageItem | undefined = await window.showInformationMessage(
 		localize(
 			"azure-account.loginFirst",
-			"You are not signed in. Sign in to continue."
+			"You are not signed in. Sign in to continue.",
 		),
-		login
+		login,
 	);
 	return result === login && commands.executeCommand("azure-account.login");
 }

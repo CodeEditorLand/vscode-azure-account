@@ -56,7 +56,7 @@ export class ProxyTokenCache {
 }
 
 export async function getStoredCredentials(
-	environment: Environment
+	environment: Environment,
 ): Promise<string | undefined> {
 	try {
 		const token = await ext.context.secrets.get("Refresh Token");
@@ -78,7 +78,7 @@ export async function getStoredCredentials(
 
 export async function storeRefreshToken(
 	environment: Environment,
-	token: string
+	token: string,
 ): Promise<void> {
 	try {
 		await ext.context.secrets.store(environment.name, token);
@@ -88,7 +88,7 @@ export async function storeRefreshToken(
 }
 
 export async function deleteRefreshToken(
-	environmentName: string
+	environmentName: string,
 ): Promise<void> {
 	try {
 		await ext.context.secrets.delete(environmentName);
@@ -101,14 +101,14 @@ export async function tokenFromRefreshToken(
 	environment: Environment,
 	refreshToken: string,
 	tenantId: string,
-	resource?: string
+	resource?: string,
 ): Promise<TokenResponse> {
 	return new Promise<TokenResponse>((resolve, reject) => {
 		const tokenCache: MemoryCache = new MemoryCache();
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,
-			tokenCache
+			tokenCache,
 		);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		context.acquireTokenWithRefreshToken(
@@ -121,32 +121,32 @@ export async function tokenFromRefreshToken(
 						new AzureLoginError(
 							localize(
 								"azure-account.tokenFromRefreshTokenFailed",
-								"Acquiring token with refresh token failed"
+								"Acquiring token with refresh token failed",
 							),
-							err
-						)
+							err,
+						),
 					);
 				} else if (tokenResponse.error) {
 					reject(
 						new AzureLoginError(
 							localize(
 								"azure-account.tokenFromRefreshTokenFailed",
-								"Acquiring token with refresh token failed"
+								"Acquiring token with refresh token failed",
 							),
-							tokenResponse
-						)
+							tokenResponse,
+						),
 					);
 				} else {
 					resolve(<TokenResponse>tokenResponse);
 				}
-			}
+			},
 		);
 	});
 }
 
 export async function tokensFromToken(
 	environment: Environment,
-	firstTokenResponse: TokenResponse
+	firstTokenResponse: TokenResponse,
 ): Promise<TokenResponse[]> {
 	const tokenCache: MemoryCache = new MemoryCache();
 	await addTokenToCache(environment, tokenCache, firstTokenResponse);
@@ -156,7 +156,7 @@ export async function tokensFromToken(
 		firstTokenResponse.userId,
 		undefined,
 		environment,
-		tokenCache
+		tokenCache,
 	);
 	const client: SubscriptionClient = new SubscriptionClient(credentials, {
 		baseUri: environment.resourceManagerEndpointUrl,
@@ -167,7 +167,7 @@ export async function tokensFromToken(
 						ext.outputChannel,
 						"SubscriptionsClient",
 						nextPolicy,
-						options
+						options,
 					);
 				},
 			});
@@ -175,7 +175,7 @@ export async function tokensFromToken(
 	});
 	const tenants: SubscriptionModels.TenantIdDescription[] = await listAll(
 		client.tenants,
-		client.tenants.list()
+		client.tenants.list(),
 	);
 	const responses: TokenResponse[] = <TokenResponse[]>(
 		await Promise.all<TokenResponse | null>(
@@ -187,7 +187,7 @@ export async function tokensFromToken(
 				return tokenFromRefreshToken(
 					environment,
 					firstTokenResponse.refreshToken!,
-					tenant.tenantId!
+					tenant.tenantId!,
 				).catch((err) => {
 					logErrorMessage(err);
 					err instanceof AzureLoginError &&
@@ -195,12 +195,12 @@ export async function tokensFromToken(
 						ext.outputChannel.appendLog(err.reason);
 					return null;
 				});
-			})
+			}),
 		)
 	).filter((r) => r);
 	if (
 		!responses.some(
-			(response) => response.tenantId === firstTokenResponse.tenantId
+			(response) => response.tenantId === firstTokenResponse.tenantId,
 		)
 	) {
 		responses.unshift(firstTokenResponse);
@@ -212,7 +212,7 @@ export async function tokensFromToken(
 export async function addTokenToCache(
 	environment: Environment,
 	tokenCache: any,
-	tokenResponse: TokenResponse
+	tokenResponse: TokenResponse,
 ): Promise<void> {
 	return new Promise<void>((resolve, reject) => {
 		const driver = new CacheDriver(
@@ -224,12 +224,12 @@ export async function addTokenToCache(
 			(
 				entry: any,
 				_resource: any,
-				callback: (err: any, response: any) => {}
+				callback: (err: any, response: any) => {},
 			) => {
 				callback(null, entry);
-			}
+			},
 		);
-		driver.add(tokenResponse, function (err: any) {
+		driver.add(tokenResponse, (err: any) => {
 			if (err) {
 				reject(err);
 			} else {
@@ -263,12 +263,12 @@ export async function getTokenWithAuthorizationCode(
 	environment: Environment,
 	redirectUrl: string,
 	tenantId: string,
-	code: string
+	code: string,
 ): Promise<TokenResponse> {
 	return new Promise<TokenResponse>((resolve, reject) => {
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
-			!isADFS(environment)
+			!isADFS(environment),
 		);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		context.acquireTokenWithAuthorizationCode(
@@ -284,13 +284,13 @@ export async function getTokenWithAuthorizationCode(
 				if (response && response.error) {
 					reject(
 						new Error(
-							`${response.error}: ${response.errorDescription}`
-						)
+							`${response.error}: ${response.errorDescription}`,
+						),
 					);
 				} else {
 					resolve(<TokenResponse>response);
 				}
-			}
+			},
 		);
 	});
 }
@@ -298,7 +298,7 @@ export async function getTokenWithAuthorizationCode(
 export async function getTokensFromToken(
 	environment: Environment,
 	tenantId: string,
-	tokenResponse: TokenResponse
+	tokenResponse: TokenResponse,
 ): Promise<TokenResponse[]> {
 	return tenantId === commonTenantId
 		? await tokensFromToken(environment, tokenResponse)
@@ -308,14 +308,14 @@ export async function getTokensFromToken(
 export async function getTokenResponse(
 	environment: Environment,
 	tenantId: string,
-	userCode: UserCodeInfo
+	userCode: UserCodeInfo,
 ): Promise<TokenResponse> {
 	return new Promise<TokenResponse>((resolve, reject) => {
 		const tokenCache: MemoryCache = new MemoryCache();
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,
-			tokenCache
+			tokenCache,
 		);
 		context.acquireTokenWithDeviceCode(
 			`${environment.managementEndpointUrl}`,
@@ -327,25 +327,25 @@ export async function getTokenResponse(
 						new AzureLoginError(
 							localize(
 								"azure-account.tokenFailed",
-								"Acquiring token with device code failed"
+								"Acquiring token with device code failed",
 							),
-							err
-						)
+							err,
+						),
 					);
 				} else if (tokenResponse.error) {
 					reject(
 						new AzureLoginError(
 							localize(
 								"azure-account.tokenFailed",
-								"Acquiring token with device code failed"
+								"Acquiring token with device code failed",
 							),
-							tokenResponse
-						)
+							tokenResponse,
+						),
 					);
 				} else {
 					resolve(<TokenResponse>tokenResponse);
 				}
-			}
+			},
 		);
 	});
 }

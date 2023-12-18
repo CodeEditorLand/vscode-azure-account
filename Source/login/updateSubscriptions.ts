@@ -33,21 +33,21 @@ export async function updateSubscriptionsAndTenants(): Promise<void> {
 			ext.loginHelper.api.subscriptions.splice(
 				0,
 				ext.loginHelper.api.subscriptions.length,
-				...(await ext.loginHelper.subscriptionsTask)
+				...(await ext.loginHelper.subscriptionsTask),
 			);
 			ext.loginHelper.tenantsTask = loadTenants(context);
 
 			// This event is relied upon by the DevDiv Analytics and Growth Team
 			context.telemetry.properties.subscriptions = JSON.stringify(
 				ext.loginHelper.api.subscriptions.map(
-					(s) => s.subscription.subscriptionId
-				)
+					(s) => s.subscription.subscriptionId,
+				),
 			);
 
 			if (ext.loginHelper.api.status !== "LoggedIn") {
 				void ext.loginHelper.context.globalState.update(
 					cacheKey,
-					undefined
+					undefined,
 				);
 				return;
 			}
@@ -63,19 +63,19 @@ export async function updateSubscriptionsAndTenants(): Promise<void> {
 								.accountInfo,
 						},
 						subscription,
-					})
+					}),
 				),
 				tenants: await ext.loginHelper.tenantsTask,
 			};
 			void ext.loginHelper.context.globalState.update(cacheKey, cache);
 
 			ext.loginHelper.onSubscriptionsChanged.fire();
-		}
+		},
 	);
 }
 
 async function loadTenants(
-	context: IActionContext
+	context: IActionContext,
 ): Promise<TenantIdDescription[]> {
 	const knownTenantIds: Set<string> = new Set();
 	const knownTenants: TenantIdDescription[] = [];
@@ -86,7 +86,7 @@ async function loadTenants(
 			{
 				baseUri: session.environment.resourceManagerEndpointUrl,
 				requestPolicyFactories: (
-					defaultFactories: RequestPolicyFactory[]
+					defaultFactories: RequestPolicyFactory[],
 				) => {
 					return defaultFactories.concat({
 						create: (nextPolicy, options) => {
@@ -94,12 +94,12 @@ async function loadTenants(
 								ext.outputChannel,
 								"SubscriptionsClient",
 								nextPolicy,
-								options
+								options,
 							);
 						},
 					});
 				},
-			}
+			},
 		);
 
 		const environment = await getSelectedEnvironment();
@@ -107,8 +107,9 @@ async function loadTenants(
 			environment.resourceManagerEndpointUrl.endsWith("/")
 				? environment.resourceManagerEndpointUrl
 				: `${environment.resourceManagerEndpointUrl}/`;
-		let url: string | undefined =
-			`${resourceManagerEndpointUrl}tenants?api-version=2020-01-01`;
+		let url:
+			| string
+			| undefined = `${resourceManagerEndpointUrl}tenants?api-version=2020-01-01`;
 
 		while (url) {
 			const options: RequestPrepareOptions = {
@@ -135,11 +136,11 @@ async function loadTenants(
 									tenant as TenantIdDescription;
 								if (
 									!knownTenantIds.has(
-										sanitizedTenant.tenantId
+										sanitizedTenant.tenantId,
 									)
 								) {
 									knownTenantIds.add(
-										sanitizedTenant.tenantId
+										sanitizedTenant.tenantId,
 									);
 									knownTenants.push(tenant);
 								}
@@ -158,7 +159,7 @@ async function loadTenants(
 				} else if ("error" in response.parsedBody) {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 					throw new Error(
-						parseError(response.parsedBody.error).message
+						parseError(response.parsedBody.error).message,
 					);
 				}
 			}
@@ -171,31 +172,31 @@ async function loadTenants(
 }
 
 async function loadSubscriptions(
-	context: IActionContext
+	context: IActionContext,
 ): Promise<AzureSubscription[]> {
 	const lists: AzureSubscription[][] = await Promise.all(
 		ext.loginHelper.api.sessions.map((session) => {
 			const client: SubscriptionClient = new SubscriptionClient(
 				session.credentials2,
-				{ baseUri: session.environment.resourceManagerEndpointUrl }
+				{ baseUri: session.environment.resourceManagerEndpointUrl },
 			);
 			return listAll(
 				client.subscriptions,
-				client.subscriptions.list()
+				client.subscriptions.list(),
 			).then((list) =>
 				list.map((subscription) => ({
 					session,
 					subscription,
-				}))
+				})),
 			);
-		})
+		}),
 	);
 	const subscriptions: AzureSubscription[] = (<AzureSubscription[]>[]).concat(
-		...lists
+		...lists,
 	);
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	subscriptions.sort((a, b) =>
-		a.subscription.displayName!.localeCompare(b.subscription.displayName!)
+		a.subscription.displayName!.localeCompare(b.subscription.displayName!),
 	);
 	context.telemetry.properties.numSubscriptions =
 		subscriptions.length.toString();

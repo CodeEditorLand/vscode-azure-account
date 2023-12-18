@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-	callWithTelemetryAndErrorHandling,
 	IActionContext,
+	callWithTelemetryAndErrorHandling,
 } from "@microsoft/vscode-azext-utils";
 import { Disposable, Event } from "vscode";
 import * as types from "../azure-account.api";
-import { createCloudConsole, OSName } from "../cloudConsole/cloudConsole";
+import { OSName, createCloudConsole } from "../cloudConsole/cloudConsole";
 import { AzureAccountLoginHelper } from "./AzureAccountLoginHelper";
 
 export class AzureAccountExtensionApi
 	implements types.AzureAccountExtensionApi
 {
-	public apiVersion: string = "1.0.0";
+	public apiVersion = "1.0.0";
 
 	public status: types.AzureLoginStatus = "Initializing";
 	public filters: types.AzureResourceFilter[] = [];
@@ -39,15 +39,16 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForFilters",
 				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi =
-						String(!!isLegacyApi);
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi,
+					);
 
 					if (!(await this.waitForSubscriptions())) {
 						return false;
 					}
 					await this.loginHelper.filtersTask;
 					return true;
-				}
+				},
 			)) || false
 		);
 	}
@@ -57,8 +58,9 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForLogin",
 				(context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi =
-						String(!!isLegacyApi);
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi,
+					);
 
 					switch (this.status) {
 						case "LoggedIn":
@@ -78,7 +80,7 @@ export class AzureAccountExtensionApi
 							const status: never = this.status;
 							throw new Error(`Unexpected status '${status}'`);
 					}
-				}
+				},
 			)) || false
 		);
 	}
@@ -88,15 +90,16 @@ export class AzureAccountExtensionApi
 			(await callWithTelemetryAndErrorHandling(
 				"waitForSubscriptions",
 				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi =
-						String(!!isLegacyApi);
+					context.telemetry.properties.isLegacyApi = String(
+						!!isLegacyApi,
+					);
 
 					if (!(await this.waitForLogin())) {
 						return false;
 					}
 					await this.loginHelper.subscriptionsTask;
 					return true;
-				}
+				},
 			)) || false
 		);
 	}

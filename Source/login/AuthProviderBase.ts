@@ -3,19 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { randomBytes } from "crypto";
+import { ServerResponse } from "http";
 import { TokenCredential } from "@azure/core-auth";
 import { Environment } from "@azure/ms-rest-azure-env";
 import { AccountInfo } from "@azure/msal-node";
 import { IActionContext, parseError } from "@microsoft/vscode-azext-utils";
-import { randomBytes } from "crypto";
-import { ServerResponse } from "http";
 import { DeviceTokenCredentials } from "ms-rest-azure";
 import {
 	CancellationToken,
-	env,
 	MessageItem,
 	UIKind,
 	Uri,
+	env,
 	window,
 } from "vscode";
 import { AzureAccountExtensionApi, AzureSession } from "../azure-account.api";
@@ -25,17 +25,17 @@ import { logAttemptingToReachUrlMessage } from "../logAttemptingToReachUrlMessag
 import { localize } from "../utils/localize";
 import { logErrorMessage } from "../utils/logErrorMessage";
 import { openUri } from "../utils/openUri";
-import { DeviceTokenCredentials2 } from "./adal/DeviceTokenCredentials2";
 import { AzureSessionInternal } from "./AzureSessionInternal";
+import { DeviceTokenCredentials2 } from "./adal/DeviceTokenCredentials2";
 import { getEnvironments } from "./environments";
 import { exchangeCodeForToken } from "./exchangeCodeForToken";
 import { getLocalCallbackUrl } from "./getCallbackUrl";
 import { getKey } from "./getKey";
 import {
 	CodeResult,
+	RedirectResult,
 	createServer,
 	createTerminateServer,
-	RedirectResult,
 	startServer,
 } from "./server";
 import { SubscriptionTenantCache } from "./subscriptionTypes";
@@ -53,33 +53,33 @@ export abstract class AuthProviderBase<TLoginResult> {
 		redirectUrl: string,
 		clientId: string,
 		environment: Environment,
-		tenantId: string
+		tenantId: string,
 	): Promise<TLoginResult>;
 	public abstract loginWithDeviceCode(
 		context: IActionContext,
 		environment: Environment,
 		tenantId: string,
-		cancellationToken: CancellationToken
+		cancellationToken: CancellationToken,
 	): Promise<TLoginResult>;
 	public abstract loginSilent(
 		environment: Environment,
-		tenantId: string
+		tenantId: string,
 	): Promise<TLoginResult>;
 	public abstract getCredentials(
 		environment: string,
 		userId: string,
-		tenantId: string
+		tenantId: string,
 	): AbstractCredentials;
 	public abstract getCredentials2(
 		environment: Environment,
 		userId: string,
 		tenantId: string,
-		accountInfo?: AccountInfo
+		accountInfo?: AccountInfo,
 	): AbstractCredentials2;
 	public abstract updateSessions(
 		environment: Environment,
 		loginResult: TLoginResult,
-		sessions: AzureSession[]
+		sessions: AzureSession[],
 	): Promise<void>;
 	public abstract clearTokenCache(): Promise<void>;
 
@@ -91,14 +91,14 @@ export abstract class AuthProviderBase<TLoginResult> {
 		tenantId: string,
 		openUri: (url: string) => Promise<void>,
 		redirectTimeout: () => Promise<void>,
-		cancellationToken: CancellationToken
+		cancellationToken: CancellationToken,
 	): Promise<TLoginResult> {
 		if (env.uiKind === UIKind.Web) {
 			return await this.loginWithoutLocalServer(
 				clientId,
 				environment,
 				isAdfs,
-				tenantId
+				tenantId,
 			);
 		}
 
@@ -114,15 +114,15 @@ export abstract class AuthProviderBase<TLoginResult> {
 			server.close(
 				(error) =>
 					error &&
-					ext.outputChannel.appendLog(parseError(error).message)
+					ext.outputChannel.appendLog(parseError(error).message),
 			);
 			clearTimeout(codeTimer);
 			context.telemetry.properties.serverClosed = "true";
 			ext.outputChannel.appendLog(
 				localize(
 					"azure-account.authProcessCancelled",
-					"Authentication process cancelled."
-				)
+					"Authentication process cancelled.",
+				),
 			);
 		});
 
@@ -134,13 +134,13 @@ export abstract class AuthProviderBase<TLoginResult> {
 			const port: number = await startServer(server, isAdfs);
 			await openUri(
 				`http://localhost:${port}/signin?nonce=${encodeURIComponent(
-					nonce
-				)}`
+					nonce,
+				)}`,
 			);
 			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			const redirectTimer = setTimeout(
 				() => redirectTimeout().catch(logErrorMessage),
-				10 * 1000
+				10 * 1000,
 			);
 			const redirectResult: RedirectResult = await redirectPromise;
 
@@ -150,7 +150,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				res.writeHead(302, {
 					Location: `/?error=${encodeURIComponent(
-						(err && err.message) || "Unknown error"
+						(err && err.message) || "Unknown error",
 					)}`,
 				});
 				res.end();
@@ -161,13 +161,13 @@ export abstract class AuthProviderBase<TLoginResult> {
 
 			const host: string = redirectResult.req.headers.host || "";
 			const updatedPortStr: string = (/^[^:]+:(\d+)$/.exec(
-				Array.isArray(host) ? host[0] : host
+				Array.isArray(host) ? host[0] : host,
 			) || [])[1];
 			const updatedPort: number = updatedPortStr
 				? parseInt(updatedPortStr, 10)
 				: port;
 			const state: string = `${encodeURIComponent(
-				getLocalCallbackUrl(updatedPort)
+				getLocalCallbackUrl(updatedPort),
 			)}?nonce=${encodeURIComponent(nonce)}`;
 			const redirectUrl: string = isAdfs
 				? redirectUrlADFS
@@ -177,9 +177,9 @@ export abstract class AuthProviderBase<TLoginResult> {
 			}${
 				isAdfs ? "" : `${tenantId}/`
 			}oauth2/authorize?response_type=code&client_id=${encodeURIComponent(
-				clientId
+				clientId,
 			)}&redirect_uri=${encodeURIComponent(
-				redirectUrl
+				redirectUrl,
 			)}&state=${state}&prompt=select_account`;
 
 			logAttemptingToReachUrlMessage(redirectUrl);
@@ -201,7 +201,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 						redirectUrl,
 						clientId,
 						environment,
-						tenantId
+						tenantId,
 					);
 				} finally {
 					serverResponse.writeHead(302, { Location: "/" });
@@ -210,7 +210,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 			} catch (err) {
 				serverResponse.writeHead(302, {
 					Location: `/?error=${encodeURIComponent(
-						parseError(err).message || "Unknown error"
+						parseError(err).message || "Unknown error",
 					)}`,
 				});
 				serverResponse.end();
@@ -221,7 +221,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				server.close(
 					(error) =>
 						error &&
-						ext.outputChannel.appendLog(parseError(error).message)
+						ext.outputChannel.appendLog(parseError(error).message),
 				);
 			}, 5000);
 		}
@@ -231,10 +231,10 @@ export abstract class AuthProviderBase<TLoginResult> {
 		clientId: string,
 		environment: Environment,
 		isAdfs: boolean,
-		tenantId: string
+		tenantId: string,
 	): Promise<TLoginResult> {
 		let callbackUri: Uri = await env.asExternalUri(
-			Uri.parse(`${env.uriScheme}://ms-vscode.azure-account`)
+			Uri.parse(`${env.uriScheme}://ms-vscode.azure-account`),
 		);
 		const nonce: string = randomBytes(16).toString("base64");
 		const callbackQuery = new URLSearchParams(callbackUri.query);
@@ -250,7 +250,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 		let uri: Uri = Uri.parse(signInUrl);
 		uri = uri.with({
 			query: `response_type=code&client_id=${encodeURIComponent(
-				clientId
+				clientId,
 			)}&redirect_uri=${redirectUrlAAD}&state=${state}&prompt=select_account`,
 		});
 		void env.openExternal(uri);
@@ -262,9 +262,9 @@ export abstract class AuthProviderBase<TLoginResult> {
 						clearTimeout(wait);
 						reject("Login timed out.");
 					},
-					1000 * 60 * 5
+					1000 * 60 * 5,
 				);
-			}
+			},
 		);
 
 		return await Promise.race([
@@ -274,7 +274,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				environment,
 				tenantId,
 				redirectUrlAAD,
-				nonce
+				nonce,
 			),
 			timeoutPromise,
 		]);
@@ -282,7 +282,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 
 	public async initializeSessions(
 		cache: SubscriptionTenantCache,
-		api: AzureAccountExtensionApi
+		api: AzureAccountExtensionApi,
 	): Promise<Record<string, AzureSession>> {
 		const sessions: Record<string, AzureSessionInternal> = {};
 		const environments: Environment[] = await getEnvironments();
@@ -291,7 +291,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 			const { environment, userId, tenantId, accountInfo } = session;
 			const key: string = getKey(environment, userId, tenantId);
 			const env: Environment | undefined = environments.find(
-				(e) => e.name === environment
+				(e) => e.name === environment,
 			);
 
 			if (!sessions[key] && env) {
@@ -300,7 +300,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 					userId,
 					tenantId,
 					accountInfo,
-					this
+					this,
 				);
 				api.sessions.push(sessions[key]);
 			}
@@ -312,7 +312,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 	protected async showDeviceCodeMessage(
 		message: string,
 		userCode: string,
-		verificationUrl: string
+		verificationUrl: string,
 	): Promise<void> {
 		const copyAndOpen: MessageItem = {
 			title: localize("azure-account.copyAndOpen", "Copy & Open"),

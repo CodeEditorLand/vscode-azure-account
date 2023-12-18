@@ -11,7 +11,7 @@ export function logAttemptingToReachUrlMessage(url: string): void {
 		localize(
 			"azure-account.attemptingToReachUrl",
 			'Attempting to reach URL "{0}"...',
-			url
-		)
+			url,
+		),
 	);
 }

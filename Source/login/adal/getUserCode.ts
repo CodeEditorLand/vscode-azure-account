@@ -11,14 +11,14 @@ import { localize } from "../../utils/localize";
 
 export async function getUserCode(
 	environment: Environment,
-	tenantId: string
+	tenantId: string,
 ): Promise<UserCodeInfo> {
 	return new Promise<UserCodeInfo>((resolve, reject) => {
 		const cache: MemoryCache = new MemoryCache();
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,
-			cache
+			cache,
 		);
 		context.acquireUserCode(
 			environment.activeDirectoryResourceId,
@@ -30,15 +30,15 @@ export async function getUserCode(
 						new AzureLoginError(
 							localize(
 								"azure-account.userCodeFailed",
-								"Acquiring user code failed"
+								"Acquiring user code failed",
 							),
-							err
-						)
+							err,
+						),
 					);
 				} else {
 					resolve(response);
 				}
-			}
+			},
 		);
 	});
 }

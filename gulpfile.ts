@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from "path";
+import { join } from "path";
 import * as fse from "fs-extra";
 import { readFile, writeFile } from "fs-extra";
 import * as gulp from "gulp";
-import * as path from "path";
-import { join } from "path";
 import { gulp_webpack } from "vscode-azureextensiondev";
 
 declare let exports: { [key: string]: unknown };
@@ -26,15 +26,15 @@ async function cleanReadme(): Promise<void> {
 	let data: string = (await readFile(readmePath)).toString();
 	data = data.replace(
 		/<!-- region exclude-from-marketplace -->.*?<!-- endregion exclude-from-marketplace -->/gis,
-		""
+		"",
 	);
 	await writeFile(readmePath, data);
 }
 
 exports["webpack-dev"] = gulp.series(prepareForWebpack, () =>
-	gulp_webpack("development")
+	gulp_webpack("development"),
 );
 exports["webpack-prod"] = gulp.series(prepareForWebpack, () =>
-	gulp_webpack("production")
+	gulp_webpack("production"),
 );
 exports.cleanReadme = cleanReadme;

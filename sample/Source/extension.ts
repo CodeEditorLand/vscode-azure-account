@@ -6,10 +6,10 @@ import {
 } from "@azure/arm-subscriptions";
 import type { AzureExtensionApiProvider } from "@microsoft/vscode-azext-utils/api";
 import {
-	commands,
 	ExtensionContext,
-	extensions,
 	QuickPickItem,
+	commands,
+	extensions,
 	window,
 } from "vscode";
 import {
@@ -26,14 +26,14 @@ export function activate(context: ExtensionContext): void {
 	subscriptions.push(
 		commands.registerCommand(
 			"azure-account-sample.showSubscriptions",
-			showSubscriptions(azureAccount)
-		)
+			showSubscriptions(azureAccount),
+		),
 	);
 	subscriptions.push(
 		commands.registerCommand(
 			"azure-account-sample.showAppServices",
-			showAppServices(azureAccount)
-		)
+			showAppServices(azureAccount),
+		),
 	);
 }
 
@@ -66,7 +66,7 @@ async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 		const subscriptionClient = new SubscriptionClient(credentials);
 		const subscriptions = await listAll(
 			subscriptionClient.subscriptions,
-			subscriptionClient.subscriptions.list()
+			subscriptionClient.subscriptions.list(),
 		);
 		subscriptionItems.push(
 			...subscriptions.map((subscription) => ({
@@ -74,7 +74,7 @@ async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 				description: subscription.subscriptionId || "",
 				session,
 				subscription,
-			}))
+			})),
 		);
 	}
 	subscriptionItems.sort((a, b) => a.label.localeCompare(b.label));
@@ -86,11 +86,11 @@ async function loadResourceGroupItems(subscriptionItem: SubscriptionItem) {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const resources = new ResourceManagementClient(
 		session.credentials2,
-		subscription.subscriptionId!
+		subscription.subscriptionId!,
 	);
 	const resourceGroups = await listAll(
 		resources.resourceGroups,
-		resources.resourceGroups.list()
+		resources.resourceGroups.list(),
 	);
 	resourceGroups.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 	return resourceGroups.map((resourceGroup) => ({
@@ -117,7 +117,7 @@ async function loadWebAppItems(api: AzureAccountExtensionApi) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const client = new WebSiteManagementClient(
 			filter.session.credentials2,
-			filter.subscription.subscriptionId!
+			filter.subscription.subscriptionId!,
 		);
 		webAppsPromises.push(
 			listAll(client.webApps, client.webApps.list()).then((webApps) =>
@@ -128,12 +128,12 @@ async function loadWebAppItems(api: AzureAccountExtensionApi) {
 						description: filter.subscription.displayName!,
 						webApp,
 					};
-				})
-			)
+				}),
+			),
 		);
 	}
 	const webApps = (<QuickPickItem[]>[]).concat(
-		...(await Promise.all(webAppsPromises))
+		...(await Promise.all(webAppsPromises)),
 	);
 	webApps.sort((a, b) => a.label.localeCompare(b.label));
 	return webApps;
@@ -149,7 +149,7 @@ export interface PartialList<T> extends Array<T> {
 
 async function listAll<T>(
 	client: { listNext(nextPageLink: string): Promise<PartialList<T>> },
-	first: Promise<PartialList<T>>
+	first: Promise<PartialList<T>>,
 ): Promise<T[]> {
 	const all: T[] = [];
 	for (

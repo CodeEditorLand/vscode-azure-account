@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-"use strict";
-
 // This is the extension entrypoint module, which imports extension.bundle.js, the actual extension code.
 //
 // This is in a separate file so we can properly measure extension.bundle.js load time.
 
-let perfStats = {
+const perfStats = {
 	loadStartTime: Date.now(),
 	loadEndTime: undefined,
 };

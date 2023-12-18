@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-	callWithTelemetryAndErrorHandlingSync,
 	IActionContext,
+	callWithTelemetryAndErrorHandlingSync,
 } from "@microsoft/vscode-azext-utils";
 import { AuthLibrary, authLibrarySetting } from "../constants";
 import { getSettingValue } from "../utils/settingUtils";
@@ -24,6 +24,6 @@ export function getAuthLibrary(): AuthLibrary {
 
 			context.telemetry.properties.authLibrarySetting = authLibrary;
 			return authLibrary;
-		}
+		},
 	) as AuthLibrary;
 }

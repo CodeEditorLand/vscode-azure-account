@@ -7,15 +7,13 @@
 
 // See https://github.com/Microsoft/vscode-azuretools/wiki/webpack for guidance
 
-"use strict";
-
 const process = require("process");
 const dev = require("vscode-azureextensiondev");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let DEBUG_WEBPACK = !!process.env.DEBUG_WEBPACK;
+const DEBUG_WEBPACK = !!process.env.DEBUG_WEBPACK;
 
-let config = dev.getDefaultWebpackConfig({
+const config = dev.getDefaultWebpackConfig({
 	entries: {
 		cloudConsoleLauncher: "./src/cloudConsole/cloudConsoleLauncher.ts",
 	},

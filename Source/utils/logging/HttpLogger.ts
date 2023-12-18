@@ -50,18 +50,18 @@ export class HttpLogger<TRequest, TResponse>
 	constructor(
 		private readonly logOutputChannel: LogOutputChannel,
 		private readonly source: string,
-		private readonly normalizer: HttpNormalizer<TRequest, TResponse>
+		private readonly normalizer: HttpNormalizer<TRequest, TResponse>,
 	) {}
 
 	logRequest(request: TRequest): void {
 		try {
 			this.logNormalizedRequest(
-				this.normalizer.normalizeRequest(request)
+				this.normalizer.normalizeRequest(request),
 			);
 		} catch (e) {
 			const error = parseError(e);
 			this.logOutputChannel.error(
-				"Error logging request: " + error.message
+				"Error logging request: " + error.message,
 			);
 		}
 	}
@@ -69,12 +69,12 @@ export class HttpLogger<TRequest, TResponse>
 	logResponse(response: TResponse): void {
 		try {
 			this.logNormalizedResponse(
-				this.normalizer.normalizeResponse(response)
+				this.normalizer.normalizeResponse(response),
 			);
 		} catch (e) {
 			const error = parseError(e);
 			this.logOutputChannel.error(
-				"Error logging response: " + error.message
+				"Error logging response: " + error.message,
 			);
 		}
 	}
@@ -85,19 +85,19 @@ export class HttpLogger<TRequest, TResponse>
 			this.logOutputChannel.info(
 				new DebugHttpStringifier().stringifyRequest(
 					request,
-					this.source
-				)
+					this.source,
+				),
 			);
 		} else {
 			this.logOutputChannel.info(
-				this.getStringifier().stringifyRequest(request, this.source)
+				this.getStringifier().stringifyRequest(request, this.source),
 			);
 		}
 	}
 
 	private logNormalizedResponse(response: NormalizedHttpResponse): void {
 		this.logOutputChannel.info(
-			this.getStringifier().stringifyResponse(response, this.source)
+			this.getStringifier().stringifyResponse(response, this.source),
 		);
 	}
 

@@ -6,12 +6,12 @@
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import {
 	CancellationTokenSource,
-	commands,
 	ConfigurationTarget,
 	QuickPickItem,
+	WorkspaceConfiguration,
+	commands,
 	window,
 	workspace,
-	WorkspaceConfiguration,
 } from "vscode";
 import { AzureSubscription } from "../../azure-account.api";
 import { extensionPrefix, resourceFilterSetting } from "../../constants";
@@ -23,7 +23,7 @@ import { getCurrentTarget } from "../getCurrentTarget";
 import { ISubscriptionItem } from "../subscriptionTypes";
 
 export async function selectSubscriptions(
-	context: IActionContext
+	context: IActionContext,
 ): Promise<unknown> {
 	if (!(await ext.loginHelper.api.waitForSubscriptions())) {
 		context.telemetry.properties.outcome = "notLoggedIn";
@@ -36,10 +36,10 @@ export async function selectSubscriptions(
 		const resourceFilter: string[] = (
 			azureConfig.get<string[]>(resourceFilterSetting) || ["all"]
 		).slice();
-		let filtersChanged: boolean = false;
+		let filtersChanged = false;
 
 		const subscriptions = ext.loginHelper.subscriptionsTask.then((list) =>
-			getSubscriptionItems(list, resourceFilter)
+			getSubscriptionItems(list, resourceFilter),
 		);
 		const source: CancellationTokenSource = new CancellationTokenSource();
 		const cancellable: Promise<ISubscriptionItem[]> = subscriptions.then(
@@ -51,12 +51,12 @@ export async function selectSubscriptions(
 					showNoSubscriptionsFoundNotification(context);
 				}
 				return s;
-			}
+			},
 		);
 		const picks: QuickPickItem[] | undefined = await window.showQuickPick(
 			cancellable,
 			{ canPickMany: true, placeHolder: "Select Subscriptions" },
-			source.token
+			source.token,
 		);
 		if (picks) {
 			if (resourceFilter[0] === "all") {
@@ -92,12 +92,12 @@ export async function selectSubscriptions(
 
 function getSubscriptionItems(
 	subscriptions: AzureSubscription[],
-	resourceFilter: string[]
+	resourceFilter: string[],
 ): ISubscriptionItem[] {
 	return subscriptions.map((subscription) => {
 		const picked: boolean =
 			resourceFilter.indexOf(
-				`${subscription.session.tenantId}/${subscription.subscription.subscriptionId}`
+				`${subscription.session.tenantId}/${subscription.subscription.subscriptionId}`,
 			) !== -1 || resourceFilter[0] === "all";
 		return <ISubscriptionItem>{
 			label: subscription.subscription.displayName,
@@ -111,37 +111,37 @@ function getSubscriptionItems(
 
 async function updateConfiguration(
 	azureConfig: WorkspaceConfiguration,
-	resourceFilter: string[]
+	resourceFilter: string[],
 ): Promise<void> {
 	const resourceFilterConfig = azureConfig.inspect<string[]>(
-		resourceFilterSetting
+		resourceFilterSetting,
 	);
 	const target: ConfigurationTarget = getCurrentTarget(resourceFilterConfig);
 	await azureConfig.update(
 		resourceFilterSetting,
 		resourceFilter[0] !== "all" ? resourceFilter : undefined,
-		target
+		target,
 	);
 }
 
 function showNoSubscriptionsFoundNotification(context: IActionContext): void {
 	const noSubscriptionsFound = localize(
 		"azure-account.noSubscriptionsFound",
-		"No subscriptions were found. Setup your account if you have yet to do so or check out our troubleshooting page for common solutions to this problem."
+		"No subscriptions were found. Setup your account if you have yet to do so or check out our troubleshooting page for common solutions to this problem.",
 	);
 	const setupAccount = localize(
 		"azure-account.setupAccount",
-		"Setup Account"
+		"Setup Account",
 	);
 	const openTroubleshooting = localize(
 		"azure-account.openTroubleshooting",
-		"Open Troubleshooting"
+		"Open Troubleshooting",
 	);
 	void window
 		.showInformationMessage(
 			noSubscriptionsFound,
 			setupAccount,
-			openTroubleshooting
+			openTroubleshooting,
 		)
 		.then((response) => {
 			if (response === setupAccount) {

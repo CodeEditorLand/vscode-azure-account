@@ -15,7 +15,7 @@ export async function selectTenant(context: IActionContext): Promise<void> {
 	const enterCustomTenant = {
 		label: localize(
 			"azure-account.enterCustomTenantWithPencil",
-			"$(pencil) Enter custom tenant"
+			"$(pencil) Enter custom tenant",
 		),
 	};
 	const picks = [
@@ -29,7 +29,7 @@ export async function selectTenant(context: IActionContext): Promise<void> {
 	];
 	const placeHolder = localize(
 		"azure-account.selectTenantPlaceHolder",
-		'Select a tenant. This will update the "azure.tenant" setting.'
+		'Select a tenant. This will update the "azure.tenant" setting.',
 	);
 	const result = await context.ui.showQuickPick(picks, { placeHolder });
 	if (result) {

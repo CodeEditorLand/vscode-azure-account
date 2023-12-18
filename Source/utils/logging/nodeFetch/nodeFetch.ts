@@ -5,12 +5,12 @@ import { NodeFetchNormalizer } from "./NodeFetchNormalizer";
 
 export async function fetchWithLogging(
 	url: RequestInfo,
-	init?: RequestInit
+	init?: RequestInit,
 ): Promise<Response> {
 	const nodeFetchLogger = new HttpLogger(
 		ext.outputChannel,
 		"NodeFetch",
-		new NodeFetchNormalizer()
+		new NodeFetchNormalizer(),
 	);
 	const request = new Request(url, init);
 	nodeFetchLogger.logRequest(request);

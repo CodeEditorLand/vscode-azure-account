@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-"use strict";
-
 import * as crypto from "crypto";
 import * as http from "http";
 import * as os from "os";
@@ -13,7 +11,7 @@ import { ext } from "../extensionVariables";
 
 export async function createServer(
 	ipcHandlePrefix: string,
-	onRequest: http.RequestListener
+	onRequest: http.RequestListener,
 ): Promise<Server> {
 	const buffer = await randomBytes(20);
 	const nonce = buffer.toString("hex");
@@ -26,10 +24,7 @@ export async function createServer(
 export class Server {
 	public server: http.Server;
 
-	constructor(
-		public ipcHandlePath: string,
-		onRequest: http.RequestListener
-	) {
+	constructor(public ipcHandlePath: string, onRequest: http.RequestListener) {
 		this.server = http.createServer((req, res) => {
 			Promise.resolve(onRequest(req, res))
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -47,7 +42,7 @@ export class Server {
 			(error) =>
 				error &&
 				error.message &&
-				ext.outputChannel.appendLog(error.message)
+				ext.outputChannel.appendLog(error.message),
 		);
 	}
 }
@@ -69,7 +64,7 @@ export async function readJSON<T>(req: http.IncomingMessage): Promise<any> {
 
 export async function sendData(
 	socketPath: string,
-	data: string
+	data: string,
 ): Promise<http.IncomingMessage> {
 	return new Promise<http.IncomingMessage>((resolve, reject) => {
 		const opts: http.RequestOptions = {

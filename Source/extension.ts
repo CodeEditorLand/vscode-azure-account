@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { createReadStream } from "fs";
+import { basename } from "path";
 import {
 	IActionContext,
 	apiUtils,
@@ -15,8 +17,6 @@ import {
 	registerUIExtensionVariables,
 } from "@microsoft/vscode-azext-utils";
 import axios from "axios";
-import { createReadStream } from "fs";
-import { basename } from "path";
 import {
 	CancellationToken,
 	ConfigurationTarget,
@@ -62,7 +62,7 @@ const enableLogging: boolean = false;
 
 export async function activateInternal(
 	context: ExtensionContext,
-	perfStats: { loadStartTime: number; loadEndTime: number }
+	perfStats: { loadStartTime: number; loadEndTime: number },
 ): Promise<apiUtils.AzureExtensionApiProvider> {
 	ext.context = context;
 	ext.outputChannel = createAzExtLogOutputChannel(displayName);
@@ -77,20 +77,20 @@ export async function activateInternal(
 		async (activateContext: IActionContext) => {
 			activateContext.telemetry.properties.isActivationEvent = "true";
 			activateContext.telemetry.properties.activationTime = String(
-				(perfStats.loadEndTime - perfStats.loadStartTime) / 1000
+				(perfStats.loadEndTime - perfStats.loadStartTime) / 1000,
 			);
 
 			ext.experimentationService =
 				await createExperimentationService(context);
 			ext.loginHelper = new AzureAccountLoginHelper(
 				context,
-				activateContext
+				activateContext,
 			);
 
 			await checkSettingsOnStartup(
 				context,
 				activateContext,
-				ext.loginHelper
+				ext.loginHelper,
 			);
 
 			await migrateEnvironmentSetting();
@@ -98,12 +98,12 @@ export async function activateInternal(
 				logDiagnostics(context, ext.loginHelper.api);
 			}
 			context.subscriptions.push(
-				createStatusBarItem(context, ext.loginHelper.api)
+				createStatusBarItem(context, ext.loginHelper.api),
 			);
 			registerCommand("azure-account.loginToCloud", loginToCloud);
 			registerCommand(
 				"azure-account.selectSubscriptions",
-				selectSubscriptions
+				selectSubscriptions,
 			);
 			registerCommand("azure-account.selectTenant", selectTenant);
 			registerCommand("azure-account.askForLogin", askForLogin);
@@ -112,13 +112,13 @@ export async function activateInternal(
 			registerCommand("azure-account.manageAccount", manageAccount);
 			context.subscriptions.push(
 				ext.loginHelper.api.onSessionsChanged(
-					updateSubscriptionsAndTenants
-				)
+					updateSubscriptionsAndTenants,
+				),
 			);
 			context.subscriptions.push(
 				ext.loginHelper.api.onSubscriptionsChanged(() =>
-					updateFilters()
-				)
+					updateFilters(),
+				),
 			);
 			registerReportIssueCommand("azure-account.reportIssue");
 
@@ -130,11 +130,11 @@ export async function activateInternal(
 							return createCloudConsole(
 								ext.loginHelper.api,
 								"Linux",
-								token
+								token,
 							).terminalProfile;
 						},
-					}
-				)
+					},
+				),
 			);
 			context.subscriptions.push(
 				window.registerTerminalProfileProvider(
@@ -144,20 +144,20 @@ export async function activateInternal(
 							return createCloudConsole(
 								ext.loginHelper.api,
 								"Windows",
-								token
+								token,
 							).terminalProfile;
 						},
-					}
-				)
+					},
+				),
 			);
 
 			survey(context);
-		}
+		},
 	);
 
 	return Object.assign(
 		ext.loginHelper.legacyApi,
-		createApiProvider([ext.loginHelper.api])
+		createApiProvider([ext.loginHelper.api]),
 	);
 }
 
@@ -168,27 +168,27 @@ async function migrateEnvironmentSetting() {
 
 	async function migrateSetting(
 		oldValue: string,
-		newValue: string
+		newValue: string,
 	): Promise<void> {
 		if (configInfo?.globalValue === oldValue) {
 			await configuration.update(
 				cloudSetting,
 				newValue,
-				ConfigurationTarget.Global
+				ConfigurationTarget.Global,
 			);
 		}
 		if (configInfo?.workspaceValue === oldValue) {
 			await configuration.update(
 				cloudSetting,
 				newValue,
-				ConfigurationTarget.Workspace
+				ConfigurationTarget.Workspace,
 			);
 		}
 		if (configInfo?.workspaceFolderValue === oldValue) {
 			await configuration.update(
 				cloudSetting,
 				newValue,
-				ConfigurationTarget.WorkspaceFolder
+				ConfigurationTarget.WorkspaceFolder,
 			);
 		}
 	}
@@ -211,8 +211,8 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 			throw new Error(
 				localize(
 					"azure-account.uploadingRequiresTrustedWorkspace",
-					"File upload only works in a trusted workspace."
-				)
+					"File upload only works in a trusted workspace.",
+				),
 			);
 		}
 		let shell = shells[0];
@@ -220,17 +220,17 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 			const shellName = await window.showInformationMessage(
 				localize(
 					"azure-account.uploadingRequiresOpenCloudConsole",
-					"File upload requires an open Cloud Shell."
+					"File upload requires an open Cloud Shell.",
 				),
 				OSes.Linux.shellName,
-				OSes.Windows.shellName
+				OSes.Windows.shellName,
 			);
 			if (!shellName) {
 				return;
 			}
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			shell = cloudConsole(
-				shellName === OSes.Linux.shellName ? "Linux" : "Windows"
+				shellName === OSes.Linux.shellName ? "Linux" : "Windows",
 			)!;
 		}
 		if (!uri) {
@@ -244,7 +244,7 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 					title: localize(
 						"azure-account.uploading",
 						"Uploading '{0}'...",
-						filename
+						filename,
 					),
 					cancellable: true,
 				},
@@ -253,9 +253,9 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 					return shell.uploadFile(
 						filename,
 						createReadStream(uri!.fsPath),
-						{ progress, token }
+						{ progress, token },
 					);
-				}
+				},
 			);
 		}
 	})().catch(logErrorMessage);
@@ -263,52 +263,52 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 
 function logDiagnostics(
 	context: ExtensionContext,
-	api: AzureAccountExtensionApi
+	api: AzureAccountExtensionApi,
 ) {
 	const subscriptions = context.subscriptions;
 	subscriptions.push(
 		api.onStatusChanged((status) => {
 			ext.outputChannel.appendLog(`onStatusChanged: ${status}`);
-		})
+		}),
 	);
 	subscriptions.push(
 		api.onSessionsChanged(() => {
 			ext.outputChannel.appendLog(
-				`onSessionsChanged: ${api.sessions.length} ${api.status}`
+				`onSessionsChanged: ${api.sessions.length} ${api.status}`,
 			);
-		})
+		}),
 	);
 	(async () => {
 		ext.outputChannel.appendLog(
-			`waitForLogin: ${await api.waitForLogin()} ${api.status}`
+			`waitForLogin: ${await api.waitForLogin()} ${api.status}`,
 		);
 	})().catch(logErrorMessage);
 	subscriptions.push(
 		api.onSubscriptionsChanged(() => {
 			ext.outputChannel.appendLog(
-				`onSubscriptionsChanged: ${api.subscriptions.length}`
+				`onSubscriptionsChanged: ${api.subscriptions.length}`,
 			);
-		})
+		}),
 	);
 	(async () => {
 		ext.outputChannel.appendLog(
 			`waitForSubscriptions: ${await api.waitForSubscriptions()} ${
 				api.subscriptions.length
-			}`
+			}`,
 		);
 	})().catch(logErrorMessage);
 	subscriptions.push(
 		api.onFiltersChanged(() => {
 			ext.outputChannel.appendLog(
-				`onFiltersChanged: ${api.filters.length}`
+				`onFiltersChanged: ${api.filters.length}`,
 			);
-		})
+		}),
 	);
 	(async () => {
 		ext.outputChannel.appendLog(
 			`waitForFilters: ${await api.waitForFilters()} ${
 				api.filters.length
-			}`
+			}`,
 		);
 	})().catch(logErrorMessage);
 }
@@ -316,19 +316,19 @@ function logDiagnostics(
 function createAccount() {
 	return env.openExternal(
 		Uri.parse(
-			"https://azure.microsoft.com/en-us/free/?utm_source=campaign&utm_campaign=vscode-azure-account&mktingSource=vscode-azure-account"
-		)
+			"https://azure.microsoft.com/en-us/free/?utm_source=campaign&utm_campaign=vscode-azure-account&mktingSource=vscode-azure-account",
+		),
 	);
 }
 
 function createStatusBarItem(
 	context: ExtensionContext,
-	api: AzureAccountExtensionApi
+	api: AzureAccountExtensionApi,
 ) {
 	const statusBarItem = window.createStatusBarItem("azure-account.status");
 	statusBarItem.name = localize(
 		"azure-account.status",
-		"Azure Account Status"
+		"Azure Account Status",
 	);
 	statusBarItem.command = "azure-account.manageAccount";
 	function updateStatusBar() {
@@ -336,7 +336,7 @@ function createStatusBarItem(
 			case "LoggingIn":
 				statusBarItem.text = localize(
 					"azure-account.loggingIn",
-					"Azure: Signing in..."
+					"Azure: Signing in...",
 				);
 				statusBarItem.show();
 				break;
@@ -348,12 +348,12 @@ function createStatusBarItem(
 						? localize(
 								"azure-account.loggedIn",
 								"Azure: {0}",
-								api.sessions[0].userId
-							)
+								api.sessions[0].userId,
+						  )
 						: localize(
 								"azure-account.loggedIn",
-								"Azure: Signed In"
-							);
+								"Azure: Signed In",
+						  );
 					statusBarItem.show();
 				}
 				break;
@@ -366,7 +366,7 @@ function createStatusBarItem(
 		statusBarItem,
 		api.onStatusChanged(updateStatusBar),
 		api.onSessionsChanged(updateStatusBar),
-		workspace.onDidChangeConfiguration(updateStatusBar)
+		workspace.onDidChangeConfiguration(updateStatusBar),
 	);
 	updateStatusBar();
 	return statusBarItem;

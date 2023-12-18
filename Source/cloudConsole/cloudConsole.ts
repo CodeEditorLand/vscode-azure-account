@@ -3,29 +3,27 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-	callWithTelemetryAndErrorHandlingSync,
-	IActionContext,
-	IParsedError,
-	parseError,
-} from "@microsoft/vscode-azext-utils";
 import * as cp from "child_process";
-import * as FormData from "form-data";
 import { ReadStream } from "fs";
 import * as http from "http";
 import { ClientRequest } from "http";
 import { Socket } from "net";
-import { Response } from "node-fetch";
 import * as path from "path";
+import { UrlWithStringQuery, parse } from "url";
+import {
+	IActionContext,
+	IParsedError,
+	callWithTelemetryAndErrorHandlingSync,
+	parseError,
+} from "@microsoft/vscode-azext-utils";
+import * as FormData from "form-data";
+import { Response } from "node-fetch";
 import * as request from "request-promise";
 import * as semver from "semver";
-import { parse, UrlWithStringQuery } from "url";
 import { v4 as uuid } from "uuid";
 import {
 	CancellationToken,
-	commands,
 	Disposable,
-	env,
 	EventEmitter,
 	MessageItem,
 	QuickPickItem,
@@ -35,6 +33,8 @@ import {
 	ThemeIcon,
 	UIKind,
 	Uri,
+	commands,
+	env,
 	version,
 	window,
 	workspace,
@@ -60,7 +60,7 @@ import { RequestNormalizer } from "../utils/logging/request/RequestNormalizer";
 import { Deferred } from "../utils/promiseUtils";
 import { delay } from "../utils/timeUtils";
 import { CloudShellInternal } from "./CloudShellInternal";
-import { createServer, Queue, readJSON, Server } from "./ipc";
+import { Queue, Server, createServer, readJSON } from "./ipc";
 
 interface OS {
 	id: "linux" | "windows";
@@ -115,25 +115,25 @@ async function waitForConnection(this: CloudShell): Promise<boolean> {
 
 function getUploadFile(
 	tokens: Promise<AccessTokens>,
-	uris: Promise<ConsoleUris>
+	uris: Promise<ConsoleUris>,
 ): (
 	this: CloudShell,
 	filename: string,
 	stream: ReadStream,
-	options?: UploadOptions
+	options?: UploadOptions,
 ) => Promise<void> {
 	return async function (
 		this: CloudShell,
 		filename: string,
 		stream: ReadStream,
-		options: UploadOptions = {}
+		options: UploadOptions = {},
 	) {
 		if (options.progress) {
 			options.progress.report({
 				message: localize(
 					"azure-account.connectingForUpload",
 					"Connecting to upload '{0}'...",
-					filename
+					filename,
 				),
 			});
 		}
@@ -181,7 +181,7 @@ function getUploadFile(
 					if (res) {
 						res.resume(); // Consume response.
 					}
-				}
+				},
 			);
 
 			if (options.token) {
@@ -197,20 +197,20 @@ function getUploadFile(
 						message: localize(
 							"azure-account.uploading",
 							"Uploading '{0}'...",
-							filename
+							filename,
 						),
 						increment: 0,
 					});
 
-					let previous: number = 0;
+					let previous = 0;
 					socket.on("drain", () => {
 						const total: number = req.getHeader(
-							"Content-Length"
+							"Content-Length",
 						) as number;
 						if (total) {
 							const worked: number = Math.min(
 								Math.round((100 * socket.bytesWritten) / total),
-								100
+								100,
 							);
 							const increment: number = worked - previous;
 							if (increment) {
@@ -219,7 +219,7 @@ function getUploadFile(
 									message: localize(
 										"azure-account.uploading",
 										"Uploading '{0}'...",
-										filename
+										filename,
 									),
 									increment,
 								});
@@ -237,7 +237,7 @@ export const shells: CloudShellInternal[] = [];
 export function createCloudConsole(
 	api: AzureAccountExtensionApi,
 	osName: OSName,
-	terminalProfileToken?: CancellationToken
+	terminalProfileToken?: CancellationToken,
 ): CloudShellInternal {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	return callWithTelemetryAndErrorHandlingSync(
@@ -256,15 +256,16 @@ export function createCloudConsole(
 			let deferredTokens: Deferred<AccessTokens>;
 			const tokensPromise: Promise<AccessTokens> =
 				new Promise<AccessTokens>(
-					(resolve, reject) => (deferredTokens = { resolve, reject })
+					(resolve, reject) => (deferredTokens = { resolve, reject }),
 				);
 			let deferredUris: Deferred<ConsoleUris>;
 			const urisPromise: Promise<ConsoleUris> = new Promise<ConsoleUris>(
-				(resolve, reject) => (deferredUris = { resolve, reject })
+				(resolve, reject) => (deferredUris = { resolve, reject }),
 			);
 			let deferredInitialSize: Deferred<Size>;
 			const initialSizePromise: Promise<Size> = new Promise<Size>(
-				(resolve, reject) => (deferredInitialSize = { resolve, reject })
+				(resolve, reject) =>
+					(deferredInitialSize = { resolve, reject }),
 			);
 			const state: CloudShellInternal = {
 				status: "Connecting",
@@ -272,14 +273,15 @@ export function createCloudConsole(
 				waitForConnection,
 				terminal: new Promise<Terminal>(
 					(resolve, reject) =>
-						(deferredTerminal = { resolve, reject })
+						(deferredTerminal = { resolve, reject }),
 				),
 				terminalProfile: new Promise<TerminalProfile>(
 					(resolve, reject) =>
-						(deferredTerminalProfile = { resolve, reject })
+						(deferredTerminalProfile = { resolve, reject }),
 				),
 				session: new Promise<AzureSession>(
-					(resolve, reject) => (deferredSession = { resolve, reject })
+					(resolve, reject) =>
+						(deferredSession = { resolve, reject }),
 				),
 				uploadFile: getUploadFile(tokensPromise, urisPromise),
 			};
@@ -303,13 +305,13 @@ export function createCloudConsole(
 					void commands.executeCommand(
 						"setContext",
 						"openCloudConsoleCount",
-						`${shells.length}`
+						`${shells.length}`,
 					);
 				}
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			(async function (): Promise<any> {
+			(async (): Promise<any> => {
 				if (!workspace.isTrusted) {
 					updateStatus("Disconnected");
 					return requiresWorkspaceTrust(context);
@@ -318,7 +320,7 @@ export function createCloudConsole(
 				void commands.executeCommand(
 					"setContext",
 					"openCloudConsoleCount",
-					`${shells.length}`
+					`${shells.length}`,
 				);
 
 				const isWindows: boolean = process.platform === "win32";
@@ -348,7 +350,7 @@ export function createCloudConsole(
 				const server: Server = await createServer(
 					"vscode-cloud-console",
 					async (req, res) => {
-						let dequeue: boolean = false;
+						let dequeue = false;
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						for (const message of await readJSON<any>(req)) {
 							/* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -357,7 +359,7 @@ export function createCloudConsole(
 							} else if (message.type === "log") {
 								Array.isArray(message.args) &&
 									ext.outputChannel.appendLog(
-										(<string[]>message.args).join(" ")
+										(<string[]>message.args).join(" "),
 									);
 							} else if (message.type === "size") {
 								deferredInitialSize.resolve(message.size);
@@ -377,22 +379,22 @@ export function createCloudConsole(
 						}
 						res.write(JSON.stringify(response));
 						res.end();
-					}
+					},
 				);
 
 				// open terminal
 				let shellPath: string = path.join(
 					ext.context.asAbsolutePath("bin"),
-					`node.${isWindows ? "bat" : "sh"}`
+					`node.${isWindows ? "bat" : "sh"}`,
 				);
 				let cloudConsoleLauncherPath: string = path.join(
 					ext.context.asAbsolutePath("dist"),
-					"cloudConsoleLauncher"
+					"cloudConsoleLauncher",
 				);
 				if (isWindows) {
 					cloudConsoleLauncherPath = cloudConsoleLauncherPath.replace(
 						/\\/g,
-						"\\\\"
+						"\\\\",
 					);
 				}
 				const shellArgs: string[] = [
@@ -423,7 +425,7 @@ export function createCloudConsole(
 					name: localize(
 						"azureCloudShell",
 						"Azure Cloud Shell ({0})",
-						os.shellName
+						os.shellName,
 					),
 					iconPath: new ThemeIcon("azure"),
 					shellPath,
@@ -451,7 +453,7 @@ export function createCloudConsole(
 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					deferredTerminalProfile!.resolve(
-						new TerminalProfile(terminalOptions)
+						new TerminalProfile(terminalOptions),
 					);
 				} else {
 					// Entry point: Extension API
@@ -463,7 +465,7 @@ export function createCloudConsole(
 								terminalCloseSubscription.dispose();
 								cleanupCloudShell();
 							}
-						}
+						},
 					);
 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -478,7 +480,7 @@ export function createCloudConsole(
 						args: [
 							localize(
 								"azure-account.doesNotSupportMsal",
-								'Cloud Shell does not currently support authenticating with MSAL. Please set the "azure.authenticationLibrary" setting to "ADAL" and try again.'
+								'Cloud Shell does not currently support authenticating with MSAL. Please set the "azure.authenticationLibrary" setting to "ADAL" and try again.',
 							),
 						],
 					});
@@ -494,7 +496,7 @@ export function createCloudConsole(
 							args: [
 								localize(
 									"azure-account.loggingIn",
-									"Signing in..."
+									"Signing in...",
 								),
 							],
 						});
@@ -505,13 +507,13 @@ export function createCloudConsole(
 							args: [
 								localize(
 									"azure-account.loginNeeded",
-									"Sign in needed."
+									"Sign in needed.",
 								),
 							],
 						});
 						context.telemetry.properties.outcome = "requiresLogin";
 						await commands.executeCommand(
-							"azure-account.askForLogin"
+							"azure-account.askForLogin",
 						);
 						if (!(await api.waitForLogin())) {
 							serverQueue.push({ type: "exit" });
@@ -526,8 +528,8 @@ export function createCloudConsole(
 				const sessions: AzureSession[] = [
 					...new Set(
 						api.subscriptions.map(
-							(subscription) => subscription.session
-						)
+							(subscription) => subscription.session,
+						),
 					),
 				]; // Only consider those with at least one subscription.
 				if (sessions.length > 1) {
@@ -536,7 +538,7 @@ export function createCloudConsole(
 						args: [
 							localize(
 								"azure-account.selectDirectory",
-								"Select directory..."
+								"Select directory...",
 							),
 						],
 					});
@@ -555,11 +557,11 @@ export function createCloudConsole(
 								(err) => {
 									logErrorMessage(err);
 									return undefined;
-								}
-							)
-						)
+								},
+							),
+						),
 					).then((tenantDetails) =>
-						tenantDetails.filter((details) => details)
+						tenantDetails.filter((details) => details),
 					);
 
 					const pick = await window.showQuickPick<
@@ -582,15 +584,15 @@ export function createCloudConsole(
 										session: details!.session,
 									};
 								})
-								.sort((a, b) => a.label.localeCompare(b.label))
+								.sort((a, b) => a.label.localeCompare(b.label)),
 						),
 						{
 							placeHolder: localize(
 								"azure-account.selectDirectoryPlaceholder",
-								"Select directory"
+								"Select directory",
 							),
 							ignoreFocusOut: true, // The terminal opens concurrently and can steal focus (https://github.com/microsoft/vscode-azure-account/issues/77).
-						}
+						},
 					);
 					if (!pick) {
 						context.telemetry.properties.outcome = "noTenantPicked";
@@ -610,7 +612,7 @@ export function createCloudConsole(
 						args: [
 							localize(
 								"azure-account.setupNeeded",
-								"Setup needed."
+								"Setup needed.",
 							),
 						],
 					});
@@ -634,7 +636,7 @@ export function createCloudConsole(
 						accessToken,
 						armEndpoint,
 						result.userSettings,
-						OSes.Linux.id
+						OSes.Linux.id,
 					);
 					context.telemetry.properties.outcome = "provisioned";
 				};
@@ -644,7 +646,7 @@ export function createCloudConsole(
 						args: [
 							localize(
 								"azure-account.requestingCloudConsole",
-								"Requesting a Cloud Shell..."
+								"Requesting a Cloud Shell...",
 							),
 						],
 					});
@@ -670,14 +672,14 @@ export function createCloudConsole(
 
 				const keyVaultToken = session.environment.keyVaultDnsSuffix
 					? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						await tokenFromRefreshToken(
+					  await tokenFromRefreshToken(
 							session.environment,
 							result.token.refreshToken,
 							session.tenantId,
 							`https://${session.environment.keyVaultDnsSuffix!.substr(
-								1
-							)}`
-						)
+								1,
+							)}`,
+					  )
 					: undefined;
 				const accessTokens: AccessTokens = {
 					resource: accessToken,
@@ -689,7 +691,7 @@ export function createCloudConsole(
 				// Connect to terminal
 				const connecting: string = localize(
 					"azure-account.connectingTerminal",
-					"Connecting terminal..."
+					"Connecting terminal...",
 				);
 				serverQueue.push({ type: "log", args: [connecting] });
 				const progressTask: (i: number) => void = (i: number) => {
@@ -707,7 +709,7 @@ export function createCloudConsole(
 						? "bash"
 						: "pwsh",
 					initialSize,
-					progressTask
+					progressTask,
 				);
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				deferredUris!.resolve(consoleUris);
@@ -733,19 +735,19 @@ export function createCloudConsole(
 							localize(
 								"azure-account.error",
 								"Error: {0}",
-								parsedError.message
+								parsedError.message,
 							),
 						],
 					});
 				}
 			});
 			return state;
-		}
+		},
 	)!;
 }
 
 async function waitForLoginStatus(
-	api: AzureAccountExtensionApi
+	api: AzureAccountExtensionApi,
 ): Promise<AzureLoginStatus> {
 	if (api.status !== "Initializing") {
 		return api.status;
@@ -759,11 +761,11 @@ async function waitForLoginStatus(
 }
 
 async function findUserSettings(
-	token: Token
+	token: Token,
 ): Promise<{ userSettings: UserSettings; token: Token } | undefined> {
 	const userSettings: UserSettings | undefined = await getUserSettings(
 		token.accessToken,
-		token.session.environment.resourceManagerEndpointUrl
+		token.session.environment.resourceManagerEndpointUrl,
 	);
 	if (userSettings && userSettings.storageProfile) {
 		return { userSettings, token };
@@ -775,7 +777,7 @@ async function requiresSetUp(context: IActionContext) {
 	const open: MessageItem = { title: localize("azure-account.open", "Open") };
 	const message: string = localize(
 		"azure-account.setUpInWeb",
-		"First launch of Cloud Shell in a directory requires setup in the web application (https://shell.azure.com)."
+		"First launch of Cloud Shell in a directory requires setup in the web application (https://shell.azure.com).",
 	);
 	const response: MessageItem | undefined =
 		await window.showInformationMessage(message, open);
@@ -792,7 +794,7 @@ async function requiresNode(context: IActionContext) {
 	const open: MessageItem = { title: localize("azure-account.open", "Open") };
 	const message: string = localize(
 		"azure-account.requiresNode",
-		"Opening a Cloud Shell currently requires Node.js 6 or later to be installed (https://nodejs.org)."
+		"Opening a Cloud Shell currently requires Node.js 6 or later to be installed (https://nodejs.org).",
 	);
 	const response: MessageItem | undefined =
 		await window.showInformationMessage(message, open);
@@ -809,7 +811,7 @@ async function requiresWorkspaceTrust(context: IActionContext) {
 	const ok: MessageItem = { title: localize("azure-account.ok", "OK") };
 	const message: string = localize(
 		"azure-account.cloudShellRequiresTrustedWorkspace",
-		"Opening a Cloud Shell only works in a trusted workspace."
+		"Opening a Cloud Shell only works in a trusted workspace.",
 	);
 	return (await window.showInformationMessage(message, ok)) === ok;
 }
@@ -821,11 +823,11 @@ async function deploymentConflict(context: IActionContext, os: OS) {
 		"azure-account.deploymentConflict",
 		"Starting a {0} session will terminate all active {1} sessions. Any running processes in active {1} sessions will be terminated.",
 		os.shellName,
-		os.otherOS.shellName
+		os.otherOS.shellName,
 	);
 	const response: MessageItem | undefined = await window.showWarningMessage(
 		message,
-		ok
+		ok,
 	);
 	const reset: boolean = response === ok;
 	context.telemetry.properties.outcome = reset
@@ -850,7 +852,7 @@ async function acquireToken(session: AzureSession): Promise<Token> {
 			environment.activeDirectoryResourceId,
 			credentials.username,
 			credentials.clientId,
-			function (err: any, result: any) {
+			(err: any, result: any) => {
 				/* eslint-enable @typescript-eslint/no-explicit-any */
 				if (err) {
 					reject(err);
@@ -863,7 +865,7 @@ async function acquireToken(session: AzureSession): Promise<Token> {
 						refreshToken: result.refreshToken,
 					});
 				}
-			}
+			},
 		);
 	});
 }
@@ -876,19 +878,19 @@ interface TenantDetails {
 }
 
 async function fetchTenantDetails(
-	session: AzureSession
+	session: AzureSession,
 ): Promise<{ session: AzureSession; tenantDetails: TenantDetails }> {
 	const response: Response = await fetchWithLogging(
 		"https://management.azure.com/tenants?api-version=2022-12-01",
 		{
 			headers: {
-				Authorization: `Bearer ${(
-					await session.credentials2.getToken([])
-				)?.token}`,
+				Authorization: `Bearer ${
+					(await session.credentials2.getToken([]))?.token
+				}`,
 				"x-ms-client-request-id": uuid(),
 				"Content-Type": "application/json; charset=utf-8",
 			},
-		}
+		},
 	);
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -950,13 +952,13 @@ export interface Size {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function requestWithLogging(
-	requestOptions: request.Options
+	requestOptions: request.Options,
 ): Promise<any> {
 	try {
 		const requestLogger = new HttpLogger(
 			ext.outputChannel,
 			"CloudConsoleLauncher",
-			new RequestNormalizer()
+			new RequestNormalizer(),
 		);
 		requestLogger.logRequest(requestOptions);
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -976,7 +978,7 @@ async function requestWithLogging(
 
 export async function getUserSettings(
 	accessToken: string,
-	armEndpoint: string
+	armEndpoint: string,
 ): Promise<UserSettings | undefined> {
 	const targetUri = `${armEndpoint}/providers/Microsoft.Portal/userSettings/cloudconsole?api-version=${consoleApiVersion}`;
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -1012,14 +1014,14 @@ export async function provisionConsole(
 	accessToken: string,
 	armEndpoint: string,
 	userSettings: UserSettings,
-	osType: string
+	osType: string,
 ): Promise<string> {
 	let response = await createTerminal(
 		accessToken,
 		armEndpoint,
 		userSettings,
 		osType,
-		true
+		true,
 	);
 	for (
 		let i = 0;
@@ -1030,7 +1032,7 @@ export async function provisionConsole(
 				armEndpoint,
 				userSettings,
 				osType,
-				false
+				false,
 			)
 	) {
 		if (response.statusCode < 200 || response.statusCode > 299) {
@@ -1047,11 +1049,11 @@ export async function provisionConsole(
 				response.body.error.message
 			) {
 				throw new Error(
-					`${response.body.error.message} (${response.statusCode})`
+					`${response.body.error.message} (${response.statusCode})`,
 				);
 			} else {
 				throw new Error(
-					`${response.statusCode} ${response.headers} ${response.body}`
+					`${response.statusCode} ${response.headers} ${response.body}`,
 				);
 			}
 		}
@@ -1065,7 +1067,7 @@ export async function provisionConsole(
 		}
 	}
 	throw new Error(
-		`Sorry, your Cloud Shell failed to provision. Please retry later. Request correlation id: ${response.headers["x-ms-routing-request-id"]}`
+		`Sorry, your Cloud Shell failed to provision. Please retry later. Request correlation id: ${response.headers["x-ms-routing-request-id"]}`,
 	);
 }
 /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
@@ -1075,7 +1077,7 @@ async function createTerminal(
 	armEndpoint: string,
 	userSettings: UserSettings,
 	osType: string,
-	initial: boolean
+	initial: boolean,
 ) {
 	return requestWithLogging({
 		uri: getConsoleUri(armEndpoint),
@@ -1094,7 +1096,7 @@ async function createTerminal(
 					properties: {
 						osType,
 					},
-				}
+			  }
 			: undefined,
 	});
 }
@@ -1123,11 +1125,11 @@ export async function resetConsole(accessToken: string, armEndpoint: string) {
 			response.body.error.message
 		) {
 			throw new Error(
-				`${response.body.error.message} (${response.statusCode})`
+				`${response.body.error.message} (${response.statusCode})`,
 			);
 		} else {
 			throw new Error(
-				`${response.statusCode} ${response.headers} ${response.body}`
+				`${response.statusCode} ${response.headers} ${response.body}`,
 			);
 		}
 	}
@@ -1139,7 +1141,7 @@ export async function connectTerminal(
 	consoleUri: string,
 	shellType: string,
 	initialSize: Size,
-	progress: (i: number) => void
+	progress: (i: number) => void,
 ): Promise<ConsoleUris> {
 	for (let i = 0; i < 10; i++) {
 		/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
@@ -1147,7 +1149,7 @@ export async function connectTerminal(
 			accessTokens,
 			consoleUri,
 			shellType,
-			initialSize
+			initialSize,
 		);
 
 		if (response.statusCode < 200 || response.statusCode > 299) {
@@ -1163,11 +1165,11 @@ export async function connectTerminal(
 					response.body.error.message
 				) {
 					throw new Error(
-						`${response.body.error.message} (${response.statusCode})`
+						`${response.body.error.message} (${response.statusCode})`,
 					);
 				} else {
 					throw new Error(
-						`${response.statusCode} ${response.headers} ${response.body}`
+						`${response.statusCode} ${response.headers} ${response.body}`,
 					);
 				}
 			}
@@ -1193,7 +1195,7 @@ async function initializeTerminal(
 	accessTokens: AccessTokens,
 	consoleUri: string,
 	shellType: string,
-	initialSize: Size
+	initialSize: Size,
 ) {
 	const consoleUrl = new URL(consoleUri);
 	return requestWithLogging({

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { env, Uri } from "vscode";
+import { Uri, env } from "vscode";
 
 export async function openUri(uri: string): Promise<void> {
 	await env.openExternal(Uri.parse(uri));
