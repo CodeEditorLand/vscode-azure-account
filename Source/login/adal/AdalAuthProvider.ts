@@ -70,17 +70,20 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				// example message:
 				// Wed, 22 Mar 2023 20:03:04 GMT:c118cca5-90ce-4fcb-b3ed-e73d32fc1eee - TokenRequest: INFO: Getting a new token from a refresh token.
 				message = message.replace(/.*-\s/, ""); // remove ADAL log timestamp and id
-				message = "ADAL: " + message;
+				message = `ADAL: ${message}`;
 				switch (level) {
-					case ADALLogLevel.Error:
+					case ADALLogLevel.Error: {
 						ext.outputChannel.error(error ?? message);
 						break;
-					case ADALLogLevel.Warning:
+					}
+					case ADALLogLevel.Warning: {
 						ext.outputChannel.warn(message);
 						break;
-					case ADALLogLevel.Info:
+					}
+					case ADALLogLevel.Info: {
 						ext.outputChannel.debug(message);
 						break;
+					}
 					case ADALLogLevel.Verbose:
 						ext.outputChannel.trace(message);
 				}
@@ -193,7 +196,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		if (parsedCreds) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const { redirectionUrl, code } = parsedCreds;
-			if (!redirectionUrl || !code) {
+			if (!(redirectionUrl && code)) {
 				throw new AzureLoginError(
 					localize(
 						"azure-account.malformedCredentials",
@@ -265,7 +268,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		}
 
 		/* eslint-disable @typescript-eslint/no-non-null-assertion */
-		this.delayedTokenCache.initEnd!();
+		this.delayedTokenCache.initEnd?.();
 
 		sessions.splice(
 			0,
@@ -302,6 +305,6 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		await clearTokenCache(this.tokenCache);
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		this.delayedTokenCache.initEnd!();
+		this.delayedTokenCache.initEnd?.();
 	}
 }

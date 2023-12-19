@@ -150,7 +150,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				res.writeHead(302, {
 					Location: `/?error=${encodeURIComponent(
-						(err && err.message) || "Unknown error",
+						err?.message || "Unknown error",
 					)}`,
 				});
 				res.end();

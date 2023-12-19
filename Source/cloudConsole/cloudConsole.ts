@@ -105,9 +105,10 @@ async function waitForConnection(this: CloudShell): Promise<boolean> {
 				return true;
 			case "Disconnected":
 				return false;
-			default:
+			default: {
 				const status: never = this.status;
 				throw new Error(`Unexpected status '${status}'`);
+			}
 		}
 	};
 	return handleStatus();
@@ -141,7 +142,7 @@ function getUploadFile(
 		const accessTokens: AccessTokens = await tokens;
 		const { terminalUri } = await uris;
 
-		if (options.token && options.token.isCancellationRequested) {
+		if (options.token?.isCancellationRequested) {
 			throw "canceled";
 		}
 
@@ -170,8 +171,7 @@ function getUploadFile(
 						reject(err);
 					}
 					if (
-						res &&
-						res.statusCode &&
+						res?.statusCode &&
 						(res.statusCode < 200 || res.statusCode > 299)
 					) {
 						reject(`${res.statusMessage} (${res.statusCode})`);
@@ -193,7 +193,7 @@ function getUploadFile(
 			if (options.progress) {
 				req.on("socket", (socket: Socket) => {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					options.progress!.report({
+					options.progress?.report({
 						message: localize(
 							"azure-account.uploading",
 							"Uploading '{0}'...",
@@ -215,7 +215,7 @@ function getUploadFile(
 							const increment: number = worked - previous;
 							if (increment) {
 								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-								options.progress!.report({
+								options.progress?.report({
 									message: localize(
 										"azure-account.uploading",
 										"Uploading '{0}'...",
@@ -452,7 +452,7 @@ export function createCloudConsole(
 						});
 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					deferredTerminalProfile!.resolve(
+					deferredTerminalProfile?.resolve(
 						new TerminalProfile(terminalOptions),
 					);
 				} else {
@@ -469,7 +469,7 @@ export function createCloudConsole(
 					);
 
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					deferredTerminal!.resolve(terminal);
+					deferredTerminal?.resolve(terminal);
 				}
 
 				liveServerQueue = serverQueue;
@@ -572,7 +572,7 @@ export function createCloudConsole(
 								.map((details) => {
 									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 									const tenantDetails: TenantDetails =
-										details!.tenantDetails;
+										details?.tenantDetails;
 									const defaultDomainName:
 										| string
 										| undefined =
@@ -581,7 +581,7 @@ export function createCloudConsole(
 										label: tenantDetails.displayName,
 										description: defaultDomainName,
 										// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-										session: details!.session,
+										session: details?.session,
 									};
 								})
 								.sort((a, b) => a.label.localeCompare(b.label)),
@@ -622,7 +622,7 @@ export function createCloudConsole(
 					return;
 				}
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				deferredSession!.resolve(result.token.session);
+				deferredSession?.resolve(result.token.session);
 
 				// provision
 				let consoleUri: string;
@@ -676,17 +676,17 @@ export function createCloudConsole(
 							session.environment,
 							result.token.refreshToken,
 							session.tenantId,
-							`https://${session.environment.keyVaultDnsSuffix!.substr(
+							`https://${session.environment.keyVaultDnsSuffix?.substr(
 								1,
 							)}`,
 					  )
 					: undefined;
 				const accessTokens: AccessTokens = {
 					resource: accessToken,
-					keyVault: keyVaultToken && keyVaultToken.accessToken,
+					keyVault: keyVaultToken?.accessToken,
 				};
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				deferredTokens!.resolve(accessTokens);
+				deferredTokens?.resolve(accessTokens);
 
 				// Connect to terminal
 				const connecting: string = localize(
@@ -712,7 +712,7 @@ export function createCloudConsole(
 					progressTask,
 				);
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				deferredUris!.resolve(consoleUris);
+				deferredUris?.resolve(consoleUris);
 
 				// Connect to WebSocket
 				serverQueue.push({
@@ -767,7 +767,7 @@ async function findUserSettings(
 		token.accessToken,
 		token.session.environment.resourceManagerEndpointUrl,
 	);
-	if (userSettings && userSettings.storageProfile) {
+	if (userSettings?.storageProfile) {
 		return { userSettings, token };
 	}
 }
@@ -1006,7 +1006,7 @@ export async function getUserSettings(
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-	return response.body && response.body.properties;
+	return response.body?.properties;
 }
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
@@ -1043,11 +1043,7 @@ export async function provisionConsole(
 				response.body.error.code === Errors.DeploymentOsTypeConflict
 			) {
 				throw new Error(Errors.DeploymentOsTypeConflict);
-			} else if (
-				response.body &&
-				response.body.error &&
-				response.body.error.message
-			) {
+			} else if (response.body?.error?.message) {
 				throw new Error(
 					`${response.body.error.message} (${response.statusCode})`,
 				);
@@ -1119,11 +1115,7 @@ export async function resetConsole(accessToken: string, armEndpoint: string) {
 
 	/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 	if (response.statusCode < 200 || response.statusCode > 299) {
-		if (
-			response.body &&
-			response.body.error &&
-			response.body.error.message
-		) {
+		if (response.body?.error?.message) {
 			throw new Error(
 				`${response.body.error.message} (${response.statusCode})`,
 			);
@@ -1159,11 +1151,7 @@ export async function connectTerminal(
 				response.body &&
 				response.body.error
 			) {
-				if (
-					response.body &&
-					response.body.error &&
-					response.body.error.message
-				) {
+				if (response.body?.error?.message) {
 					throw new Error(
 						`${response.body.error.message} (${response.statusCode})`,
 					);
@@ -1200,26 +1188,13 @@ async function initializeTerminal(
 	const consoleUrl = new URL(consoleUri);
 	return requestWithLogging({
 		// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-		uri:
-			consoleUri +
-			"/terminals?cols=" +
-			initialSize.cols +
-			"&rows=" +
-			initialSize.rows +
-			"&shell=" +
-			shellType,
+		uri: `${consoleUri}/terminals?cols=${initialSize.cols}&rows=${initialSize.rows}&shell=${shellType}`,
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 			Accept: "application/json",
 			Authorization: `Bearer ${accessTokens.resource}`,
-			Referer:
-				consoleUrl.protocol +
-				"//" +
-				consoleUrl.hostname +
-				"/$hc" +
-				consoleUrl.pathname +
-				"/terminals",
+			Referer: `${consoleUrl.protocol}//${consoleUrl.hostname}/$hc${consoleUrl.pathname}/terminals`,
 		},
 		simple: false,
 		resolveWithFullResponse: true,

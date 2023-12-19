@@ -22,8 +22,10 @@ export async function waitUntilOnline(
 		false,
 	);
 	while (
-		!token.isCancellationRequested &&
-		!(await Promise.race([checkIsOnlineTask, delayTask]))
+		!(
+			token.isCancellationRequested ||
+			(await Promise.race([checkIsOnlineTask, delayTask]))
+		)
 	) {
 		await delayTask;
 		checkIsOnlineTask = asyncOr(

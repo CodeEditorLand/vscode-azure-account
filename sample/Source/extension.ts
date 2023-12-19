@@ -20,7 +20,7 @@ import {
 export function activate(context: ExtensionContext): void {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const azureAccount: AzureAccountExtensionApi = (<AzureExtensionApiProvider>(
-		extensions.getExtension("ms-vscode.azure-account")!.exports
+		extensions.getExtension("ms-vscode.azure-account")?.exports
 	)).getApi("1.0.0");
 	const subscriptions = context.subscriptions;
 	subscriptions.push(

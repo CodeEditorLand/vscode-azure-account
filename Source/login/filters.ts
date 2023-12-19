@@ -34,17 +34,15 @@ export function getNewFilters(
 	if (resourceFilter && !Array.isArray(resourceFilter)) {
 		resourceFilter = [];
 	}
-	const filters =
-		resourceFilter &&
-		resourceFilter.reduce(
-			(f, s) => {
-				if (typeof s === "string") {
-					f[s] = true;
-				}
-				return f;
-			},
-			<Record<string, boolean>>{},
-		);
+	const filters = resourceFilter?.reduce(
+		(f, s) => {
+			if (typeof s === "string") {
+				f[s] = true;
+			}
+			return f;
+		},
+		<Record<string, boolean>>{},
+	);
 
 	return filters
 		? subscriptions.filter(

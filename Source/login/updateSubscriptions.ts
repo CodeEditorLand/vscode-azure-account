@@ -196,7 +196,7 @@ async function loadSubscriptions(
 	);
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	subscriptions.sort((a, b) =>
-		a.subscription.displayName!.localeCompare(b.subscription.displayName!),
+		a.subscription.displayName?.localeCompare(b.subscription.displayName!),
 	);
 	context.telemetry.properties.numSubscriptions =
 		subscriptions.length.toString();

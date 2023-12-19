@@ -32,7 +32,7 @@ function stringifyRequest(
 		"Proxy configuration",
 		true,
 	);
-	message += `\n└───────────────────────────────────────────────────`;
+	message += "\n└───────────────────────────────────────────────────";
 	return message;
 }
 
@@ -55,7 +55,7 @@ function stringifyResponse(
 	message += `\n\tBody: ${
 		hideBody ?? `\n\t${response.bodyAsText?.split("\n").join("\n\t")}`
 	}`;
-	message += `\n└───────────────────────────────────────────────────`;
+	message += "\n└───────────────────────────────────────────────────";
 	return message;
 }
 
@@ -67,16 +67,14 @@ function stringifyRecord(
 	const entries = Object.entries(record)
 		.sort()
 		.filter(([_, value]) => typeof value !== "object");
-	const entriesString =
-		"\n\t└ " +
-		entries
-			.map(
-				([name, value]) =>
-					`${name}: "${
-						Array.isArray(value) ? value.join(", ") : String(value)
-					}"`,
-			)
-			.join("\n\t└ ");
+	const entriesString = `\n\t└ ${entries
+		.map(
+			([name, value]) =>
+				`${name}: "${
+					Array.isArray(value) ? value.join(", ") : String(value)
+				}"`,
+		)
+		.join("\n\t└ ")}`;
 	return `\n\t${label}${
 		entries.length && !hideCount ? ` (${entries.length})` : ""
 	}:${entries.length === 0 ? " None" : entriesString}`;
@@ -119,18 +117,14 @@ export class DebugHttpStringifier implements HttpStringifier {
 		const entries = Object.entries(record)
 			.sort()
 			.filter(([_, value]) => typeof value !== "object");
-		const entriesString =
-			"\n\t└ " +
-			entries
-				.map(
-					([name, value]) =>
-						`${name}: "${
-							Array.isArray(value)
-								? value.join(", ")
-								: String(value)
-						}"`,
-				)
-				.join("\n\t└ ");
+		const entriesString = `\n\t└ ${entries
+			.map(
+				([name, value]) =>
+					`${name}: "${
+						Array.isArray(value) ? value.join(", ") : String(value)
+					}"`,
+			)
+			.join("\n\t└ ")}`;
 		return `\n\t${label}${
 			entries.length && !hideCount ? ` (${entries.length})` : ""
 		}:${entries.length === 0 ? " None" : entriesString}`;

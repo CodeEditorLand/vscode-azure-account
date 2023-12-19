@@ -21,19 +21,23 @@ export function getAzureCloudInstance(
 				let azureCloudInstance: AzureCloudInstance;
 
 				switch (environment.name) {
-					case "AzureCloud":
+					case "AzureCloud": {
 						azureCloudInstance = AzureCloudInstance.AzurePublic;
 						break;
-					case "AzureChinaCloud":
+					}
+					case "AzureChinaCloud": {
 						azureCloudInstance = AzureCloudInstance.AzureChina;
 						break;
-					case "AzureUSGovernment":
+					}
+					case "AzureUSGovernment": {
 						azureCloudInstance =
 							AzureCloudInstance.AzureUsGovernment;
 						break;
-					case "AzureGermanCloud":
+					}
+					case "AzureGermanCloud": {
 						azureCloudInstance = AzureCloudInstance.AzureGermany;
 						break;
+					}
 					default:
 						azureCloudInstance = AzureCloudInstance.None;
 				}

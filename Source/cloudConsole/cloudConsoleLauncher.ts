@@ -77,11 +77,7 @@ async function resize(accessTokens: AccessTokens, terminalUri: string) {
 				response.body &&
 				response.body.error
 			) {
-				if (
-					response.body &&
-					response.body.error &&
-					response.body.error.message
-				) {
+				if (response.body?.error?.message) {
 					console.log(
 						`${response.body.error.message} (${response.statusCode})`,
 					);
@@ -140,7 +136,7 @@ function connectSocket(ipcHandle: string, url: string) {
 	let error = false;
 	ws.on("error", (event) => {
 		error = true;
-		console.error("Socket error: " + JSON.stringify(event));
+		console.error(`Socket error: ${JSON.stringify(event)}`);
 	});
 
 	ws.on("close", () => {
@@ -179,7 +175,7 @@ function connectSocket(ipcHandle: string, url: string) {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function main() {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	process.stdin.setRawMode!(true);
+	process.stdin.setRawMode?.(true);
 	process.stdin.resume();
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

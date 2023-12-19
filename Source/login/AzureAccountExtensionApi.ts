@@ -35,72 +35,67 @@ export class AzureAccountExtensionApi
 	}
 
 	public async waitForFilters(isLegacyApi?: boolean): Promise<boolean> {
-		return (
-			(await callWithTelemetryAndErrorHandling(
-				"waitForFilters",
-				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+		return await callWithTelemetryAndErrorHandling(
+			"waitForFilters",
+			async (context: IActionContext) => {
+				context.telemetry.properties.isLegacyApi = String(
+					!!isLegacyApi,
+				);
 
-					if (!(await this.waitForSubscriptions())) {
-						return false;
-					}
-					await this.loginHelper.filtersTask;
-					return true;
-				},
-			)) || false
+				if (!(await this.waitForSubscriptions())) {
+					return false;
+				}
+				await this.loginHelper.filtersTask;
+				return true;
+			},
 		);
 	}
 
 	public async waitForLogin(isLegacyApi?: boolean): Promise<boolean> {
-		return (
-			(await callWithTelemetryAndErrorHandling(
-				"waitForLogin",
-				(context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+		return await callWithTelemetryAndErrorHandling(
+			"waitForLogin",
+			(context: IActionContext) => {
+				context.telemetry.properties.isLegacyApi = String(
+					!!isLegacyApi,
+				);
 
-					switch (this.status) {
-						case "LoggedIn":
-							return true;
-						case "LoggedOut":
-							return false;
-						case "Initializing":
-						case "LoggingIn":
-							return new Promise<boolean>((resolve) => {
-								const subscription: Disposable =
-									this.onStatusChanged(() => {
-										subscription.dispose();
-										resolve(this.waitForLogin());
-									});
-							});
-						default:
-							const status: never = this.status;
-							throw new Error(`Unexpected status '${status}'`);
+				switch (this.status) {
+					case "LoggedIn":
+						return true;
+					case "LoggedOut":
+						return false;
+					case "Initializing":
+					case "LoggingIn":
+						return new Promise<boolean>((resolve) => {
+							const subscription: Disposable =
+								this.onStatusChanged(() => {
+									subscription.dispose();
+									resolve(this.waitForLogin());
+								});
+						});
+					default: {
+						const status: never = this.status;
+						throw new Error(`Unexpected status '${status}'`);
 					}
-				},
-			)) || false
+				}
+			},
 		);
 	}
 
 	public async waitForSubscriptions(isLegacyApi?: boolean): Promise<boolean> {
-		return (
-			(await callWithTelemetryAndErrorHandling(
-				"waitForSubscriptions",
-				async (context: IActionContext) => {
-					context.telemetry.properties.isLegacyApi = String(
-						!!isLegacyApi,
-					);
+		return await callWithTelemetryAndErrorHandling(
+			"waitForSubscriptions",
+			async (context: IActionContext) => {
+				context.telemetry.properties.isLegacyApi = String(
+					!!isLegacyApi,
+				);
 
-					if (!(await this.waitForLogin())) {
-						return false;
-					}
-					await this.loginHelper.subscriptionsTask;
-					return true;
-				},
-			)) || false
+				if (!(await this.waitForLogin())) {
+					return false;
+				}
+				await this.loginHelper.subscriptionsTask;
+				return true;
+			},
 		);
 	}
 

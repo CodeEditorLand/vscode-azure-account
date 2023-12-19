@@ -252,7 +252,7 @@ function uploadFile(_context: IActionContext, uri?: Uri) {
 					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 					return shell.uploadFile(
 						filename,
-						createReadStream(uri!.fsPath),
+						createReadStream(uri?.fsPath),
 						{ progress, token },
 					);
 				},
@@ -333,14 +333,15 @@ function createStatusBarItem(
 	statusBarItem.command = "azure-account.manageAccount";
 	function updateStatusBar() {
 		switch (api.status) {
-			case "LoggingIn":
+			case "LoggingIn": {
 				statusBarItem.text = localize(
 					"azure-account.loggingIn",
 					"Azure: Signing in...",
 				);
 				statusBarItem.show();
 				break;
-			case "LoggedIn":
+			}
+			case "LoggedIn": {
 				if (api.sessions.length) {
 					const showSignedInEmail: boolean | undefined =
 						getSettingValue(showSignedInEmailSetting);
@@ -357,9 +358,11 @@ function createStatusBarItem(
 					statusBarItem.show();
 				}
 				break;
-			default:
+			}
+			default: {
 				statusBarItem.hide();
 				break;
+			}
 		}
 	}
 	context.subscriptions.push(

@@ -114,7 +114,7 @@ export function createServer(
 			/* parseQueryString */ true,
 		);
 		switch (reqUrl.pathname) {
-			case "/signin":
+			case "/signin": {
 				const receivedNonce: string = (
 					reqUrl.query.nonce?.toString() || ""
 				).replace(/ /g, "+");
@@ -125,7 +125,8 @@ export function createServer(
 					deferredRedirect.resolve({ err, res });
 				}
 				break;
-			case "/":
+			}
+			case "/": {
 				sendFile(
 					res,
 					path.join(
@@ -135,7 +136,8 @@ export function createServer(
 					"text/html; charset=utf-8",
 				);
 				break;
-			case "/main.css":
+			}
+			case "/main.css": {
 				sendFile(
 					res,
 					path.join(
@@ -145,7 +147,8 @@ export function createServer(
 					"text/css; charset=utf-8",
 				);
 				break;
-			case "/callback":
+			}
+			case "/callback": {
 				deferredCode.resolve(
 					callback(nonce, reqUrl)
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -155,10 +158,12 @@ export function createServer(
 						),
 				);
 				break;
-			default:
+			}
+			default: {
 				res.writeHead(404);
 				res.end();
 				break;
+			}
 		}
 	});
 	codePromise.then(cancelCodeTimer, cancelCodeTimer);

@@ -61,7 +61,7 @@ export class HttpLogger<TRequest, TResponse>
 		} catch (e) {
 			const error = parseError(e);
 			this.logOutputChannel.error(
-				"Error logging request: " + error.message,
+				`Error logging request: ${error.message}`,
 			);
 		}
 	}
@@ -74,7 +74,7 @@ export class HttpLogger<TRequest, TResponse>
 		} catch (e) {
 			const error = parseError(e);
 			this.logOutputChannel.error(
-				"Error logging response: " + error.message,
+				`Error logging response: ${error.message}`,
 			);
 		}
 	}

@@ -56,23 +56,28 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 						message: string,
 						_containsPii: boolean,
 					) => {
-						message = "MSAL: " + message;
+						message = `MSAL: ${message}`;
 						switch (_level) {
-							case LogLevel.Error:
+							case LogLevel.Error: {
 								ext.outputChannel.error(message);
 								break;
-							case LogLevel.Warning:
+							}
+							case LogLevel.Warning: {
 								ext.outputChannel.warn(message);
 								break;
-							case LogLevel.Info:
+							}
+							case LogLevel.Info: {
 								ext.outputChannel.info(message);
 								break;
-							case LogLevel.Verbose:
+							}
+							case LogLevel.Verbose: {
 								ext.outputChannel.debug(message);
 								break;
-							case LogLevel.Trace:
+							}
+							case LogLevel.Trace: {
 								ext.outputChannel.trace(message);
 								break;
+							}
 						}
 					},
 					piiLoggingEnabled: true,
@@ -259,8 +264,8 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 			sessions.length,
 			new AzureSessionInternal(
 				environment,
-				loginResult.account!.username,
-				loginResult.account!.tenantId,
+				loginResult.account?.username,
+				loginResult.account?.tenantId,
 				loginResult.account!,
 				this,
 			),

@@ -30,7 +30,7 @@ export function getErrorMessage(err: any): string | undefined {
 	if (!str || str === "[object Object]") {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const ctr = err.constructor;
-		if (ctr && ctr.name && typeof ctr.name === "string") {
+		if (ctr?.name && typeof ctr.name === "string") {
 			return ctr.name;
 		}
 	}

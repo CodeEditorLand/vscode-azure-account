@@ -59,7 +59,7 @@ export function survey({ globalState }: ExtensionContext): void {
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion
 			const extensionVersion =
-				extensions.getExtension("ms-vscode.azure-account")!.packageJSON
+				extensions.getExtension("ms-vscode.azure-account")?.packageJSON
 					.version || "unknown";
 			if (!isCandidate) {
 				await globalState.update(SKIP_VERSION_KEY, extensionVersion);

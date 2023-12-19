@@ -28,7 +28,7 @@ export class Server {
 		this.server = http.createServer((req, res) => {
 			Promise.resolve(onRequest(req, res))
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				.catch((err) => console.error((err && err.message) || err));
+				.catch((err) => console.error(err?.message || err));
 		});
 		this.server.on("error", (err) => console.error(err));
 	}
@@ -40,9 +40,7 @@ export class Server {
 	dispose(): void {
 		this.server.close(
 			(error) =>
-				error &&
-				error.message &&
-				ext.outputChannel.appendLog(error.message),
+				error?.message && ext.outputChannel.appendLog(error.message),
 		);
 	}
 }

@@ -61,7 +61,7 @@ export class PublicClientCredential
 				},
 			});
 
-		if (authResult && authResult.expiresOn) {
+		if (authResult?.expiresOn) {
 			return {
 				token: authResult.accessToken,
 				expiresOnTimestamp: authResult.expiresOn.getTime(),

@@ -281,7 +281,7 @@ export async function getTokenWithAuthorizationCode(
 				if (err) {
 					reject(err);
 				}
-				if (response && response.error) {
+				if (response?.error) {
 					reject(
 						new Error(
 							`${response.error}: ${response.errorDescription}`,
