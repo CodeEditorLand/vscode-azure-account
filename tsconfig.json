@@ -5,12 +5,21 @@
 		"strict": true,
 		"noUnusedLocals": true,
 		"outDir": "./out",
-		"lib": ["es6"],
-		"typeRoots": ["node_modules/@types/*", "*"],
+		"lib": [
+			"es6"
+		],
+		"typeRoots": [
+			"node_modules/@types/*",
+			"*"
+		],
 		"sourceMap": true,
 		"rootDir": ".",
 		"resolveJsonModule": true,
-		"skipLibCheck": true // Some declarations in http-proxy-agent and https-proxy-agent have issues
+		"skipLibCheck": true, // Some declarations in http-proxy-agent and https-proxy-agent have issues
 	},
-	"exclude": ["node_modules", "gulpfile.ts", "sample/*"]
+	"exclude": [
+		"node_modules",
+		"gulpfile.ts",
+		"sample/*"
+	]
 }

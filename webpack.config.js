@@ -7,37 +7,36 @@
 
 // See https://github.com/Microsoft/vscode-azuretools/wiki/webpack for guidance
 
-const process = require("process");
+'use strict';
+
+const process = require('process');
 const dev = require("vscode-azureextensiondev");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const DEBUG_WEBPACK = !!process.env.DEBUG_WEBPACK;
+let DEBUG_WEBPACK = !!process.env.DEBUG_WEBPACK;
 
-const config = dev.getDefaultWebpackConfig({
+let config = dev.getDefaultWebpackConfig({
 	entries: {
-		cloudConsoleLauncher: "./src/cloudConsole/cloudConsoleLauncher.ts",
+		cloudConsoleLauncher: './src/cloudConsole/cloudConsoleLauncher.ts',
 	},
-	projectRoot: __dirname,
-	verbosity: DEBUG_WEBPACK ? "debug" : "normal",
-	externals: {
-		bufferutil: "commonjs bufferutil",
-		"utf-8-validate": "commonjs utf-8-validate",
-		"./platform/openbsd": "commonjs copy-paste-openbsd",
+    projectRoot: __dirname,
+    verbosity: DEBUG_WEBPACK ? 'debug' : 'normal',
+    externals: {
+		bufferutil: 'commonjs bufferutil',
+		'utf-8-validate': 'commonjs utf-8-validate',
+		'./platform/openbsd': 'commonjs copy-paste-openbsd',
 	},
-	plugins: [
-		new CopyWebpackPlugin({
-			patterns: [
-				{
-					from: "./out/src/utils/getCoreNodeModule.js",
-					to: "node_modules",
-				},
-			],
-		}),
-	],
+    plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: './out/src/utils/getCoreNodeModule.js', to: 'node_modules' }
+            ]
+        })
+    ]
 });
 
 if (DEBUG_WEBPACK) {
-	console.log("Config:", config);
+    console.log('Config:', config);
 }
 
 module.exports = config;
