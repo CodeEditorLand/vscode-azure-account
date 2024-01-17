@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AccessToken, TokenCredential } from "@azure/core-auth";
-import { DeviceTokenCredentials } from "@azure/ms-rest-nodeauth";
+import { DeviceTokenCredentials } from '@azure/ms-rest-nodeauth';
 import { TokenResponse } from "adal-node";
 
 /**
@@ -13,15 +13,12 @@ import { TokenResponse } from "adal-node";
  * affect T1 SDKs as those require `signRequest`
  * `DeviceTokenCredentials` requires `getToken` to return `TokenResponse` so this overwrites that
  */
-export class DeviceTokenCredentials2
-	extends DeviceTokenCredentials
-	implements TokenCredential
-{
+export class DeviceTokenCredentials2 extends DeviceTokenCredentials implements TokenCredential {
 	public async getToken(): Promise<AccessToken & TokenResponse> {
 		const tokenResponse = await super.getToken();
 		return Object.assign(tokenResponse, {
-			token: tokenResponse.accessToken,
-			expiresOnTimestamp: new Date().getTime() + tokenResponse.expiresIn,
-		});
+			token: tokenResponse.accessToken, 
+			expiresOnTimestamp: new Date().getTime() + tokenResponse.expiresIn 
+		})
 	}
 }

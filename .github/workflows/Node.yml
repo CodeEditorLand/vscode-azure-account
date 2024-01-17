@@ -90,14 +90,6 @@ jobs:
                   name: .-Node-${{ matrix.node-version }}-Target
                   path: ./Target
 
-            - run: pnpm run prepublishOnly
-              working-directory: .
-
-            - uses: actions/upload-artifact@v4.1.0
-              with:
-                  name: .-Node-${{ matrix.node-version }}-Target
-                  path: ./Target
-
             - uses: actions/setup-node@v4.0.1
               with:
                   node-version: ${{ matrix.node-version }}
@@ -106,11 +98,3 @@ jobs:
 
             - run: pnpm install
               working-directory: ./sample
-
-            - run: pnpm run prepublishOnly
-              working-directory: .
-
-            - uses: actions/upload-artifact@v4.1.0
-              with:
-                  name: .-sample-Node-${{ matrix.node-version }}-Target
-                  path: ./sample/Target

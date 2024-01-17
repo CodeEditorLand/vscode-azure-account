@@ -4,5 +4,5 @@
  *--------------------------------------------------------------------------------------------*/
 
 export function getLocalCallbackUrl(port: number): string {
-	return `http://127.0.0.1:${port}/callback`;
+    return `http://127.0.0.1:${port}/callback`;
 }

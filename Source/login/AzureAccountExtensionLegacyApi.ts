@@ -3,14 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Event } from "vscode";
-import * as legacyTypes from "../azure-account.legacy.api";
-import { OSName } from "../cloudConsole/cloudConsole";
-import { AzureAccountExtensionApi } from "./AzureAccountExtensionApi";
+import { Event } from 'vscode';
+import * as legacyTypes from '../azure-account.legacy.api';
+import { OSName } from '../cloudConsole/cloudConsole';
+import { AzureAccountExtensionApi } from './AzureAccountExtensionApi';
 
-export class AzureAccountExtensionLegacyApi
-	implements legacyTypes.AzureAccount
-{
+export class AzureAccountExtensionLegacyApi implements legacyTypes.AzureAccount {
 	public onStatusChanged: Event<legacyTypes.AzureLoginStatus>;
 	public onFiltersChanged: Event<void>;
 	public onSessionsChanged: Event<void>;

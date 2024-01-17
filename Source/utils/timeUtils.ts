@@ -3,9 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export function delay<T = void>(
-	ms: number,
-	result?: T | PromiseLike<T>,
-): Promise<T | PromiseLike<T> | undefined> {
-	return new Promise((resolve) => setTimeout(() => resolve(result), ms));
+export function delay<T = void>(ms: number, result?: T | PromiseLike<T>): Promise<T | PromiseLike<T> | undefined> {
+	return new Promise(resolve => setTimeout(() => resolve(result), ms));
 }
