@@ -1,15 +1,28 @@
 {
-	"activationEvents": [
-		"onCommand:azure-account-sample.showSubscriptions",
-		"onCommand:azure-account-sample.showAppServices"
-	],
-	"author": {
-		"email": "Hello@Playform.Cloud",
-		"name": "Playform",
-		"url": "https://playform.cloud"
-	},
+	"name": "azure-account-sample",
+	"displayName": "Azure Account Sample",
+	"version": "0.0.1",
+	"private": false,
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
 	"bugs": {
 		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./out/src/extension",
+	"scripts": {
+		"compile": "tsc -watch -p ./",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"vscode:prepublish": "tsc -p ./"
 	},
 	"contributes": {
 		"commands": [
@@ -25,6 +38,10 @@
 			}
 		]
 	},
+	"activationEvents": [
+		"onCommand:azure-account-sample.showSubscriptions",
+		"onCommand:azure-account-sample.showAppServices"
+	],
 	"dependencies": {
 		"@azure/arm-appservice": "^9.0.0",
 		"@azure/arm-resources": "^4.2.2",
@@ -35,29 +52,12 @@
 		"@types/node": "^14.0.0",
 		"@types/vscode": "1.58.0",
 		"typescript": "^4.0.2",
-		"typescript-esbuild": ""
+		"typescript-esbuild": "0.4.5"
 	},
-	"displayName": "Azure Account Sample",
 	"extensionDependencies": [
 		"ms-vscode.azure-account"
 	],
-	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
-	"license": "SEE LICENSE IN LICENSE",
-	"main": "./out/src/extension",
-	"name": "azure-account-sample",
-	"private": false,
 	"publishConfig": {
 		"access": "public"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
-	},
-	"scripts": {
-		"compile": "tsc -watch -p ./",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"vscode:prepublish": "tsc -p ./"
-	},
-	"type": "module",
-	"version": "0.0.1"
+	}
 }
