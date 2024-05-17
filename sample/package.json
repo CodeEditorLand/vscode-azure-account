@@ -1,26 +1,6 @@
 {
 	"name": "azure-account-sample",
 	"displayName": "Azure Account Sample",
-	"version": "0.0.1",
-	"private": false,
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureAccount#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureAccount/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandAzureAccount.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./out/src/extension",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
@@ -48,13 +28,9 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/node": "20.12.10"
 	},
 	"extensionDependencies": [
 		"ms-vscode.azure-account"
-	],
-	"publishConfig": {
-		"access": "public"
-	}
+	]
 }

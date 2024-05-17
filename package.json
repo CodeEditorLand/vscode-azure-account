@@ -1,27 +1,7 @@
 {
 	"name": "azure-account",
 	"displayName": "Azure Account",
-	"version": "0.0.1",
-	"private": false,
 	"description": "A common Sign In and Subscription management extension for VS Code.",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureAccount#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureAccount/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandAzureAccount.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./main",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
@@ -276,7 +256,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/form-data": "2.2.1",
 		"@types/fs-extra": "11.0.4",
 		"@types/node": "20.12.10",
@@ -288,9 +267,6 @@
 		"@types/ws": "8.5.10",
 		"fs-extra": "11.2.0",
 		"ts-loader": "9.5.1"
-	},
-	"publishConfig": {
-		"access": "public"
 	},
 	"icon": "resources/Market_AzureAccount_128x.png",
 	"galleryBanner": {
