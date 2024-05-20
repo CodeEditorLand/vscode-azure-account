@@ -6,7 +6,7 @@
 
 <!-- endregion exclude-from-marketplace -->
 
-> Attention extension authors! The Azure Account extension is being replaced by [VS Code's built-in Microsoft authentication extension](https://github.com/microsoft/vscode/tree/main/extensions/microsoft-authentication). We've built a [wrapper SDK for Azure authentication npm package](https://www.npmjs.com/package/@microsoft/vscode-azext-azureauth). If you are creating a new extension that needs authentication to Azure, please use this instead of the Azure Account extension.
+⚠️ Attention extension authors! The Azure Account extension is being deprecated in January 2025. If you own an Azure extension that relies on Azure Account, or are creating a new extension that needs authentication to Azure, please see the [deprecation announcement](https://github.com/microsoft/vscode-azure-account/issues/964) for guidance.
 
 The Azure Account extension provides a single Azure sign in and subscription filtering experience for all other Azure extensions. It makes Azure's Cloud Shell service available in VS Code's integrated terminal.
 
@@ -21,6 +21,8 @@ Sign out of Azure using the `Azure: Sign Out` command.
 ![The sign out command in the command palette](resources/readme/signOutCommand.png)
 
 ## Azure Cloud Shell
+
+> Note: The Azure Cloud Shell feature has moved to the [Azure Resources extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups). Apart from moving codebases, the feature is the same from a users perspective. Authentication for the Cloud Shell feature is now handled by the VS Code built-in Microsoft authentication provider, which means you may have to login upon first use of the migrated feature.
 
 Azure Cloud Shell instances can be started via the terminal view in VS Code. To begin, click the
 dropdown arrow in the terminal view and select from either `Azure Cloud Shell (Bash)` or
