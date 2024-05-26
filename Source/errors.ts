@@ -5,7 +5,10 @@
 
 export class AzureLoginError extends Error {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-	constructor(message: string, public reason?: any) {
+	constructor(
+		message: string,
+		public reason?: any,
+	) {
 		super(message);
 	}
 }
@@ -17,20 +20,20 @@ export function getErrorMessage(err: any): string | undefined {
 	}
 
 	/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
-	if (err.message && typeof err.message === 'string') {
+	if (err.message && typeof err.message === "string") {
 		return err.message;
 	}
 
-	if (err.stack && typeof err.stack === 'string') {
+	if (err.stack && typeof err.stack === "string") {
 		// eslint-disable-next-line  @typescript-eslint/no-unsafe-call
-		return err.stack.split('\n')[0];
+		return err.stack.split("\n")[0];
 	}
 
 	const str = String(err);
-	if (!str || str === '[object Object]') {
+	if (!str || str === "[object Object]") {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const ctr = err.constructor;
-		if (ctr && ctr.name && typeof ctr.name === 'string') {
+		if (ctr && ctr.name && typeof ctr.name === "string") {
 			return ctr.name;
 		}
 	}

@@ -27,7 +27,5 @@
 	"devDependencies": {
 		"@types/node": "20.12.12"
 	},
-	"extensionDependencies": [
-		"ms-vscode.azure-account"
-	]
+	"extensionDependencies": ["ms-vscode.azure-account"]
 }

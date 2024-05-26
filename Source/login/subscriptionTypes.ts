@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SubscriptionModels } from "@azure/arm-subscriptions";
-import { AccountInfo } from "@azure/msal-node";
-import { QuickPickItem } from "vscode";
-import { AzureSubscription } from "../azure-account.api";
-import { TenantIdDescription } from "./TenantIdDescription";
+import type { SubscriptionModels } from "@azure/arm-subscriptions";
+import type { AccountInfo } from "@azure/msal-node";
+import type { QuickPickItem } from "vscode";
+import type { AzureSubscription } from "../azure-account.api";
+import type { TenantIdDescription } from "./TenantIdDescription";
 
 export interface ISubscriptionItem extends QuickPickItem {
 	subscription: AzureSubscription;
