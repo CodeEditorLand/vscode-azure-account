@@ -8,10 +8,7 @@ import { env } from "vscode";
 declare const __webpack_require__: typeof require;
 declare const __non_webpack_require__: typeof require;
 export function getNodeModule<T>(moduleName: string): T | undefined {
-	const r =
-		typeof __webpack_require__ === "function"
-			? __non_webpack_require__
-			: require;
+	const r = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return r(`${env.appRoot}/node_modules.asar/${moduleName}`);
