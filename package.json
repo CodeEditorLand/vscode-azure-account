@@ -215,7 +215,7 @@
 	"devDependencies": {
 		"@types/form-data": "2.2.1",
 		"@types/fs-extra": "^11.0.4",
-		"@types/node": "^20.14.8",
+		"@types/node": "^20.14.9",
 		"@types/node-fetch": "^2.6.11",
 		"@types/request": "2.48.12",
 		"@types/request-promise": "4.1.51",
