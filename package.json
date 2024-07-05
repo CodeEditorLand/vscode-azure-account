@@ -210,7 +210,7 @@
 		"request-promise": "4.2.2",
 		"semver": "7.6.2",
 		"uuid": "10.0.0",
-		"ws": "8.17.1"
+		"ws": "8.18.0"
 	},
 	"devDependencies": {
 		"@types/form-data": "2.2.1",
