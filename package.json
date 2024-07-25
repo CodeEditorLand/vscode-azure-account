@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"activationEvents": [
 		"onCommand:azure-account.createAccount",
 		"onCommand:azure-account.login",
@@ -23,6 +24,20 @@
 			],
 			"supported": "limited"
 		}
+=======
+	"name": "azure-account",
+	"displayName": "Azure Account",
+	"description": "A common Sign In and Subscription management extension for VS Code.",
+	"main": "./main",
+	"scripts": {
+		"build": "tsc",
+		"cleanReadme": "gulp cleanReadme",
+		"compile": "tsc -watch",
+		"prepare": "husky install",
+		"webpack": "npm run build && gulp webpack-dev",
+		"webpack-prod": "npm run build && gulp webpack-prod",
+		"which": "which tsc"
+>>>>>>> 02a482d44895fcf1eaf35fb61b2ea14b8e24e51a
 	},
 	"contributes": {
 		"commands": [
@@ -202,6 +217,7 @@
 			]
 		}
 	},
+<<<<<<< HEAD
 	"dependencies": {
 		"adal-node": "^0.2.3",
 		"form-data": "2.3.3",
@@ -232,10 +248,52 @@
 	"extensionDependencies": [
 		"ms-azuretools.vscode-azureresourcegroups"
 	],
+=======
+	"activationEvents": [
+		"onCommand:azure-account.createAccount",
+		"onCommand:azure-account.login",
+		"onCommand:azure-account.loginToCloud",
+		"onCommand:azure-account.loginWithDeviceCode",
+		"onCommand:azure-account.logout",
+		"onCommand:azure-account.reportIssue",
+		"onCommand:azure-account.selectSubscriptions",
+		"onCommand:azure-account.selectTenant"
+	],
+	"dependencies": {
+		"adal-node": "0.2.3",
+		"form-data": "4.0.0",
+		"http-proxy-agent": "7.0.2",
+		"https-proxy-agent": "7.0.5",
+		"node-fetch": "4.0.0-beta.4",
+		"request": "2.88.0",
+		"request-promise": "4.2.2",
+		"semver": "7.6.3",
+		"uuid": "10.0.0",
+		"ws": "8.18.0"
+	},
+	"devDependencies": {
+		"@types/form-data": "2.2.1",
+		"@types/fs-extra": "11.0.4",
+		"@types/node": "20.14.12",
+		"@types/node-fetch": "3.0.2",
+		"@types/request": "2.48.12",
+		"@types/request-promise": "4.1.51",
+		"@types/semver": "7.5.8",
+		"@types/uuid": "10.0.0",
+		"@types/ws": "8.5.11",
+		"fs-extra": "11.2.0",
+		"ts-loader": "9.5.1"
+	},
+	"extensionDependencies": [
+		"ms-azuretools.vscode-azureresourcegroups"
+	],
+	"icon": "resources/Market_AzureAccount_128x.png",
+>>>>>>> 02a482d44895fcf1eaf35fb61b2ea14b8e24e51a
 	"galleryBanner": {
 		"color": "#0072c6",
 		"theme": "dark"
 	},
+<<<<<<< HEAD
 	"icon": "resources/Market_AzureAccount_128x.png",
 	"main": "./main",
 	"name": "azure-account",
@@ -247,5 +305,21 @@
 		"webpack": "npm run build && gulp webpack-dev",
 		"webpack-prod": "npm run build && gulp webpack-prod",
 		"which": "which tsc"
+=======
+	"aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"description": "%azure-account.capabilities.untrustedWorkspaces.description%",
+			"restrictedConfigurations": [
+				"azure.resourceFilter",
+				"azure.tenant",
+				"azure.cloud",
+				"azure.customCloud.resourceManagerEndpointUrl",
+				"azure.ppe",
+				"azure.authenticationLibrary"
+			],
+			"supported": "limited"
+		}
+>>>>>>> 02a482d44895fcf1eaf35fb61b2ea14b8e24e51a
 	}
 }

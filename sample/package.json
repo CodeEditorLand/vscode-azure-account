@@ -1,8 +1,17 @@
 {
+<<<<<<< HEAD
 	"activationEvents": [
 		"onCommand:azure-account-sample.showSubscriptions",
 		"onCommand:azure-account-sample.showAppServices"
 	],
+=======
+	"name": "azure-account-sample",
+	"displayName": "Azure Account Sample",
+	"main": "./out/src/extension",
+	"scripts": {
+		"compile": "tsc -watch -p ./"
+	},
+>>>>>>> 02a482d44895fcf1eaf35fb61b2ea14b8e24e51a
 	"contributes": {
 		"commands": [
 			{
@@ -17,6 +26,7 @@
 			}
 		]
 	},
+<<<<<<< HEAD
 	"dependencies": {},
 	"devDependencies": {
 		"@types/node": "^14.0.0"
@@ -30,4 +40,17 @@
 	"scripts": {
 		"compile": "tsc -watch -p ./"
 	}
+=======
+	"activationEvents": [
+		"onCommand:azure-account-sample.showSubscriptions",
+		"onCommand:azure-account-sample.showAppServices"
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"@types/node": "20.14.12"
+	},
+	"extensionDependencies": [
+		"ms-vscode.azure-account"
+	]
+>>>>>>> 02a482d44895fcf1eaf35fb61b2ea14b8e24e51a
 }
