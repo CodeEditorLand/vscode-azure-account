@@ -16,7 +16,9 @@ import {
 import {
 	AzureAccountExtensionApi,
 	AzureSession,
-} from "../../src/azure-account.api"; // Other extensions need to copy this .d.ts to their repository.
+} from "../../src/azure-account.api";
+
+// Other extensions need to copy this .d.ts to their repository.
 
 export function activate(context: ExtensionContext): void {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
