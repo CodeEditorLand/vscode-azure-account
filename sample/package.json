@@ -19,7 +19,7 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@types/node": "22.7.5"
+		"@types/node": "22.7.6"
 	},
 	"displayName": "Azure Account Sample",
 	"extensionDependencies": [
