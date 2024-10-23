@@ -216,9 +216,9 @@
 	},
 	"description": "A common Sign In and Subscription management extension for VS Code.",
 	"devDependencies": {
-		"@types/form-data": "2.5.0",
+		"@types/form-data": "2.5.2",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "22.7.7",
+		"@types/node": "22.7.9",
 		"@types/node-fetch": "2.6.11",
 		"@types/request": "2.48.12",
 		"@types/request-promise": "4.1.51",
