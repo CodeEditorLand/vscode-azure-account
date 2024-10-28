@@ -211,14 +211,14 @@
 		"request": "2.88.2",
 		"request-promise": "4.2.6",
 		"semver": "7.6.3",
-		"uuid": "10.0.0",
+		"uuid": "11.0.1",
 		"ws": "8.18.0"
 	},
 	"description": "A common Sign In and Subscription management extension for VS Code.",
 	"devDependencies": {
 		"@types/form-data": "2.5.2",
 		"@types/fs-extra": "11.0.4",
-		"@types/node": "22.7.9",
+		"@types/node": "22.8.1",
 		"@types/node-fetch": "2.6.11",
 		"@types/request": "2.48.12",
 		"@types/request-promise": "4.1.51",
