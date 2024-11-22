@@ -50,6 +50,7 @@ export async function updateSubscriptionsAndTenants(): Promise<void> {
 					cacheKey,
 					undefined,
 				);
+
 				return;
 			}
 
@@ -79,6 +80,7 @@ async function loadTenants(
 	context: IActionContext,
 ): Promise<TenantIdDescription[]> {
 	const knownTenantIds: Set<string> = new Set();
+
 	const knownTenants: TenantIdDescription[] = [];
 
 	for (const session of ext.loginHelper.api.sessions) {
@@ -104,10 +106,12 @@ async function loadTenants(
 		);
 
 		const environment = await getSelectedEnvironment();
+
 		const resourceManagerEndpointUrl: string =
 			environment.resourceManagerEndpointUrl.endsWith("/")
 				? environment.resourceManagerEndpointUrl
 				: `${environment.resourceManagerEndpointUrl}/`;
+
 		let url: string | undefined =
 			`${resourceManagerEndpointUrl}tenants?api-version=2020-01-01`;
 
@@ -116,6 +120,7 @@ async function loadTenants(
 				url,
 				method: "GET",
 			};
+
 			const response: HttpOperationResponse =
 				await client.sendRequest(options);
 
@@ -134,6 +139,7 @@ async function loadTenants(
 							) {
 								const sanitizedTenant: TenantIdDescription =
 									tenant as TenantIdDescription;
+
 								if (
 									!knownTenantIds.has(
 										sanitizedTenant.tenantId,
@@ -153,6 +159,7 @@ async function loadTenants(
 							url = response.parsedBody.nextLink as
 								| string
 								| undefined;
+
 							continue;
 						}
 					}
@@ -168,6 +175,7 @@ async function loadTenants(
 	}
 
 	context.telemetry.properties.numTenants = knownTenants.length.toString();
+
 	return knownTenants;
 }
 
@@ -180,6 +188,7 @@ async function loadSubscriptions(
 				session.credentials2,
 				{ baseUri: session.environment.resourceManagerEndpointUrl },
 			);
+
 			return listAll(
 				client.subscriptions,
 				client.subscriptions.list(),
@@ -191,6 +200,7 @@ async function loadSubscriptions(
 			);
 		}),
 	);
+
 	const subscriptions: AzureSubscription[] = (<AzureSubscription[]>[]).concat(
 		...lists,
 	);
@@ -200,5 +210,6 @@ async function loadSubscriptions(
 	);
 	context.telemetry.properties.numSubscriptions =
 		subscriptions.length.toString();
+
 	return subscriptions;
 }

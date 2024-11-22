@@ -25,10 +25,12 @@ export async function checkSettingsOnStartup(
 
 	const lastSeenSettingsCache: SettingsCache | undefined =
 		extensionContext.globalState.get(settingsCacheKey);
+
 	const valuesToCopy =
 		lastSeenSettingsCache?.values?.length === numSettings
 			? lastSeenSettingsCache.values
 			: [];
+
 	const lastSeenSettingsCacheVerified: SettingsCacheVerified = {
 		values: new Array<undefined>(numSettings),
 	};
@@ -97,6 +99,7 @@ export async function askThenSignOutAndReload(
 		"azure-account.signOutAndReloadRequired",
 		"Signing out and reloading the window is required for the modified setting(s) to take effect.",
 	);
+
 	const signOutAndReload: string = localize(
 		"azure-account.signOutAndReload",
 		"Sign Out and Reload Window",
@@ -123,6 +126,7 @@ export async function askForSignIn(
 		"azure-account.signInAgainRequired",
 		"Signing in again is required for the modified setting(s) to take effect.",
 	);
+
 	const signIn: string = localize("azure-account.signIn", "Sign In");
 
 	// Purposefully await this message to block whatever command caused the extension to activate.

@@ -16,6 +16,7 @@ export async function getUserCode(
 ): Promise<UserCodeInfo> {
 	return new Promise<UserCodeInfo>((resolve, reject) => {
 		const cache: MemoryCache = new MemoryCache();
+
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,

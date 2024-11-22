@@ -19,6 +19,7 @@ export class DeviceTokenCredentials2
 {
 	public async getToken(): Promise<AccessToken & TokenResponse> {
 		const tokenResponse = await super.getToken();
+
 		return Object.assign(tokenResponse, {
 			token: tokenResponse.accessToken,
 			expiresOnTimestamp: new Date().getTime() + tokenResponse.expiresIn,

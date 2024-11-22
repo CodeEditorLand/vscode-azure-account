@@ -13,6 +13,7 @@ export function updateFilters(configChange = false): void {
 	const resourceFilter: string[] | undefined = getSettingValue(
 		resourceFilterSetting,
 	);
+
 	if (
 		configChange &&
 		JSON.stringify(resourceFilter) === ext.loginHelper.oldResourceFilter
@@ -21,9 +22,11 @@ export function updateFilters(configChange = false): void {
 	}
 	ext.loginHelper.filtersTask = (async () => {
 		await ext.loginHelper.api.waitForSubscriptions();
+
 		const subscriptions: AzureSubscription[] =
 			await ext.loginHelper.subscriptionsTask;
 		ext.loginHelper.oldResourceFilter = JSON.stringify(resourceFilter);
+
 		const newFilters: AzureResourceFilter[] = getNewFilters(
 			subscriptions,
 			resourceFilter,
@@ -34,6 +37,7 @@ export function updateFilters(configChange = false): void {
 			...newFilters,
 		);
 		ext.loginHelper.onFiltersChanged.fire();
+
 		return ext.loginHelper.api.filters;
 	})();
 }

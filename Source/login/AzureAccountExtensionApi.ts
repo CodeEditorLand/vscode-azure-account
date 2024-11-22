@@ -47,6 +47,7 @@ export class AzureAccountExtensionApi
 						return false;
 					}
 					await this.loginHelper.filtersTask;
+
 					return true;
 				},
 			)) || false
@@ -64,8 +65,10 @@ export class AzureAccountExtensionApi
 					switch (this.status) {
 						case "LoggedIn":
 							return true;
+
 						case "LoggedOut":
 							return false;
+
 						case "Initializing":
 						case "LoggingIn":
 							return new Promise<boolean>((resolve) => {
@@ -75,8 +78,10 @@ export class AzureAccountExtensionApi
 										resolve(this.waitForLogin());
 									});
 							});
+
 						default:
 							const status: never = this.status;
+
 							throw new Error(`Unexpected status '${status}'`);
 					}
 				},
@@ -96,6 +101,7 @@ export class AzureAccountExtensionApi
 						return false;
 					}
 					await this.loginHelper.subscriptionsTask;
+
 					return true;
 				},
 			)) || false

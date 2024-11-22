@@ -78,11 +78,13 @@ export class PublicClientCredential
 		const tokenResponse: AccessToken | null = await this.getToken(
 			getDefaultMsalScopes(await getSelectedEnvironment()),
 		);
+
 		if (tokenResponse) {
 			webResource.headers.set(
 				MSRestConstants.HeaderConstants.AUTHORIZATION,
 				`${MSRestConstants.HeaderConstants.AUTHORIZATION_SCHEME} ${tokenResponse.token}`,
 			);
+
 			return webResource;
 		}
 	}

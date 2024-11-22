@@ -25,6 +25,7 @@ export function activate(context: ExtensionContext): void {
 	const azureAccount: AzureAccountExtensionApi = (<AzureExtensionApiProvider>(
 		extensions.getExtension("ms-vscode.azure-account")!.exports
 	)).getApi("1.0.0");
+
 	const subscriptions = context.subscriptions;
 	subscriptions.push(
 		commands.registerCommand(
@@ -53,7 +54,9 @@ function showSubscriptions(api: AzureAccountExtensionApi) {
 			return commands.executeCommand("azure-account.askForLogin");
 		}
 		const subscriptionItems = loadSubscriptionItems(api);
+
 		const result = await window.showQuickPick(subscriptionItems);
+
 		if (result) {
 			const resourceGroupItems = loadResourceGroupItems(result);
 			await window.showQuickPick(resourceGroupItems);
@@ -63,10 +66,14 @@ function showSubscriptions(api: AzureAccountExtensionApi) {
 
 async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 	await api.waitForFilters();
+
 	const subscriptionItems: SubscriptionItem[] = [];
+
 	for (const session of api.sessions) {
 		const credentials = session.credentials2;
+
 		const subscriptionClient = new SubscriptionClient(credentials);
+
 		const subscriptions = await listAll(
 			subscriptionClient.subscriptions,
 			subscriptionClient.subscriptions.list(),
@@ -81,6 +88,7 @@ async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 		);
 	}
 	subscriptionItems.sort((a, b) => a.label.localeCompare(b.label));
+
 	return subscriptionItems;
 }
 
@@ -91,11 +99,13 @@ async function loadResourceGroupItems(subscriptionItem: SubscriptionItem) {
 		session.credentials2,
 		subscription.subscriptionId!,
 	);
+
 	const resourceGroups = await listAll(
 		resources.resourceGroups,
 		resources.resourceGroups.list(),
 	);
 	resourceGroups.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
 	return resourceGroups.map((resourceGroup) => ({
 		label: resourceGroup.name || "",
 		description: resourceGroup.location,
@@ -115,7 +125,9 @@ function showAppServices(api: AzureAccountExtensionApi) {
 
 async function loadWebAppItems(api: AzureAccountExtensionApi) {
 	await api.waitForFilters();
+
 	const webAppsPromises: Promise<QuickPickItem[]>[] = [];
+
 	for (const filter of api.filters) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const client = new WebSiteManagementClient(
@@ -139,6 +151,7 @@ async function loadWebAppItems(api: AzureAccountExtensionApi) {
 		...(await Promise.all(webAppsPromises)),
 	);
 	webApps.sort((a, b) => a.label.localeCompare(b.label));
+
 	return webApps;
 }
 
@@ -155,6 +168,7 @@ async function listAll<T>(
 	first: Promise<PartialList<T>>,
 ): Promise<T[]> {
 	const all: T[] = [];
+
 	for (
 		let list = await first;
 		list.length || list.nextLink;

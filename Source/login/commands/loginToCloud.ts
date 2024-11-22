@@ -27,6 +27,7 @@ import { getCurrentTarget } from "../getCurrentTarget";
 
 export async function loginToCloud(context: IActionContext): Promise<void> {
 	const current: Environment = await getSelectedEnvironment();
+
 	const selected: (QuickPickItem & { environment: Environment }) | undefined =
 		await window.showQuickPick<
 			QuickPickItem & { environment: Environment }
@@ -55,8 +56,10 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 	if (selected) {
 		const config: WorkspaceConfiguration =
 			workspace.getConfiguration(extensionPrefix);
+
 		if (config.get(cloudSetting) !== selected.environment.name) {
 			let armUrl: string | undefined;
+
 			if (selected.environment.name === azureCustomCloud) {
 				armUrl = await window.showInputBox({
 					prompt: localize(
@@ -66,6 +69,7 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 					placeHolder: "https://management.local.azurestack.external",
 					ignoreFocusOut: true,
 				});
+
 				if (!armUrl) {
 					// directly return when user didn't type in anything or press esc for resourceManagerEndpointUrl inputbox
 					return;
@@ -82,6 +86,7 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 				),
 				ignoreFocusOut: true,
 			});
+
 			if (tenantId !== undefined) {
 				// Force a sign out before updating the configuration to prevent the config watcher from showing a notification.
 				await ext.loginHelper.logout(true /* forceLogout */);

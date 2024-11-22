@@ -39,6 +39,7 @@ export class LogRequestPolicy extends BaseRequestPolicy {
 		void result.then((response) => {
 			this.logger.logResponse(response);
 		});
+
 		return result;
 	}
 }

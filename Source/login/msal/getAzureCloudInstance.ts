@@ -24,23 +24,32 @@ export function getAzureCloudInstance(
 				switch (environment.name) {
 					case "AzureCloud":
 						azureCloudInstance = AzureCloudInstance.AzurePublic;
+
 						break;
+
 					case "AzureChinaCloud":
 						azureCloudInstance = AzureCloudInstance.AzureChina;
+
 						break;
+
 					case "AzureUSGovernment":
 						azureCloudInstance =
 							AzureCloudInstance.AzureUsGovernment;
+
 						break;
+
 					case "AzureGermanCloud":
 						azureCloudInstance = AzureCloudInstance.AzureGermany;
+
 						break;
+
 					default:
 						azureCloudInstance = AzureCloudInstance.None;
 				}
 
 				context.telemetry.properties.azureCloudInstance =
 					String(azureCloudInstance);
+
 				return azureCloudInstance;
 			},
 		);

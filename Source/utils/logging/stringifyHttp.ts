@@ -23,6 +23,7 @@ function stringifyRequest(
 ): string {
 	let message = `[${source} Request]`;
 	message = `\n┌────── ${source} Request ${request.method} ${request.url}`;
+
 	if (verbose) {
 		message += stringifyRecord(request.headers ?? {}, "Headers");
 		message += stringifyRecord(request.query ?? {}, "Query parameters");
@@ -33,6 +34,7 @@ function stringifyRequest(
 		true,
 	);
 	message += `\n└───────────────────────────────────────────────────`;
+
 	return message;
 }
 
@@ -54,6 +56,7 @@ function stringifyResponse(
 	// only show the body if the log level is trace
 	message += `\n\tBody: ${hideBody ?? `\n\t${response.bodyAsText?.split("\n").join("\n\t")}`}`;
 	message += `\n└───────────────────────────────────────────────────`;
+
 	return message;
 }
 
@@ -65,6 +68,7 @@ function stringifyRecord(
 	const entries = Object.entries(record)
 		.sort()
 		.filter(([_, value]) => typeof value !== "object");
+
 	const entriesString =
 		"\n\t└ " +
 		entries
@@ -73,6 +77,7 @@ function stringifyRecord(
 					`${name}: "${Array.isArray(value) ? value.join(", ") : String(value)}"`,
 			)
 			.join("\n\t└ ");
+
 	return `\n\t${label}${entries.length && !hideCount ? ` (${entries.length})` : ""}:${entries.length === 0 ? " None" : entriesString}`;
 }
 
@@ -113,6 +118,7 @@ export class DebugHttpStringifier implements HttpStringifier {
 		const entries = Object.entries(record)
 			.sort()
 			.filter(([_, value]) => typeof value !== "object");
+
 		const entriesString =
 			"\n\t└ " +
 			entries
@@ -121,6 +127,7 @@ export class DebugHttpStringifier implements HttpStringifier {
 						`${name}: "${Array.isArray(value) ? value.join(", ") : String(value)}"`,
 				)
 				.join("\n\t└ ");
+
 		return `\n\t${label}${entries.length && !hideCount ? ` (${entries.length})` : ""}:${entries.length === 0 ? " None" : entriesString}`;
 	}
 }

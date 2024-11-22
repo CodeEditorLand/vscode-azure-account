@@ -37,6 +37,7 @@ function getWindowSize(): Size {
 	const windowSize: [number, number] = stdout.isTTY
 		? stdout.getWindowSize()
 		: [80, 30];
+
 	return {
 		cols: windowSize[0],
 		rows: windowSize[1],
@@ -96,6 +97,7 @@ async function resize(accessTokens: AccessTokens, terminalUri: string) {
 				break;
 			}
 			await delay(1000 * (i + 1));
+
 			continue;
 		}
 		/* eslint-enable @typescript-eslint/no-unsafe-member-access */
@@ -109,7 +111,9 @@ async function resize(accessTokens: AccessTokens, terminalUri: string) {
 function connectSocket(ipcHandle: string, url: string) {
 	const proxy =
 		process.env.HTTPS_PROXY || process.env.HTTP_PROXY || undefined;
+
 	let agent: http.Agent | undefined = undefined;
+
 	if (proxy) {
 		agent =
 			url.startsWith("ws:") || url.startsWith("http:")
@@ -152,6 +156,7 @@ function connectSocket(ipcHandle: string, url: string) {
 		).catch((err) => {
 			console.error(err);
 		});
+
 		if (!error) {
 			process.exit(0);
 		}
@@ -162,6 +167,7 @@ function connectSocket(ipcHandle: string, url: string) {
 		ws.on("pong", () => {
 			isAlive = true;
 		});
+
 		const timer = setInterval(() => {
 			if (isAlive === false) {
 				error = true;
@@ -190,6 +196,7 @@ export function main() {
 			ipcHandle,
 			JSON.stringify([{ type: "size", size: getWindowSize() }]),
 		);
+
 		let res: http.IncomingMessage;
 		// eslint-disable-next-line no-cond-assign
 		while (
@@ -206,6 +213,7 @@ export function main() {
 				} else if (message.type === "connect") {
 					try {
 						const accessTokens: AccessTokens = message.accessTokens;
+
 						const consoleUris: ConsoleUris = message.consoleUris;
 						connectSocket(ipcHandle, consoleUris.socketUri);
 						process.stdout.on("resize", () => {

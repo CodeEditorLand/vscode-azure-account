@@ -20,6 +20,7 @@ export function removeFilter(
 	item: ISubscriptionItem,
 ): void {
 	const { session, subscription } = item.subscription;
+
 	const indexToRemove: number = resourceFilter.indexOf(
 		`${session.tenantId}/${subscription.subscriptionId}`,
 	);

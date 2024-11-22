@@ -42,6 +42,7 @@ export class NodeFetchNormalizer
 		Object.entries(headers.raw()).forEach(([key, value]) => {
 			headersRecord[key] = value.join(", ");
 		});
+
 		return headersRecord;
 	}
 }

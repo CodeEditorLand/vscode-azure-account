@@ -18,7 +18,9 @@ export class AxiosNormalizer
 {
 	normalizeRequest(request: AxiosRequestConfig): NormalizedHttpRequest {
 		const query = new URLSearchParams(request.data as string);
+
 		const queryParams = Array.from(query.entries());
+
 		const rec: Record<string, string> = {};
 		queryParams.forEach(([name, value]) => (rec[name] = value));
 
@@ -68,11 +70,13 @@ export function setupAxiosLogging(
 
 	axios.interceptors.request.use((requestConfig) => {
 		axiosLogger.logRequest(requestConfig);
+
 		return requestConfig;
 	});
 
 	axios.interceptors.response.use((response) => {
 		axiosLogger.logResponse(response);
+
 		return response;
 	});
 }

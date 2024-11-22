@@ -54,6 +54,7 @@ interface IResourceManagerMetadata {
 
 export async function getSelectedEnvironment(): Promise<Environment> {
 	const envSetting: string | undefined = getSettingValue(cloudSetting);
+
 	return (
 		(await getEnvironments()).find(
 			(environment) => environment.name === envSetting,
@@ -69,13 +70,16 @@ export async function getEnvironments(
 ): Promise<Environment[]> {
 	const metadataDiscoveryUrl: string | undefined =
 		process.env["ARM_CLOUD_METADATA_URL"];
+
 	if (metadataDiscoveryUrl) {
 		try {
 			const response: Response =
 				await fetchWithLogging(metadataDiscoveryUrl);
+
 			if (response.ok) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const endpoints: ICloudMetadata[] = await response.json();
+
 				return endpoints.map((endpoint) => {
 					return {
 						name: endpoint.name,
@@ -107,7 +111,9 @@ export async function getEnvironments(
 
 	const config: WorkspaceConfiguration =
 		workspace.getConfiguration(extensionPrefix);
+
 	const ppe: Environment | undefined = config.get(ppeSetting);
+
 	if (ppe) {
 		result.push({
 			...ppe,
@@ -120,6 +126,7 @@ export async function getEnvironments(
 
 	const customCloudEnvironment: Environment | undefined =
 		await getCustomCloudEnvironment(config, includePartial);
+
 	if (customCloudEnvironment) {
 		result.push(customCloudEnvironment);
 	}
@@ -129,7 +136,9 @@ export async function getEnvironments(
 
 export function isADFS(environment: Environment): boolean {
 	const u = url.parse(environment.activeDirectoryEndpointUrl);
+
 	const pathname = (u.pathname || "").toLowerCase();
+
 	return pathname === "/adfs" || pathname.startsWith("/adfs/");
 }
 
@@ -138,15 +147,19 @@ async function getCustomCloudEnvironment(
 	includePartial: boolean,
 ): Promise<Environment | undefined> {
 	const armUrl: string | undefined = config.get(customCloudArmUrlSetting);
+
 	if (armUrl) {
 		try {
 			const endpointsUrl: string = getMetadataEndpoints(armUrl);
+
 			const endpointsResponse: Response =
 				await fetchWithLogging(endpointsUrl);
+
 			if (endpointsResponse.ok) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const endpoints: IResourceManagerMetadata =
 					await endpointsResponse.json();
+
 				return <Environment>{
 					name: azureCustomCloud,
 					resourceManagerEndpointUrl: armUrl,
@@ -204,6 +217,7 @@ async function getCustomCloudEnvironment(
 function getValidateAuthority(activeDirectoryEndpointUrl: string): boolean {
 	// get validateAuthority from activeDirectoryUrl from user setting, it should be set to false only under ADFS environemnt.
 	let validateAuthority: boolean = true;
+
 	if (activeDirectoryEndpointUrl) {
 		const activeDirectoryUrl: string = activeDirectoryEndpointUrl.endsWith(
 			"/",
@@ -219,7 +233,9 @@ function getMetadataEndpoints(resourceManagerUrl: string): string {
 	resourceManagerUrl = resourceManagerUrl.endsWith("/")
 		? resourceManagerUrl.slice(0, -1)
 		: resourceManagerUrl;
+
 	const endpointSuffix: string = "/metadata/endpoints";
+
 	const apiVersion: string = "2018-05-01";
 	// return ppe metadata endpoints Url
 	return `${resourceManagerUrl}${endpointSuffix}?api-version=${apiVersion}`;

@@ -72,16 +72,23 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 				// Wed, 22 Mar 2023 20:03:04 GMT:c118cca5-90ce-4fcb-b3ed-e73d32fc1eee - TokenRequest: INFO: Getting a new token from a refresh token.
 				message = message.replace(/.*-\s/, ""); // remove ADAL log timestamp and id
 				message = "ADAL: " + message;
+
 				switch (level) {
 					case ADALLogLevel.Error:
 						ext.outputChannel.error(error ?? message);
+
 						break;
+
 					case ADALLogLevel.Warning:
 						ext.outputChannel.warn(message);
+
 						break;
+
 					case ADALLogLevel.Info:
 						ext.outputChannel.debug(message);
+
 						break;
+
 					case ADALLogLevel.Verbose:
 						ext.outputChannel.trace(message);
 				}
@@ -107,6 +114,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		await storeRefreshToken(environment, tokenResponse.refreshToken!);
+
 		return getTokensFromToken(environment, tenantId, tokenResponse);
 	}
 
@@ -118,6 +126,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	): Promise<TokenResponse[]> {
 		// Used for prematurely ending the `tokenResponseTask`.
 		let deferredTaskRegulator: Deferred<TokenResponse>;
+
 		const taskRegulator = new Promise<TokenResponse>(
 			(resolve, reject) => (deferredTaskRegulator = { resolve, reject }),
 		);
@@ -140,16 +149,19 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		});
 
 		const userCode: UserCodeInfo = await getUserCode(environment, tenantId);
+
 		const messageTask: Promise<void> = this.showDeviceCodeMessage(
 			userCode.message,
 			userCode.userCode,
 			userCode.verificationUrl,
 		);
+
 		const tokenResponseTask: Promise<TokenResponse> = getTokenResponse(
 			environment,
 			tenantId,
 			userCode,
 		);
+
 		const tokenResponse: TokenResponse = await Promise.race([
 			tokenResponseTask,
 			messageTask.then(() =>
@@ -161,6 +173,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		await storeRefreshToken(environment, tokenResponse.refreshToken!);
+
 		return getTokensFromToken(environment, tenantId, tokenResponse);
 	}
 
@@ -170,6 +183,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	): Promise<TokenResponse[]> {
 		const storedCreds: string | undefined =
 			await getStoredCredentials(environment);
+
 		if (!storedCreds) {
 			throw new AzureLoginError(
 				localize("azure-account.refreshTokenMissing", "Not signed in"),
@@ -178,6 +192,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let parsedCreds: any;
+
 		let tokenResponse: TokenResponse | null = null;
 
 		try {
@@ -194,6 +209,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 		if (parsedCreds) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const { redirectionUrl, code } = parsedCreds;
+
 			if (!redirectionUrl || !code) {
 				throw new AzureLoginError(
 					localize(
@@ -297,6 +313,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 			"Azure",
 			"AzureChina",
 		]);
+
 		for (const name of allEnvironmentNames) {
 			await deleteRefreshToken(name);
 		}

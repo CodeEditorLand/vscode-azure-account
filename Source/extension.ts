@@ -61,6 +61,7 @@ export async function activateInternal(
 	context.subscriptions.push(ext.outputChannel);
 	context.subscriptions.push(window.registerUriHandler(ext.uriEventHandler));
 	registerUIExtensionVariables(ext);
+
 	setupAxiosLogging(axios, ext.outputChannel);
 
 	await callWithTelemetryAndErrorHandling(
@@ -85,6 +86,7 @@ export async function activateInternal(
 			);
 
 			await migrateEnvironmentSetting();
+
 			if (enableLogging) {
 				logDiagnostics(context, ext.loginHelper.api);
 			}
@@ -125,6 +127,7 @@ export async function activateInternal(
 async function migrateEnvironmentSetting() {
 	const configuration: WorkspaceConfiguration =
 		workspace.getConfiguration(extensionPrefix);
+
 	const configInfo = configuration.inspect(cloudSetting);
 
 	async function migrateSetting(
@@ -224,6 +227,7 @@ function createStatusBarItem(
 		"Azure Account Status",
 	);
 	statusBarItem.command = "azure-account.manageAccount";
+
 	function updateStatusBar() {
 		switch (api.status) {
 			case "LoggingIn":
@@ -232,7 +236,9 @@ function createStatusBarItem(
 					"Azure: Signing in...",
 				);
 				statusBarItem.show();
+
 				break;
+
 			case "LoggedIn":
 				if (api.sessions.length) {
 					const showSignedInEmail: boolean | undefined =
@@ -250,8 +256,10 @@ function createStatusBarItem(
 					statusBarItem.show();
 				}
 				break;
+
 			default:
 				statusBarItem.hide();
+
 				break;
 		}
 	}
@@ -262,6 +270,7 @@ function createStatusBarItem(
 		workspace.onDidChangeConfiguration(updateStatusBar),
 	);
 	updateStatusBar();
+
 	return statusBarItem;
 }
 

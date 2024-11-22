@@ -17,9 +17,13 @@ const localize = nls.loadMessageBundle();
 const NPS_SURVEY_URL = "https://www.surveymonkey.com/r/SMQM3DH";
 
 const PROBABILITY = 0.15;
+
 const SESSION_COUNT_KEY = "nps/sessionCount";
+
 const LAST_SESSION_DATE_KEY = "nps/lastSessionDate";
+
 const SKIP_VERSION_KEY = "nps/skipVersion";
+
 const IS_CANDIDATE_KEY = "nps/isCandidate";
 
 export function survey({ globalState }: ExtensionContext): void {
@@ -31,11 +35,13 @@ export function survey({ globalState }: ExtensionContext): void {
 			}
 
 			const skipVersion = globalState.get(SKIP_VERSION_KEY, "");
+
 			if (skipVersion) {
 				return;
 			}
 
 			const date = new Date().toDateString();
+
 			const lastSessionDate = globalState.get(
 				LAST_SESSION_DATE_KEY,
 				new Date(0).toDateString(),
@@ -63,8 +69,10 @@ export function survey({ globalState }: ExtensionContext): void {
 			const extensionVersion =
 				extensions.getExtension("ms-vscode.azure-account")!.packageJSON
 					.version || "unknown";
+
 			if (!isCandidate) {
 				await globalState.update(SKIP_VERSION_KEY, extensionVersion);
+
 				return;
 			}
 
@@ -84,6 +92,7 @@ export function survey({ globalState }: ExtensionContext): void {
 					);
 				},
 			};
+
 			const remind = {
 				title: localize("azure-account.remindLater", "Remind Me Later"),
 				run: async () => {
@@ -94,6 +103,7 @@ export function survey({ globalState }: ExtensionContext): void {
 					);
 				},
 			};
+
 			const never = {
 				title: localize("azure-account.neverAgain", "Don't Show Again"),
 				isSecondary: true,
@@ -108,6 +118,7 @@ export function survey({ globalState }: ExtensionContext): void {
 			};
 
 			context.telemetry.properties.userAsked = "true";
+
 			const button = await window.showInformationMessage(
 				localize(
 					"azure-account.surveyQuestion",

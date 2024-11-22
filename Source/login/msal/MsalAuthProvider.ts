@@ -47,6 +47,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 
 	constructor() {
 		super();
+
 		const msalConfiguration: Configuration = {
 			auth: { clientId },
 			cache: { cachePlugin },
@@ -58,21 +59,31 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 						_containsPii: boolean,
 					) => {
 						message = "MSAL: " + message;
+
 						switch (_level) {
 							case LogLevel.Error:
 								ext.outputChannel.error(message);
+
 								break;
+
 							case LogLevel.Warning:
 								ext.outputChannel.warn(message);
+
 								break;
+
 							case LogLevel.Info:
 								ext.outputChannel.info(message);
+
 								break;
+
 							case LogLevel.Verbose:
 								ext.outputChannel.debug(message);
+
 								break;
+
 							case LogLevel.Trace:
 								ext.outputChannel.trace(message);
+
 								break;
 						}
 					},
@@ -122,6 +133,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 	): Promise<AuthenticationResult> {
 		// Used for prematurely ending the `authResultTask`.
 		let deferredTaskRegulator: Deferred<AuthenticationResult>;
+
 		const taskRegulator = new Promise<AuthenticationResult>(
 			(resolve, reject) => (deferredTaskRegulator = { resolve, reject }),
 		);
@@ -156,16 +168,19 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 
 						// Acquiring the token has already saved it in the cache so remove it.
 						await this.clearTokenCache();
+
 						throw new UserCancelledError();
 					}
 					return result;
 				});
 
 		let authResult: AuthenticationResult | null;
+
 		try {
 			authResult = await Promise.race([authResultTask, taskRegulator]);
 		} catch (error) {
 			const parsedError: IParsedError = parseError(error);
+
 			if (/user_timeout_reached/i.test(parsedError.errorType)) {
 				context.errorHandling.suppressDisplay = true;
 			}
@@ -189,8 +204,10 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 		tenantId: string,
 	): Promise<AuthenticationResult> {
 		const msalTokenCache: TokenCache = this.publicClientApp.getTokenCache();
+
 		const accountInfo: AccountInfo[] =
 			await msalTokenCache.getAllAccounts();
+
 		let authResult: AuthenticationResult | null;
 
 		if (accountInfo.length === 1) {

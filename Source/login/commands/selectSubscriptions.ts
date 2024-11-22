@@ -28,21 +28,26 @@ export async function selectSubscriptions(
 ): Promise<unknown> {
 	if (!(await ext.loginHelper.api.waitForSubscriptions())) {
 		context.telemetry.properties.outcome = "notLoggedIn";
+
 		return commands.executeCommand("azure-account.askForLogin");
 	}
 
 	try {
 		const azureConfig: WorkspaceConfiguration =
 			workspace.getConfiguration(extensionPrefix);
+
 		const resourceFilter: string[] = (
 			azureConfig.get<string[]>(resourceFilterSetting) || ["all"]
 		).slice();
+
 		let filtersChanged: boolean = false;
 
 		const subscriptions = ext.loginHelper.subscriptionsTask.then((list) =>
 			getSubscriptionItems(list, resourceFilter),
 		);
+
 		const source: CancellationTokenSource = new CancellationTokenSource();
+
 		const cancellable: Promise<ISubscriptionItem[]> = subscriptions.then(
 			(s) => {
 				if (!s.length) {
@@ -54,14 +59,17 @@ export async function selectSubscriptions(
 				return s;
 			},
 		);
+
 		const picks: QuickPickItem[] | undefined = await window.showQuickPick(
 			cancellable,
 			{ canPickMany: true, placeHolder: "Select Subscriptions" },
 			source.token,
 		);
+
 		if (picks) {
 			if (resourceFilter[0] === "all") {
 				resourceFilter.splice(0, 1);
+
 				for (const subscription of await subscriptions) {
 					addFilter(resourceFilter, subscription);
 				}
@@ -72,6 +80,7 @@ export async function selectSubscriptions(
 					(picks.indexOf(subscription) !== -1)
 				) {
 					filtersChanged = true;
+
 					if (subscription.picked) {
 						removeFilter(resourceFilter, subscription);
 					} else {
@@ -87,6 +96,7 @@ export async function selectSubscriptions(
 		context.telemetry.properties.outcome = "success";
 	} catch (error) {
 		context.telemetry.properties.outcome = "error";
+
 		throw error;
 	}
 }
@@ -100,6 +110,7 @@ function getSubscriptionItems(
 			resourceFilter.indexOf(
 				`${subscription.session.tenantId}/${subscription.subscription.subscriptionId}`,
 			) !== -1 || resourceFilter[0] === "all";
+
 		return <ISubscriptionItem>{
 			label: subscription.subscription.displayName,
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -117,6 +128,7 @@ async function updateConfiguration(
 	const resourceFilterConfig = azureConfig.inspect<string[]>(
 		resourceFilterSetting,
 	);
+
 	const target: ConfigurationTarget = getCurrentTarget(resourceFilterConfig);
 	await azureConfig.update(
 		resourceFilterSetting,
@@ -130,10 +142,12 @@ function showNoSubscriptionsFoundNotification(context: IActionContext): void {
 		"azure-account.noSubscriptionsFound",
 		"No subscriptions were found. Setup your account if you have yet to do so or check out our troubleshooting page for common solutions to this problem.",
 	);
+
 	const setupAccount = localize(
 		"azure-account.setupAccount",
 		"Setup Account",
 	);
+
 	const openTroubleshooting = localize(
 		"azure-account.openTroubleshooting",
 		"Open Troubleshooting",

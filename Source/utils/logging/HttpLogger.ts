@@ -106,8 +106,10 @@ export class HttpLogger<TRequest, TResponse>
 		switch (this.logOutputChannel.logLevel) {
 			case LogLevel.Debug:
 				return new DebugHttpStringifier();
+
 			case LogLevel.Trace:
 				return new TraceHttpStringifier();
+
 			default:
 				return new SimpleHttpStringifier();
 		}

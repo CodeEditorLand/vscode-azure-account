@@ -159,6 +159,7 @@ export class AzureAccountLoginHelper {
 					)
 				) {
 					const numSettings = cachedSettingKeys.length;
+
 					const settingsCacheNew: SettingsCacheVerified = {
 						values: new Array<string | undefined>(numSettings),
 					};
@@ -214,12 +215,16 @@ export class AzureAccountLoginHelper {
 		await ext.loginHelper.logout(true /* forceLogout */);
 
 		let codePath: CodePath = "newLogin";
+
 		let environmentName: string = "uninitialized";
+
 		const cancelSource: CancellationTokenSource =
 			new CancellationTokenSource();
+
 		try {
 			const environment: Environment = await getSelectedEnvironment();
 			environmentName = environment.name;
+
 			const environmentLabel: string =
 				environmentLabels[environmentName] ||
 				localize("azure-account.unknownCloud", "unknown cloud");
@@ -251,6 +256,7 @@ export class AzureAccountLoginHelper {
 						2000,
 						cancelSource.token,
 					);
+
 					const timerTask: Promise<
 						boolean | PromiseLike<boolean> | undefined
 					> = delay(2000, true);
@@ -287,13 +293,16 @@ export class AzureAccountLoginHelper {
 
 					const tenantId: string =
 						getSettingValue(tenantSetting) || commonTenantId;
+
 					const isAdfs: boolean = isADFS(environment);
+
 					const useCodeFlow: boolean =
 						trigger !== "loginWithDeviceCode" &&
 						(await checkRedirectServer(isAdfs));
 					codePath = useCodeFlow
 						? "newLoginCodeFlow"
 						: "newLoginDeviceCode";
+
 					const loginResult = useCodeFlow
 						? await this.authProvider.login(
 								context,
@@ -382,16 +391,21 @@ export class AzureAccountLoginHelper {
 			"azure-account.initialize",
 			async (context: IActionContext) => {
 				let environmentName: string = "uninitialized";
+
 				const codePath: CodePath = "tryExisting";
+
 				try {
 					await this.loadSubscriptionTenantCache();
+
 					const environment: Environment =
 						await getSelectedEnvironment();
 					environmentName = environment.name;
+
 					const tenantId: string =
 						getSettingValue(tenantSetting) || commonTenantId;
 					await waitUntilOnline(environment, 5000);
 					this.beginLoggingIn();
+
 					const loginResult = await this.authProvider.loginSilent(
 						environment,
 						tenantId,
@@ -438,8 +452,10 @@ export class AzureAccountLoginHelper {
 	private async loadSubscriptionTenantCache(): Promise<void> {
 		const cache: SubscriptionTenantCache | undefined =
 			this.context.globalState.get(cacheKey);
+
 		if (cache) {
 			(<IAzureAccountWriteable>this.api).status = "LoggedIn";
+
 			const sessions: Record<string, AzureSession> =
 				await this.authProvider.initializeSessions(cache, this.api);
 
@@ -447,11 +463,13 @@ export class AzureAccountLoginHelper {
 				cache.subscriptions.map<AzureSubscription>(
 					({ session, subscription }) => {
 						const { environment, userId, tenantId } = session;
+
 						const key: string = getKey(
 							environment,
 							userId,
 							tenantId,
 						);
+
 						return {
 							session: sessions[key],
 							subscription,
@@ -466,6 +484,7 @@ export class AzureAccountLoginHelper {
 				resourceFilterSetting,
 			);
 			this.oldResourceFilter = JSON.stringify(resourceFilter);
+
 			const newFilters: AzureResourceFilter[] = getNewFilters(
 				subscriptions,
 				resourceFilter,
@@ -486,6 +505,7 @@ export class AzureAccountLoginHelper {
 		const status: AzureLoginStatus = this.api.sessions.length
 			? "LoggedIn"
 			: "LoggedOut";
+
 		if (this.api.status !== status) {
 			(<IAzureAccountWriteable>this.api).status = status;
 			this.onStatusChanged.fire(this.api.status);
@@ -521,12 +541,14 @@ function promptToClearTenant(): void {
 		"azure-account.promptToClearTenant",
 		(context: IActionContext) => {
 			const tenant: string | undefined = getSettingValue(tenantSetting);
+
 			if (tenant) {
 				const clearTenantPrompt: string = localize(
 					"azure-account.clearTenantPrompt",
 					'You have been successfully signed out but your tenant ID is still set to "{0}". Would you like to clear it?',
 					tenant,
 				);
+
 				const clearTenant: string = localize(
 					"azure-account.clearTenant",
 					"Clear tenant ID",
@@ -554,14 +576,17 @@ async function redirectTimeout(): Promise<void> {
 		"azure-account.browserDidNotConnect",
 		"Browser did not connect to local server within 10 seconds. Do you want to try the alternate sign in using a device code instead?",
 	);
+
 	const useDeviceCode: string = localize(
 		"azure-account.useDeviceCode",
 		"Use Device Code",
 	);
+
 	const response: string | undefined = await window.showInformationMessage(
 		message,
 		useDeviceCode,
 	);
+
 	if (response) {
 		await commands.executeCommand("azure-account.loginWithDeviceCode");
 	}

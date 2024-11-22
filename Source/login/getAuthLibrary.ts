@@ -17,6 +17,7 @@ export function getAuthLibrary(): AuthLibrary {
 		(context: IActionContext) => {
 			let authLibrary: AuthLibrary | undefined =
 				getSettingValue(authLibrarySetting);
+
 			if (!authLibrary) {
 				authLibrary = "ADAL";
 				context.telemetry.properties.failedToReadAuthLibrarySetting =
@@ -24,6 +25,7 @@ export function getAuthLibrary(): AuthLibrary {
 			}
 
 			context.telemetry.properties.authLibrarySetting = authLibrary;
+
 			return authLibrary;
 		},
 	) as AuthLibrary;

@@ -18,10 +18,12 @@ export async function waitUntilOnline(
 	token = new CancellationTokenSource().token,
 ): Promise<void> {
 	let checkIsOnlineTask: Promise<boolean> = checkIsOnline(environment);
+
 	let delayTask: Promise<false | PromiseLike<false> | undefined> = delay(
 		interval,
 		false,
 	);
+
 	while (
 		!token.isCancellationRequested &&
 		!(await Promise.race([checkIsOnlineTask, delayTask]))
@@ -44,9 +46,11 @@ async function checkIsOnline(environment: Environment): Promise<boolean> {
 				.get(url, resolve)
 				.on("error", reject);
 		});
+
 		return true;
 	} catch (err) {
 		logErrorMessage(err);
+
 		return false;
 	}
 }

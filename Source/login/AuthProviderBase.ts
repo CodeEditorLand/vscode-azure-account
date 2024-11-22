@@ -108,6 +108,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 		}
 
 		const nonce: string = randomBytes(16).toString("base64");
+
 		const { server, redirectPromise, codePromise, codeTimer } =
 			createServer(context, nonce);
 
@@ -141,6 +142,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				() => redirectTimeout().catch(logErrorMessage),
 				10 * 1000,
 			);
+
 			const redirectResult: RedirectResult = await redirectPromise;
 
 			if ("err" in redirectResult) {
@@ -151,22 +153,28 @@ export abstract class AuthProviderBase<TLoginResult> {
 					Location: `/?error=${encodeURIComponent((err && err.message) || "Unknown error")}`,
 				});
 				res.end();
+
 				throw err;
 			}
 
 			clearTimeout(redirectTimer);
 
 			const host: string = redirectResult.req.headers.host || "";
+
 			const updatedPortStr: string = (/^[^:]+:(\d+)$/.exec(
 				Array.isArray(host) ? host[0] : host,
 			) || [])[1];
+
 			const updatedPort: number = updatedPortStr
 				? parseInt(updatedPortStr, 10)
 				: port;
+
 			const state: string = `${encodeURIComponent(getLocalCallbackUrl(updatedPort))}?nonce=${encodeURIComponent(nonce)}`;
+
 			const redirectUrl: string = isAdfs
 				? redirectUrlADFS
 				: redirectUrlAAD;
+
 			const signInUrl: string = `${environment.activeDirectoryEndpointUrl}${isAdfs ? "" : `${tenantId}/`}oauth2/authorize?response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUrl)}&state=${state}&prompt=select_account`;
 
 			logAttemptingToReachUrlMessage(redirectUrl);
@@ -176,7 +184,9 @@ export abstract class AuthProviderBase<TLoginResult> {
 			redirectResult.res.end();
 
 			const codeResult: CodeResult = await codePromise;
+
 			const serverResponse: ServerResponse = codeResult.res;
+
 			try {
 				if ("err" in codeResult) {
 					throw codeResult.err;
@@ -199,6 +209,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 					Location: `/?error=${encodeURIComponent(parseError(err).message || "Unknown error")}`,
 				});
 				serverResponse.end();
+
 				throw err;
 			}
 		} finally {
@@ -221,15 +232,20 @@ export abstract class AuthProviderBase<TLoginResult> {
 		let callbackUri: Uri = await env.asExternalUri(
 			Uri.parse(`${env.uriScheme}://ms-vscode.azure-account`),
 		);
+
 		const nonce: string = randomBytes(16).toString("base64");
+
 		const callbackQuery = new URLSearchParams(callbackUri.query);
 		callbackQuery.set("nonce", nonce);
 		callbackUri = callbackUri.with({
 			query: callbackQuery.toString(),
 		});
+
 		const state = encodeURIComponent(callbackUri.toString(true));
+
 		const signInUrl: string = `${environment.activeDirectoryEndpointUrl}${isAdfs ? "" : `${tenantId}/`}oauth2/authorize`;
 		logAttemptingToReachUrlMessage(signInUrl);
+
 		let uri: Uri = Uri.parse(signInUrl);
 		uri = uri.with({
 			query: `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${redirectUrlAAD}&state=${state}&prompt=select_account`,
@@ -266,11 +282,14 @@ export abstract class AuthProviderBase<TLoginResult> {
 		api: AzureAccountExtensionApi,
 	): Promise<Record<string, AzureSession>> {
 		const sessions: Record<string, AzureSessionInternal> = {};
+
 		const environments: Environment[] = await getEnvironments();
 
 		for (const { session } of cache.subscriptions) {
 			const { environment, userId, tenantId, accountInfo } = session;
+
 			const key: string = getKey(environment, userId, tenantId);
+
 			const env: Environment | undefined = environments.find(
 				(e) => e.name === environment,
 			);
@@ -298,8 +317,10 @@ export abstract class AuthProviderBase<TLoginResult> {
 		const copyAndOpen: MessageItem = {
 			title: localize("azure-account.copyAndOpen", "Copy & Open"),
 		};
+
 		const response: MessageItem | undefined =
 			await window.showInformationMessage(message, copyAndOpen);
+
 		if (response === copyAndOpen) {
 			void env.clipboard.writeText(userCode);
 			await openUri(verificationUrl);

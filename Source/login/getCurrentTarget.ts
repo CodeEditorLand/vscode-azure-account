@@ -9,6 +9,7 @@ export function getCurrentTarget(
 	config:
 		| {
 				key: string;
+
 				defaultValue?: unknown;
 				globalValue?: unknown;
 				workspaceValue?: unknown;

@@ -12,6 +12,7 @@ export async function listAll<T>(
 	first: Promise<IPartialList<T>>,
 ): Promise<T[]> {
 	const all: T[] = [];
+
 	for (
 		let list = await first;
 		list.length || list.nextLink;

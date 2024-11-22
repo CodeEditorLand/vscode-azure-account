@@ -15,6 +15,7 @@ export async function askForLogin(): Promise<unknown> {
 	const login: MessageItem = {
 		title: localize("azure-account.login", "Sign In"),
 	};
+
 	const result: MessageItem | undefined = await window.showInformationMessage(
 		localize(
 			"azure-account.loginFirst",
@@ -22,5 +23,6 @@ export async function askForLogin(): Promise<unknown> {
 		),
 		login,
 	);
+
 	return result === login && commands.executeCommand("azure-account.login");
 }

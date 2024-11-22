@@ -17,10 +17,14 @@ export async function createServer(
 	onRequest: http.RequestListener,
 ): Promise<Server> {
 	const buffer = await randomBytes(20);
+
 	const nonce = buffer.toString("hex");
+
 	const ipcHandlePath = getIPCHandlePath(`${ipcHandlePrefix}-${nonce}`);
+
 	const server = new Server(ipcHandlePath, onRequest);
 	server.listen();
+
 	return server;
 }
 
@@ -120,6 +124,7 @@ export class Queue<T> {
 
 	public push(message: T): void {
 		this.messages.push(message);
+
 		if (this.dequeueRequest) {
 			this.dequeueRequest.resolve(this.messages);
 			this.dequeueRequest = undefined;
@@ -131,6 +136,7 @@ export class Queue<T> {
 		if (this.messages.length) {
 			const messages = this.messages;
 			this.messages = [];
+
 			return messages;
 		}
 		if (this.dequeueRequest) {
@@ -138,6 +144,7 @@ export class Queue<T> {
 		}
 		return new Promise<T[]>((resolve, reject) => {
 			this.dequeueRequest = { resolve, reject };
+
 			if (typeof timeout === "number") {
 				setTimeout(reject, timeout);
 			}

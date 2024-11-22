@@ -34,7 +34,9 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 		return true;
 	}
 	const testCallbackUrl: string = getLocalCallbackUrl(3333);
+
 	let timer: NodeJS.Timer | undefined;
+
 	const checkServerPromise = new Promise<boolean>((resolve) => {
 		const req: http.ClientRequest = https.get(
 			{
@@ -46,6 +48,7 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 				const key: string | undefined = Object.keys(res.headers).find(
 					(key) => key.toLowerCase() === "location",
 				);
+
 				const location: string | string[] | undefined =
 					key && res.headers[key];
 				resolve(
@@ -67,12 +70,14 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 			req.abort();
 		}, 5000);
 	});
+
 	function cancelTimer() {
 		if (timer) {
 			clearTimeout(timer);
 		}
 	}
 	checkServerPromise.then(cancelTimer, cancelTimer);
+
 	return checkServerPromise;
 }
 
@@ -86,17 +91,20 @@ export function createServer(
 	codeTimer: NodeJS.Timeout;
 } {
 	let deferredRedirect: Deferred<RedirectResult>;
+
 	const redirectPromise = new Promise<RedirectResult>(
 		(resolve, reject) => (deferredRedirect = { resolve, reject }),
 	);
 
 	let deferredCode: Deferred<CodeResult>;
+
 	const codePromise = new Promise<CodeResult>(
 		(resolve, reject) => (deferredCode = { resolve, reject }),
 	);
 
 	const codeTimer = setTimeout(() => {
 		context.errorHandling.suppressDisplay = true;
+
 		const message: string = localize(
 			"azure-account.timeoutWaitingForCode",
 			"Timeout waiting for code.",
@@ -114,11 +122,13 @@ export function createServer(
 			req.url!,
 			/* parseQueryString */ true,
 		);
+
 		switch (reqUrl.pathname) {
 			case "/signin":
 				const receivedNonce: string = (
 					reqUrl.query.nonce?.toString() || ""
 				).replace(/ /g, "+");
+
 				if (receivedNonce === nonce) {
 					deferredRedirect.resolve({ req, res });
 				} else {
@@ -126,6 +136,7 @@ export function createServer(
 					deferredRedirect.resolve({ err, res });
 				}
 				break;
+
 			case "/":
 				sendFile(
 					res,
@@ -135,7 +146,9 @@ export function createServer(
 					),
 					"text/html; charset=utf-8",
 				);
+
 				break;
+
 			case "/main.css":
 				sendFile(
 					res,
@@ -145,7 +158,9 @@ export function createServer(
 					),
 					"text/css; charset=utf-8",
 				);
+
 				break;
+
 			case "/callback":
 				deferredCode.resolve(
 					callback(nonce, reqUrl)
@@ -155,14 +170,18 @@ export function createServer(
 							(err) => ({ err, res }),
 						),
 				);
+
 				break;
+
 			default:
 				res.writeHead(404);
 				res.end();
+
 				break;
 		}
 	});
 	codePromise.then(cancelCodeTimer, cancelCodeTimer);
+
 	return {
 		server,
 		redirectPromise,
@@ -175,6 +194,7 @@ export function createTerminateServer(
 	server: http.Server,
 ): () => Promise<void> {
 	const sockets: Record<number, net.Socket> = {};
+
 	let socketCount = 0;
 	server.on("connection", (socket) => {
 		const id = socketCount++;
@@ -183,10 +203,12 @@ export function createTerminateServer(
 			delete sockets[id];
 		});
 	});
+
 	return async () => {
 		const result = new Promise<void>((resolve: () => void) =>
 			server.close(resolve),
 		);
+
 		for (const id in sockets) {
 			sockets[id].destroy();
 		}
@@ -199,6 +221,7 @@ export async function startServer(
 	adfs: boolean,
 ): Promise<number> {
 	let portTimer: NodeJS.Timer;
+
 	function cancelPortTimer() {
 		clearTimeout(portTimer);
 	}
@@ -208,6 +231,7 @@ export async function startServer(
 		}, 5000);
 		server.on("listening", () => {
 			const address: string | net.AddressInfo | null = server.address();
+
 			if (address && typeof address !== "string") {
 				resolve(address.port);
 			}
@@ -221,6 +245,7 @@ export async function startServer(
 		server.listen(adfs ? portADFS : 0, "127.0.0.1");
 	});
 	portPromise.then(cancelPortTimer, cancelPortTimer);
+
 	return portPromise;
 }
 
@@ -244,7 +269,9 @@ function sendFile(
 
 async function callback(nonce: string, reqUrl: url.Url): Promise<string> {
 	let query: ParsedUrlQuery;
+
 	let error: string | undefined;
+
 	let code: string | undefined;
 
 	if (reqUrl.query) {
@@ -262,6 +289,7 @@ async function callback(nonce: string, reqUrl: url.Url): Promise<string> {
 				/ /g,
 				"+",
 			);
+
 			if (receivedNonce !== nonce) {
 				error = "Nonce does not match.";
 			}
@@ -277,5 +305,6 @@ async function callback(nonce: string, reqUrl: url.Url): Promise<string> {
 
 function getQueryProp(query: ParsedUrlQuery, propName: string): string {
 	const value = query[propName];
+
 	return typeof value === "string" ? value : "";
 }

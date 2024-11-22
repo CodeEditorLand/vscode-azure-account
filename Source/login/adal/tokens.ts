@@ -61,6 +61,7 @@ export async function getStoredCredentials(
 ): Promise<string | undefined> {
 	try {
 		const token = await ext.context.secrets.get("Refresh Token");
+
 		if (token) {
 			if (!(await ext.context.secrets.get("Azure"))) {
 				await ext.context.secrets.store("Azure", token);
@@ -106,6 +107,7 @@ export async function tokenFromRefreshToken(
 ): Promise<TokenResponse> {
 	return new Promise<TokenResponse>((resolve, reject) => {
 		const tokenCache: MemoryCache = new MemoryCache();
+
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,
@@ -151,6 +153,7 @@ export async function tokensFromToken(
 ): Promise<TokenResponse[]> {
 	const tokenCache: MemoryCache = new MemoryCache();
 	await addTokenToCache(environment, tokenCache, firstTokenResponse);
+
 	const credentials: DeviceTokenCredentials2 = new DeviceTokenCredentials2(
 		clientId,
 		undefined,
@@ -159,6 +162,7 @@ export async function tokensFromToken(
 		environment,
 		tokenCache,
 	);
+
 	const client: SubscriptionClient = new SubscriptionClient(credentials, {
 		baseUri: environment.resourceManagerEndpointUrl,
 		requestPolicyFactories: (defaultFactories: RequestPolicyFactory[]) => {
@@ -174,10 +178,12 @@ export async function tokensFromToken(
 			});
 		},
 	});
+
 	const tenants: SubscriptionModels.TenantIdDescription[] = await listAll(
 		client.tenants,
 		client.tenants.list(),
 	);
+
 	const responses: TokenResponse[] = <TokenResponse[]>(
 		await Promise.all<TokenResponse | null>(
 			tenants.map((tenant) => {
@@ -194,11 +200,13 @@ export async function tokensFromToken(
 					err instanceof AzureLoginError &&
 						err.reason &&
 						ext.outputChannel.appendLog(err.reason);
+
 					return null;
 				});
 			}),
 		)
 	).filter((r) => r);
+
 	if (
 		!responses.some(
 			(response) => response.tenantId === firstTokenResponse.tenantId,
@@ -313,6 +321,7 @@ export async function getTokenResponse(
 ): Promise<TokenResponse> {
 	return new Promise<TokenResponse>((resolve, reject) => {
 		const tokenCache: MemoryCache = new MemoryCache();
+
 		const context: AuthenticationContext = new AuthenticationContext(
 			`${environment.activeDirectoryEndpointUrl}${tenantId}`,
 			environment.validateAuthority,
