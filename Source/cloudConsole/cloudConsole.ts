@@ -248,6 +248,7 @@ function getUploadFile(
 }
 
 export const shells: CloudShellInternal[] = [];
+
 export function createCloudConsole(
 	api: AzureAccountExtensionApi,
 	osName: OSName,

@@ -7,6 +7,7 @@ import { env } from "vscode";
 
 declare const __webpack_require__: typeof require;
 declare const __non_webpack_require__: typeof require;
+
 export function getNodeModule<T>(moduleName: string): T | undefined {
 	const r =
 		typeof __webpack_require__ === "function"

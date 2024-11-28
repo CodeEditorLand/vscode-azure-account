@@ -42,6 +42,7 @@ import {
 import { SubscriptionTenantCache } from "./subscriptionTypes";
 
 export type AbstractCredentials = DeviceTokenCredentials;
+
 export type AbstractCredentials2 = DeviceTokenCredentials2 | TokenCredential;
 
 const redirectUrlADFS: string = getLocalCallbackUrl(portADFS);
