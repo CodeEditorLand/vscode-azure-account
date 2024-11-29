@@ -43,6 +43,7 @@ export async function selectTenant(context: IActionContext): Promise<void> {
 
 		if (result === enterCustomTenant) {
 			context.telemetry.properties.enterCustomTenant = "true";
+
 			tenant = await context.ui.showInputBox({
 				prompt: localize("enterCustomTenant", "Enter custom tenant"),
 			});
@@ -51,6 +52,7 @@ export async function selectTenant(context: IActionContext): Promise<void> {
 		}
 
 		context.telemetry.properties.outcome = "tenantSelected";
+
 		await updateSettingValue(tenantSetting, tenant);
 	}
 }

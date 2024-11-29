@@ -20,11 +20,13 @@ export function getNodeModule<T>(moduleName: string): T | undefined {
 	} catch (err) {
 		// Not in ASAR.
 	}
+
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return r(`${env.appRoot}/node_modules/${moduleName}`);
 	} catch (err) {
 		// Not available.
 	}
+
 	return undefined;
 }

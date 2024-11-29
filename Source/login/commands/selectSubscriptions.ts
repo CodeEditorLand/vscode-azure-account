@@ -53,9 +53,12 @@ export async function selectSubscriptions(
 				if (!s.length) {
 					context.telemetry.properties.outcome =
 						"noSubscriptionsFound";
+
 					source.cancel();
+
 					showNoSubscriptionsFoundNotification(context);
 				}
+
 				return s;
 			},
 		);
@@ -74,6 +77,7 @@ export async function selectSubscriptions(
 					addFilter(resourceFilter, subscription);
 				}
 			}
+
 			for (const subscription of await subscriptions) {
 				if (
 					subscription.picked !==
@@ -93,6 +97,7 @@ export async function selectSubscriptions(
 		if (filtersChanged) {
 			await updateConfiguration(azureConfig, resourceFilter);
 		}
+
 		context.telemetry.properties.outcome = "success";
 	} catch (error) {
 		context.telemetry.properties.outcome = "error";
@@ -130,6 +135,7 @@ async function updateConfiguration(
 	);
 
 	const target: ConfigurationTarget = getCurrentTarget(resourceFilterConfig);
+
 	await azureConfig.update(
 		resourceFilterSetting,
 		resourceFilter[0] !== "all" ? resourceFilter : undefined,
@@ -152,6 +158,7 @@ function showNoSubscriptionsFoundNotification(context: IActionContext): void {
 		"azure-account.openTroubleshooting",
 		"Open Troubleshooting",
 	);
+
 	void window
 		.showInformationMessage(
 			noSubscriptionsFound,
@@ -161,9 +168,11 @@ function showNoSubscriptionsFoundNotification(context: IActionContext): void {
 		.then((response) => {
 			if (response === setupAccount) {
 				context.telemetry.properties.setupAccount = "true";
+
 				void openUri("https://aka.ms/AAeyf8k");
 			} else if (response === openTroubleshooting) {
 				context.telemetry.properties.openTroubleshooting = "true";
+
 				void openUri("https://aka.ms/AAevvhr");
 			}
 		});

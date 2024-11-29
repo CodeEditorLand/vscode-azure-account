@@ -78,6 +78,7 @@ export async function exchangeCodeForToken<TLoginResult>(
 function parseQuery(uri: Uri): any {
 	return uri.query.split("&").reduce((prev: any, current) => {
 		const queryString: string[] = current.split("=");
+
 		prev[queryString[0]] = queryString[1];
 
 		return prev;

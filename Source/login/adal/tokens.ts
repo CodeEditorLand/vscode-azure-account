@@ -34,6 +34,7 @@ const createLogContext = require("adal-node/lib/log").createLogContext;
 export class ProxyTokenCache {
 	/* eslint-disable */
 	public initEnd?: () => void;
+
 	private initTask: Promise<void> = new Promise<void>((resolve) => {
 		this.initEnd = resolve;
 	});
@@ -66,11 +67,13 @@ export async function getStoredCredentials(
 			if (!(await ext.context.secrets.get("Azure"))) {
 				await ext.context.secrets.store("Azure", token);
 			}
+
 			await ext.context.secrets.delete("Refresh Token");
 		}
 	} catch {
 		// ignore
 	}
+
 	try {
 		return await ext.context.secrets.get(environment.name);
 	} catch {
@@ -152,6 +155,7 @@ export async function tokensFromToken(
 	firstTokenResponse: TokenResponse,
 ): Promise<TokenResponse[]> {
 	const tokenCache: MemoryCache = new MemoryCache();
+
 	await addTokenToCache(environment, tokenCache, firstTokenResponse);
 
 	const credentials: DeviceTokenCredentials2 = new DeviceTokenCredentials2(
@@ -197,6 +201,7 @@ export async function tokensFromToken(
 					tenant.tenantId!,
 				).catch((err) => {
 					logErrorMessage(err);
+
 					err instanceof AzureLoginError &&
 						err.reason &&
 						ext.outputChannel.appendLog(err.reason);
@@ -214,6 +219,7 @@ export async function tokensFromToken(
 	) {
 		responses.unshift(firstTokenResponse);
 	}
+
 	return responses;
 }
 
@@ -238,6 +244,7 @@ export async function addTokenToCache(
 				callback(null, entry);
 			},
 		);
+
 		driver.add(tokenResponse, function (err: any) {
 			if (err) {
 				reject(err);
@@ -290,6 +297,7 @@ export async function getTokenWithAuthorizationCode(
 				if (err) {
 					reject(err);
 				}
+
 				if (response && response.error) {
 					reject(
 						new Error(
@@ -327,6 +335,7 @@ export async function getTokenResponse(
 			environment.validateAuthority,
 			tokenCache,
 		);
+
 		context.acquireTokenWithDeviceCode(
 			`${environment.managementEndpointUrl}`,
 			clientId,

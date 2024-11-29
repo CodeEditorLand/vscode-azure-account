@@ -23,6 +23,7 @@ export async function createServer(
 	const ipcHandlePath = getIPCHandlePath(`${ipcHandlePrefix}-${nonce}`);
 
 	const server = new Server(ipcHandlePath, onRequest);
+
 	server.listen();
 
 	return server;
@@ -40,6 +41,7 @@ export class Server {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				.catch((err) => console.error((err && err.message) || err));
 		});
+
 		this.server.on("error", (err) => console.error(err));
 	}
 
@@ -61,12 +63,17 @@ export class Server {
 export async function readJSON<T>(req: http.IncomingMessage): Promise<any> {
 	return new Promise<T>((resolve, reject) => {
 		const chunks: string[] = [];
+
 		req.setEncoding("utf8");
+
 		req.on("data", (d: string) => chunks.push(d));
+
 		req.on("error", (err: Error) => reject(err));
+
 		req.on("end", () => {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const data = JSON.parse(chunks.join(""));
+
 			resolve(data);
 		});
 	});
@@ -84,8 +91,11 @@ export async function sendData(
 		};
 
 		const req = http.request(opts, (res) => resolve(res));
+
 		req.on("error", (err: Error) => reject(err));
+
 		req.write(data);
+
 		req.end();
 	});
 }
@@ -117,8 +127,10 @@ function getIPCHandlePath(id: string): string {
 
 export class Queue<T> {
 	private messages: T[] = [];
+
 	private dequeueRequest?: {
 		resolve: (value: T[]) => void;
+
 		reject: (err: unknown) => void;
 	};
 
@@ -127,7 +139,9 @@ export class Queue<T> {
 
 		if (this.dequeueRequest) {
 			this.dequeueRequest.resolve(this.messages);
+
 			this.dequeueRequest = undefined;
+
 			this.messages = [];
 		}
 	}
@@ -135,13 +149,16 @@ export class Queue<T> {
 	public async dequeue(timeout?: number): Promise<T[]> {
 		if (this.messages.length) {
 			const messages = this.messages;
+
 			this.messages = [];
 
 			return messages;
 		}
+
 		if (this.dequeueRequest) {
 			this.dequeueRequest.resolve([]);
 		}
+
 		return new Promise<T[]>((resolve, reject) => {
 			this.dequeueRequest = { resolve, reject };
 

@@ -23,31 +23,48 @@ import { getSettingValue } from "../utils/settingUtils";
 
 interface ICloudMetadata {
 	portal: string;
+
 	authentication: {
 		loginEndpoint: string;
+
 		audiences: string[];
 	};
+
 	graphAudience: string;
+
 	graph: string;
+
 	name: string;
+
 	suffixes: {
 		acrLoginServer: string;
+
 		keyVaultDns: string;
+
 		sqlServerHostname: string;
+
 		storage: string;
 	};
+
 	batch: string;
+
 	resourceManager: string;
+
 	sqlManagement: string;
+
 	gallery: string;
 }
 
 interface IResourceManagerMetadata {
 	galleryEndpoint: string;
+
 	graphEndpoint: string;
+
 	portalEndpoint: string;
+
 	authentication: {
 		loginEndpoint: string;
+
 		audiences: [string];
 	};
 }
@@ -192,6 +209,7 @@ async function getCustomCloudEnvironment(
 				"openSettings",
 				"Open Settings",
 			);
+
 			void window
 				.showErrorMessage(
 					localize(
@@ -224,8 +242,10 @@ function getValidateAuthority(activeDirectoryEndpointUrl: string): boolean {
 		)
 			? activeDirectoryEndpointUrl.slice(0, -1)
 			: activeDirectoryEndpointUrl;
+
 		validateAuthority = activeDirectoryUrl.endsWith("/adfs") ? false : true;
 	}
+
 	return validateAuthority;
 }
 

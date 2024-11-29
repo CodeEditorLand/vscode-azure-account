@@ -19,19 +19,28 @@ export class AzureAccountExtensionApi
 	public apiVersion: string = "1.0.0";
 
 	public status: types.AzureLoginStatus = "Initializing";
+
 	public filters: types.AzureResourceFilter[] = [];
+
 	public sessions: types.AzureSession[] = [];
+
 	public subscriptions: types.AzureSubscription[] = [];
 
 	public onStatusChanged: Event<types.AzureLoginStatus>;
+
 	public onFiltersChanged: Event<void>;
+
 	public onSessionsChanged: Event<void>;
+
 	public onSubscriptionsChanged: Event<void>;
 
 	constructor(public loginHelper: AzureAccountLoginHelper) {
 		this.onStatusChanged = loginHelper.onStatusChanged.event;
+
 		this.onFiltersChanged = loginHelper.onFiltersChanged.event;
+
 		this.onSessionsChanged = loginHelper.onSessionsChanged.event;
+
 		this.onSubscriptionsChanged = loginHelper.onSubscriptionsChanged.event;
 	}
 
@@ -46,6 +55,7 @@ export class AzureAccountExtensionApi
 					if (!(await this.waitForSubscriptions())) {
 						return false;
 					}
+
 					await this.loginHelper.filtersTask;
 
 					return true;
@@ -75,6 +85,7 @@ export class AzureAccountExtensionApi
 								const subscription: Disposable =
 									this.onStatusChanged(() => {
 										subscription.dispose();
+
 										resolve(this.waitForLogin());
 									});
 							});
@@ -100,6 +111,7 @@ export class AzureAccountExtensionApi
 					if (!(await this.waitForLogin())) {
 						return false;
 					}
+
 					await this.loginHelper.subscriptionsTask;
 
 					return true;

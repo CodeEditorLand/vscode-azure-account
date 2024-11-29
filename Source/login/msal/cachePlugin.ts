@@ -14,6 +14,7 @@ const beforeCacheAccess = async (
 	const cachedValue: string | undefined = await ext.context.secrets.get(
 		(await getSelectedEnvironment()).name,
 	);
+
 	cachedValue && cacheContext.tokenCache.deserialize(cachedValue);
 };
 

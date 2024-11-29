@@ -23,6 +23,7 @@ export class PublicClientCredential
 	implements TokenCredential, AzExtServiceClientCredentials
 {
 	private publicClientApp: PublicClientApplication;
+
 	private accountInfo: AccountInfo;
 
 	constructor(
@@ -30,6 +31,7 @@ export class PublicClientCredential
 		accountInfo: AccountInfo,
 	) {
 		this.publicClientApp = publicClientApp;
+
 		this.accountInfo = accountInfo;
 	}
 

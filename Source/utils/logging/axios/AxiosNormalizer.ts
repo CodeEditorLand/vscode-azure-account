@@ -22,9 +22,11 @@ export class AxiosNormalizer
 		const queryParams = Array.from(query.entries());
 
 		const rec: Record<string, string> = {};
+
 		queryParams.forEach(([name, value]) => (rec[name] = value));
 
 		const sanitizedHeaders: Record<string, string> = {};
+
 		Object.entries(request.headers).forEach(([key, value]) => {
 			if (typeof value !== "object") {
 				sanitizedHeaders[key] = String(value);

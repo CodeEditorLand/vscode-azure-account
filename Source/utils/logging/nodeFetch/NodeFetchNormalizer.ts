@@ -13,7 +13,9 @@ import type {
 
 type NodeFetchResponseInfo = {
 	response: Response;
+
 	request: Request;
+
 	bodyAsText: string;
 };
 
@@ -39,6 +41,7 @@ export class NodeFetchNormalizer
 
 	private convertNodeFetchHeaders(headers: Headers): Record<string, string> {
 		const headersRecord: Record<string, string> = {};
+
 		Object.entries(headers.raw()).forEach(([key, value]) => {
 			headersRecord[key] = value.join(", ");
 		});

@@ -22,6 +22,7 @@ export async function getUserCode(
 			environment.validateAuthority,
 			cache,
 		);
+
 		context.acquireUserCode(
 			environment.activeDirectoryResourceId,
 			clientId,

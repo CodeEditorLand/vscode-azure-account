@@ -25,6 +25,7 @@ export class LogRequestPolicy extends BaseRequestPolicy {
 		options: RequestPolicyOptionsLike,
 	) {
 		super(nextPolicy, options);
+
 		this.logger = new HttpLogger(
 			outputChannel,
 			clientName,
@@ -36,6 +37,7 @@ export class LogRequestPolicy extends BaseRequestPolicy {
 		this.logger.logRequest(webResource);
 
 		const result = this._nextPolicy.sendRequest(webResource);
+
 		void result.then((response) => {
 			this.logger.logResponse(response);
 		});

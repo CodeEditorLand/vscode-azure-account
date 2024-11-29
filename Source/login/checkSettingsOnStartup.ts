@@ -34,6 +34,7 @@ export async function checkSettingsOnStartup(
 	const lastSeenSettingsCacheVerified: SettingsCacheVerified = {
 		values: new Array<undefined>(numSettings),
 	};
+
 	lastSeenSettingsCacheVerified.values.splice(
 		0,
 		numSettings,
@@ -52,6 +53,7 @@ export async function checkSettingsOnStartup(
 
 		const settingValueOnStartup: string | undefined =
 			getSettingValue(settingKey);
+
 		addPropertyToTelemetry(
 			actionContext,
 			settingKey,
@@ -61,6 +63,7 @@ export async function checkSettingsOnStartup(
 
 		const lastSeenSettingValue: string | undefined =
 			lastSeenSettingsCacheVerified.values[index];
+
 		addPropertyToTelemetry(
 			actionContext,
 			settingKey,
@@ -111,7 +114,9 @@ export async function askThenSignOutAndReload(
 		.then(async (value) => {
 			if (value === signOutAndReload) {
 				actionContext.telemetry.properties.signOutAndReload = "true";
+
 				await loginHelper.logout(forceLogout);
+
 				await commands.executeCommand("workbench.action.reloadWindow");
 			}
 		});
@@ -135,6 +140,7 @@ export async function askForSignIn(
 		.then(async (value) => {
 			if (value === signIn) {
 				actionContext.telemetry.properties.signInAgain = "true";
+
 				await commands.executeCommand("azure-account.login");
 			}
 		});

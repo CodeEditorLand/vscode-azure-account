@@ -18,15 +18,23 @@ import {
  */
 export interface NormalizedHttpRequest {
 	method?: string;
+
 	url?: string;
+
 	headers?: Record<string, unknown>;
+
 	proxy?: {
 		host?: string;
+
 		port?: string;
+
 		protocol?: string;
+
 		password?: string;
+
 		username?: string;
 	};
+
 	query?: Record<string, string>;
 }
 
@@ -35,13 +43,17 @@ export interface NormalizedHttpRequest {
  */
 export interface NormalizedHttpResponse {
 	status?: number;
+
 	bodyAsText?: string;
+
 	headers?: Record<string, unknown>;
+
 	request: NormalizedHttpRequest;
 }
 
 export interface HttpNormalizer<TRequest, TResponse> {
 	normalizeRequest(request: TRequest): NormalizedHttpRequest;
+
 	normalizeResponse(response: TResponse): NormalizedHttpResponse;
 }
 
@@ -61,6 +73,7 @@ export class HttpLogger<TRequest, TResponse>
 			);
 		} catch (e) {
 			const error = parseError(e);
+
 			this.logOutputChannel.error(
 				"Error logging request: " + error.message,
 			);
@@ -74,6 +87,7 @@ export class HttpLogger<TRequest, TResponse>
 			);
 		} catch (e) {
 			const error = parseError(e);
+
 			this.logOutputChannel.error(
 				"Error logging response: " + error.message,
 			);

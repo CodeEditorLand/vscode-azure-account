@@ -6,5 +6,6 @@
 // Source: https://docs.microsoft.com/en-us/rest/api/resources/Tenants/List#tenantiddescription
 export interface TenantIdDescription {
 	tenantId: string;
+
 	displayName: string;
 }

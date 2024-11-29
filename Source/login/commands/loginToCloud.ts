@@ -75,6 +75,7 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 					return;
 				}
 			}
+
 			const tenantId: string | undefined = await window.showInputBox({
 				prompt: localize(
 					"azure-account.enterTenantId",
@@ -100,6 +101,7 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 						),
 					);
 				}
+
 				await config.update(
 					tenantSetting,
 					tenantId,
@@ -111,12 +113,14 @@ export async function loginToCloud(context: IActionContext): Promise<void> {
 					selected.environment.name,
 					getCurrentTarget(config.inspect(cloudSetting)),
 				);
+
 				context.telemetry.properties.newCloudSetting =
 					selected.environment.name;
 			} else {
 				return;
 			}
 		}
+
 		return ext.loginHelper.login(context, "loginToCloud");
 	}
 }

@@ -29,10 +29,12 @@ export async function waitUntilOnline(
 		!(await Promise.race([checkIsOnlineTask, delayTask]))
 	) {
 		await delayTask;
+
 		checkIsOnlineTask = asyncOr(
 			checkIsOnlineTask,
 			checkIsOnline(environment),
 		);
+
 		delayTask = delay(interval, false);
 	}
 }
@@ -41,6 +43,7 @@ async function checkIsOnline(environment: Environment): Promise<boolean> {
 	try {
 		await new Promise<http.IncomingMessage>((resolve, reject) => {
 			const url: string = environment.activeDirectoryEndpointUrl;
+
 			logAttemptingToReachUrlMessage(url);
 			(url.startsWith("https:") ? https : http)
 				.get(url, resolve)

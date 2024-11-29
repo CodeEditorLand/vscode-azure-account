@@ -12,6 +12,7 @@ export async function askForLogin(): Promise<unknown> {
 	if (ext.loginHelper.api.status === "LoggedIn") {
 		return;
 	}
+
 	const login: MessageItem = {
 		title: localize("azure-account.login", "Sign In"),
 	};

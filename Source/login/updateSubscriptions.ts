@@ -30,12 +30,15 @@ export async function updateSubscriptionsAndTenants(): Promise<void> {
 		"updateSubscriptionsAndTenants",
 		async (context: IActionContext) => {
 			await ext.loginHelper.api.waitForLogin();
+
 			ext.loginHelper.subscriptionsTask = loadSubscriptions(context);
+
 			ext.loginHelper.api.subscriptions.splice(
 				0,
 				ext.loginHelper.api.subscriptions.length,
 				...(await ext.loginHelper.subscriptionsTask),
 			);
+
 			ext.loginHelper.tenantsTask = loadTenants(context);
 
 			// This event is relied upon by the DevDiv Analytics and Growth Team
@@ -69,6 +72,7 @@ export async function updateSubscriptionsAndTenants(): Promise<void> {
 				),
 				tenants: await ext.loginHelper.tenantsTask,
 			};
+
 			void ext.loginHelper.context.globalState.update(cacheKey, cache);
 
 			ext.loginHelper.onSubscriptionsChanged.fire();
@@ -132,6 +136,7 @@ async function loadTenants(
 					if (Array.isArray(value)) {
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const tenants: any[] = value as any[];
+
 						tenants.forEach((tenant) => {
 							if (
 								"tenantId" in tenant &&
@@ -148,6 +153,7 @@ async function loadTenants(
 									knownTenantIds.add(
 										sanitizedTenant.tenantId,
 									);
+
 									knownTenants.push(tenant);
 								}
 							}
@@ -170,6 +176,7 @@ async function loadTenants(
 					);
 				}
 			}
+
 			url = undefined;
 		}
 	}
@@ -208,6 +215,7 @@ async function loadSubscriptions(
 	subscriptions.sort((a, b) =>
 		a.subscription.displayName!.localeCompare(b.subscription.displayName!),
 	);
+
 	context.telemetry.properties.numSubscriptions =
 		subscriptions.length.toString();
 

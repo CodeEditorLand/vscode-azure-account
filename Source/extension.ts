@@ -56,10 +56,15 @@ export async function activateInternal(
 	perfStats: { loadStartTime: number; loadEndTime: number },
 ): Promise<apiUtils.AzureExtensionApiProvider> {
 	ext.context = context;
+
 	ext.outputChannel = createAzExtLogOutputChannel(displayName);
+
 	ext.uriEventHandler = new UriEventHandler();
+
 	context.subscriptions.push(ext.outputChannel);
+
 	context.subscriptions.push(window.registerUriHandler(ext.uriEventHandler));
+
 	registerUIExtensionVariables(ext);
 
 	setupAxiosLogging(axios, ext.outputChannel);
@@ -68,12 +73,14 @@ export async function activateInternal(
 		"azure-account.activate",
 		async (activateContext: IActionContext) => {
 			activateContext.telemetry.properties.isActivationEvent = "true";
+
 			activateContext.telemetry.properties.activationTime = String(
 				(perfStats.loadEndTime - perfStats.loadStartTime) / 1000,
 			);
 
 			ext.experimentationService =
 				await createExperimentationService(context);
+
 			ext.loginHelper = new AzureAccountLoginHelper(
 				context,
 				activateContext,
@@ -90,28 +97,38 @@ export async function activateInternal(
 			if (enableLogging) {
 				logDiagnostics(context, ext.loginHelper.api);
 			}
+
 			context.subscriptions.push(
 				createStatusBarItem(context, ext.loginHelper.api),
 			);
+
 			registerCommand("azure-account.loginToCloud", loginToCloud);
+
 			registerCommand(
 				"azure-account.selectSubscriptions",
 				selectSubscriptions,
 			);
+
 			registerCommand("azure-account.selectTenant", selectTenant);
+
 			registerCommand("azure-account.askForLogin", askForLogin);
+
 			registerCommand("azure-account.createAccount", createAccount);
+
 			registerCommand("azure-account.manageAccount", manageAccount);
+
 			context.subscriptions.push(
 				ext.loginHelper.api.onSessionsChanged(
 					updateSubscriptionsAndTenants,
 				),
 			);
+
 			context.subscriptions.push(
 				ext.loginHelper.api.onSubscriptionsChanged(() =>
 					updateFilters(),
 				),
 			);
+
 			registerReportIssueCommand("azure-account.reportIssue");
 
 			survey(context);
@@ -141,6 +158,7 @@ async function migrateEnvironmentSetting() {
 				ConfigurationTarget.Global,
 			);
 		}
+
 		if (configInfo?.workspaceValue === oldValue) {
 			await configuration.update(
 				cloudSetting,
@@ -148,6 +166,7 @@ async function migrateEnvironmentSetting() {
 				ConfigurationTarget.Workspace,
 			);
 		}
+
 		if (configInfo?.workspaceFolderValue === oldValue) {
 			await configuration.update(
 				cloudSetting,
@@ -158,6 +177,7 @@ async function migrateEnvironmentSetting() {
 	}
 
 	await migrateSetting("Azure", "AzureCloud");
+
 	await migrateSetting("AzureChina", "AzureChinaCloud");
 }
 
@@ -166,11 +186,13 @@ function logDiagnostics(
 	api: AzureAccountExtensionApi,
 ) {
 	const subscriptions = context.subscriptions;
+
 	subscriptions.push(
 		api.onStatusChanged((status) => {
 			ext.outputChannel.appendLog(`onStatusChanged: ${status}`);
 		}),
 	);
+
 	subscriptions.push(
 		api.onSessionsChanged(() => {
 			ext.outputChannel.appendLog(
@@ -183,6 +205,7 @@ function logDiagnostics(
 			`waitForLogin: ${await api.waitForLogin()} ${api.status}`,
 		);
 	})().catch(logErrorMessage);
+
 	subscriptions.push(
 		api.onSubscriptionsChanged(() => {
 			ext.outputChannel.appendLog(
@@ -195,6 +218,7 @@ function logDiagnostics(
 			`waitForSubscriptions: ${await api.waitForSubscriptions()} ${api.subscriptions.length}`,
 		);
 	})().catch(logErrorMessage);
+
 	subscriptions.push(
 		api.onFiltersChanged(() => {
 			ext.outputChannel.appendLog(
@@ -222,10 +246,12 @@ function createStatusBarItem(
 	api: AzureAccountExtensionApi,
 ) {
 	const statusBarItem = window.createStatusBarItem("azure-account.status");
+
 	statusBarItem.name = localize(
 		"azure-account.status",
 		"Azure Account Status",
 	);
+
 	statusBarItem.command = "azure-account.manageAccount";
 
 	function updateStatusBar() {
@@ -235,6 +261,7 @@ function createStatusBarItem(
 					"azure-account.loggingIn",
 					"Azure: Signing in...",
 				);
+
 				statusBarItem.show();
 
 				break;
@@ -243,6 +270,7 @@ function createStatusBarItem(
 				if (api.sessions.length) {
 					const showSignedInEmail: boolean | undefined =
 						getSettingValue(showSignedInEmailSetting);
+
 					statusBarItem.text = showSignedInEmail
 						? localize(
 								"azure-account.loggedIn",
@@ -253,8 +281,10 @@ function createStatusBarItem(
 								"azure-account.loggedIn",
 								"Azure: Signed In",
 							);
+
 					statusBarItem.show();
 				}
+
 				break;
 
 			default:
@@ -263,12 +293,14 @@ function createStatusBarItem(
 				break;
 		}
 	}
+
 	context.subscriptions.push(
 		statusBarItem,
 		api.onStatusChanged(updateStatusBar),
 		api.onSessionsChanged(updateStatusBar),
 		workspace.onDidChangeConfiguration(updateStatusBar),
 	);
+
 	updateStatusBar();
 
 	return statusBarItem;

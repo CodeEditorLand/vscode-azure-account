@@ -15,9 +15,11 @@ export async function fetchWithLogging(
 	);
 
 	const request = new Request(url, init);
+
 	nodeFetchLogger.logRequest(request);
 
 	const response = await fetch(url, init);
+
 	nodeFetchLogger.logResponse({
 		response,
 		request,

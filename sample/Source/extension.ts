@@ -27,12 +27,14 @@ export function activate(context: ExtensionContext): void {
 	)).getApi("1.0.0");
 
 	const subscriptions = context.subscriptions;
+
 	subscriptions.push(
 		commands.registerCommand(
 			"azure-account-sample.showSubscriptions",
 			showSubscriptions(azureAccount),
 		),
 	);
+
 	subscriptions.push(
 		commands.registerCommand(
 			"azure-account-sample.showAppServices",
@@ -43,8 +45,11 @@ export function activate(context: ExtensionContext): void {
 
 interface SubscriptionItem {
 	label: string;
+
 	description: string;
+
 	session: AzureSession;
+
 	subscription: SubscriptionModels.Subscription;
 }
 
@@ -53,12 +58,14 @@ function showSubscriptions(api: AzureAccountExtensionApi) {
 		if (!(await api.waitForLogin())) {
 			return commands.executeCommand("azure-account.askForLogin");
 		}
+
 		const subscriptionItems = loadSubscriptionItems(api);
 
 		const result = await window.showQuickPick(subscriptionItems);
 
 		if (result) {
 			const resourceGroupItems = loadResourceGroupItems(result);
+
 			await window.showQuickPick(resourceGroupItems);
 		}
 	};
@@ -78,6 +85,7 @@ async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 			subscriptionClient.subscriptions,
 			subscriptionClient.subscriptions.list(),
 		);
+
 		subscriptionItems.push(
 			...subscriptions.map((subscription) => ({
 				label: subscription.displayName || "",
@@ -87,6 +95,7 @@ async function loadSubscriptionItems(api: AzureAccountExtensionApi) {
 			})),
 		);
 	}
+
 	subscriptionItems.sort((a, b) => a.label.localeCompare(b.label));
 
 	return subscriptionItems;
@@ -104,6 +113,7 @@ async function loadResourceGroupItems(subscriptionItem: SubscriptionItem) {
 		resources.resourceGroups,
 		resources.resourceGroups.list(),
 	);
+
 	resourceGroups.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
 	return resourceGroups.map((resourceGroup) => ({
@@ -118,7 +128,9 @@ function showAppServices(api: AzureAccountExtensionApi) {
 		if (!(await api.waitForLogin())) {
 			return commands.executeCommand("azure-account.askForLogin");
 		}
+
 		const webAppItems = loadWebAppItems(api);
+
 		await window.showQuickPick(webAppItems);
 	};
 }
@@ -134,6 +146,7 @@ async function loadWebAppItems(api: AzureAccountExtensionApi) {
 			filter.session.credentials2,
 			filter.subscription.subscriptionId!,
 		);
+
 		webAppsPromises.push(
 			listAll(client.webApps, client.webApps.list()).then((webApps) =>
 				webApps.map((webApp) => {
@@ -147,9 +160,11 @@ async function loadWebAppItems(api: AzureAccountExtensionApi) {
 			),
 		);
 	}
+
 	const webApps = (<QuickPickItem[]>[]).concat(
 		...(await Promise.all(webAppsPromises)),
 	);
+
 	webApps.sort((a, b) => a.label.localeCompare(b.label));
 
 	return webApps;
@@ -171,10 +186,13 @@ async function listAll<T>(
 
 	for (
 		let list = await first;
+
 		list.length || list.nextLink;
+
 		list = list.nextLink ? await client.listNext(list.nextLink) : []
 	) {
 		all.push(...list);
 	}
+
 	return all;
 }

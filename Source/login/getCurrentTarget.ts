@@ -11,8 +11,11 @@ export function getCurrentTarget(
 				key: string;
 
 				defaultValue?: unknown;
+
 				globalValue?: unknown;
+
 				workspaceValue?: unknown;
+
 				workspaceFolderValue?: unknown;
 		  }
 		| undefined,
@@ -26,5 +29,6 @@ export function getCurrentTarget(
 			return ConfigurationTarget.Global;
 		}
 	}
+
 	return ConfigurationTarget.Global;
 }

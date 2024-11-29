@@ -52,7 +52,9 @@ export function survey({ globalState }: ExtensionContext): void {
 			}
 
 			const sessionCount = globalState.get(SESSION_COUNT_KEY, 0) + 1;
+
 			await globalState.update(LAST_SESSION_DATE_KEY, date);
+
 			await globalState.update(SESSION_COUNT_KEY, sessionCount);
 
 			if (sessionCount < 9) {
@@ -80,12 +82,15 @@ export function survey({ globalState }: ExtensionContext): void {
 				title: localize("azure-account.takeSurvey", "Take Survey"),
 				run: async () => {
 					context.telemetry.properties.takeShortSurvey = "true";
+
 					void env.openExternal(
 						Uri.parse(
 							`${NPS_SURVEY_URL}?o=${encodeURIComponent(process.platform)}&v=${encodeURIComponent(extensionVersion)}&m=${encodeURIComponent(env.machineId)}`,
 						),
 					);
+
 					await globalState.update(IS_CANDIDATE_KEY, false);
+
 					await globalState.update(
 						SKIP_VERSION_KEY,
 						extensionVersion,
@@ -97,6 +102,7 @@ export function survey({ globalState }: ExtensionContext): void {
 				title: localize("azure-account.remindLater", "Remind Me Later"),
 				run: async () => {
 					context.telemetry.properties.remindMeLater = "true";
+
 					await globalState.update(
 						SESSION_COUNT_KEY,
 						sessionCount - 3,
@@ -109,7 +115,9 @@ export function survey({ globalState }: ExtensionContext): void {
 				isSecondary: true,
 				run: async () => {
 					context.telemetry.properties.dontShowAgain = "true";
+
 					await globalState.update(IS_CANDIDATE_KEY, false);
+
 					await globalState.update(
 						SKIP_VERSION_KEY,
 						extensionVersion,
@@ -128,6 +136,7 @@ export function survey({ globalState }: ExtensionContext): void {
 				remind,
 				never,
 			);
+
 			await (button || remind).run();
 		},
 	);

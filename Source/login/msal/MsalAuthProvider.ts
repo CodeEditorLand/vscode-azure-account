@@ -92,6 +92,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 				},
 			},
 		};
+
 		this.publicClientApp = new PublicClientApplication(msalConfiguration);
 	}
 
@@ -171,6 +172,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 
 						throw new UserCancelledError();
 					}
+
 					return result;
 				});
 
@@ -184,6 +186,7 @@ export class MsalAuthProvider extends AuthProviderBase<AuthenticationResult> {
 			if (/user_timeout_reached/i.test(parsedError.errorType)) {
 				context.errorHandling.suppressDisplay = true;
 			}
+
 			throw error;
 		}
 

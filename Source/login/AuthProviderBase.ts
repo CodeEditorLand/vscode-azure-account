@@ -57,32 +57,38 @@ export abstract class AuthProviderBase<TLoginResult> {
 		environment: Environment,
 		tenantId: string,
 	): Promise<TLoginResult>;
+
 	public abstract loginWithDeviceCode(
 		context: IActionContext,
 		environment: Environment,
 		tenantId: string,
 		cancellationToken: CancellationToken,
 	): Promise<TLoginResult>;
+
 	public abstract loginSilent(
 		environment: Environment,
 		tenantId: string,
 	): Promise<TLoginResult>;
+
 	public abstract getCredentials(
 		environment: string,
 		userId: string,
 		tenantId: string,
 	): AbstractCredentials;
+
 	public abstract getCredentials2(
 		environment: Environment,
 		userId: string,
 		tenantId: string,
 		accountInfo?: AccountInfo,
 	): AbstractCredentials2;
+
 	public abstract updateSessions(
 		environment: Environment,
 		loginResult: TLoginResult,
 		sessions: AzureSession[],
 	): Promise<void>;
+
 	public abstract clearTokenCache(): Promise<void>;
 
 	public async login(
@@ -119,8 +125,11 @@ export abstract class AuthProviderBase<TLoginResult> {
 					error &&
 					ext.outputChannel.appendLog(parseError(error).message),
 			);
+
 			clearTimeout(codeTimer);
+
 			context.telemetry.properties.serverClosed = "true";
+
 			ext.outputChannel.appendLog(
 				localize(
 					"azure-account.authProcessCancelled",
@@ -135,6 +144,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 
 		try {
 			const port: number = await startServer(server, isAdfs);
+
 			await openUri(
 				`http://localhost:${port}/signin?nonce=${encodeURIComponent(nonce)}`,
 			);
@@ -153,6 +163,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				res.writeHead(302, {
 					Location: `/?error=${encodeURIComponent((err && err.message) || "Unknown error")}`,
 				});
+
 				res.end();
 
 				throw err;
@@ -179,9 +190,11 @@ export abstract class AuthProviderBase<TLoginResult> {
 			const signInUrl: string = `${environment.activeDirectoryEndpointUrl}${isAdfs ? "" : `${tenantId}/`}oauth2/authorize?response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUrl)}&state=${state}&prompt=select_account`;
 
 			logAttemptingToReachUrlMessage(redirectUrl);
+
 			logAttemptingToReachUrlMessage(signInUrl);
 
 			redirectResult.res.writeHead(302, { Location: signInUrl });
+
 			redirectResult.res.end();
 
 			const codeResult: CodeResult = await codePromise;
@@ -203,12 +216,14 @@ export abstract class AuthProviderBase<TLoginResult> {
 					);
 				} finally {
 					serverResponse.writeHead(302, { Location: "/" });
+
 					serverResponse.end();
 				}
 			} catch (err) {
 				serverResponse.writeHead(302, {
 					Location: `/?error=${encodeURIComponent(parseError(err).message || "Unknown error")}`,
 				});
+
 				serverResponse.end();
 
 				throw err;
@@ -237,7 +252,9 @@ export abstract class AuthProviderBase<TLoginResult> {
 		const nonce: string = randomBytes(16).toString("base64");
 
 		const callbackQuery = new URLSearchParams(callbackUri.query);
+
 		callbackQuery.set("nonce", nonce);
+
 		callbackUri = callbackUri.with({
 			query: callbackQuery.toString(),
 		});
@@ -245,12 +262,15 @@ export abstract class AuthProviderBase<TLoginResult> {
 		const state = encodeURIComponent(callbackUri.toString(true));
 
 		const signInUrl: string = `${environment.activeDirectoryEndpointUrl}${isAdfs ? "" : `${tenantId}/`}oauth2/authorize`;
+
 		logAttemptingToReachUrlMessage(signInUrl);
 
 		let uri: Uri = Uri.parse(signInUrl);
+
 		uri = uri.with({
 			query: `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${redirectUrlAAD}&state=${state}&prompt=select_account`,
 		});
+
 		void env.openExternal(uri);
 
 		const timeoutPromise = new Promise(
@@ -258,6 +278,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 				const wait = setTimeout(
 					() => {
 						clearTimeout(wait);
+
 						reject("Login timed out.");
 					},
 					1000 * 60 * 5,
@@ -303,6 +324,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 					accountInfo,
 					this,
 				);
+
 				api.sessions.push(sessions[key]);
 			}
 		}
@@ -324,6 +346,7 @@ export abstract class AuthProviderBase<TLoginResult> {
 
 		if (response === copyAndOpen) {
 			void env.clipboard.writeText(userCode);
+
 			await openUri(verificationUrl);
 		}
 	}

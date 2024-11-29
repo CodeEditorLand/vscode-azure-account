@@ -14,6 +14,7 @@ import type {
 
 type RequestResponseInfo = {
 	response: http.IncomingMessage & { body?: unknown };
+
 	request: request.Options;
 };
 

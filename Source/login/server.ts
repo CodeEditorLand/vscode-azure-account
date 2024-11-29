@@ -33,6 +33,7 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 	if (isAdfs) {
 		return true;
 	}
+
 	const testCallbackUrl: string = getLocalCallbackUrl(3333);
 
 	let timer: NodeJS.Timer | undefined;
@@ -51,6 +52,7 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 
 				const location: string | string[] | undefined =
 					key && res.headers[key];
+
 				resolve(
 					res.statusCode === 302 &&
 						typeof location === "string" &&
@@ -58,15 +60,20 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 				);
 			},
 		);
+
 		req.on("error", (error) => {
 			logErrorMessage(error);
+
 			resolve(false);
 		});
+
 		req.on("close", () => {
 			resolve(false);
 		});
+
 		timer = setTimeout(() => {
 			resolve(false);
+
 			req.abort();
 		}, 5000);
 	});
@@ -76,6 +83,7 @@ export async function checkRedirectServer(isAdfs: boolean): Promise<boolean> {
 			clearTimeout(timer);
 		}
 	}
+
 	checkServerPromise.then(cancelTimer, cancelTimer);
 
 	return checkServerPromise;
@@ -86,8 +94,11 @@ export function createServer(
 	nonce: string,
 ): {
 	server: http.Server;
+
 	redirectPromise: Promise<RedirectResult>;
+
 	codePromise: Promise<CodeResult>;
+
 	codeTimer: NodeJS.Timeout;
 } {
 	let deferredRedirect: Deferred<RedirectResult>;
@@ -109,6 +120,7 @@ export function createServer(
 			"azure-account.timeoutWaitingForCode",
 			"Timeout waiting for code.",
 		);
+
 		deferredCode.reject(new Error(message));
 	}, authTimeoutMs);
 
@@ -133,8 +145,10 @@ export function createServer(
 					deferredRedirect.resolve({ req, res });
 				} else {
 					const err = new Error("Nonce does not match.");
+
 					deferredRedirect.resolve({ err, res });
 				}
+
 				break;
 
 			case "/":
@@ -175,11 +189,13 @@ export function createServer(
 
 			default:
 				res.writeHead(404);
+
 				res.end();
 
 				break;
 		}
 	});
+
 	codePromise.then(cancelCodeTimer, cancelCodeTimer);
 
 	return {
@@ -196,9 +212,12 @@ export function createTerminateServer(
 	const sockets: Record<number, net.Socket> = {};
 
 	let socketCount = 0;
+
 	server.on("connection", (socket) => {
 		const id = socketCount++;
+
 		sockets[id] = socket;
+
 		socket.on("close", () => {
 			delete sockets[id];
 		});
@@ -212,6 +231,7 @@ export function createTerminateServer(
 		for (const id in sockets) {
 			sockets[id].destroy();
 		}
+
 		return result;
 	};
 }
@@ -225,10 +245,12 @@ export async function startServer(
 	function cancelPortTimer() {
 		clearTimeout(portTimer);
 	}
+
 	const portPromise = new Promise<number>((resolve, reject) => {
 		portTimer = setTimeout(() => {
 			reject(new Error("Timeout waiting for port"));
 		}, 5000);
+
 		server.on("listening", () => {
 			const address: string | net.AddressInfo | null = server.address();
 
@@ -236,14 +258,18 @@ export async function startServer(
 				resolve(address.port);
 			}
 		});
+
 		server.on("error", (err) => {
 			reject(err);
 		});
+
 		server.on("close", () => {
 			reject(new Error("Closed"));
 		});
+
 		server.listen(adfs ? portADFS : 0, "127.0.0.1");
 	});
+
 	portPromise.then(cancelPortTimer, cancelPortTimer);
 
 	return portPromise;
@@ -262,6 +288,7 @@ function sendFile(
 				"Content-Length": body.length,
 				"Content-Type": contentType,
 			});
+
 			res.end(body);
 		}
 	});
@@ -279,9 +306,11 @@ async function callback(nonce: string, reqUrl: url.Url): Promise<string> {
 			typeof reqUrl.query === "string"
 				? parse(reqUrl.query)
 				: reqUrl.query;
+
 		error =
 			getQueryProp(query, "error_description") ||
 			getQueryProp(query, "error");
+
 		code = getQueryProp(query, "code");
 
 		if (!error) {

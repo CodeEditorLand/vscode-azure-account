@@ -89,28 +89,37 @@ type CodePath =
 
 export class AzureAccountLoginHelper {
 	private adalAuthProvider: AdalAuthProvider;
+
 	private msalAuthProvider: MsalAuthProvider;
+
 	private authProvider: AdalAuthProvider | MsalAuthProvider;
 
 	public oldResourceFilter: string = "";
+
 	public onStatusChanged: EventEmitter<AzureLoginStatus> =
 		new EventEmitter<AzureLoginStatus>();
+
 	public onFiltersChanged: EventEmitter<void> = new EventEmitter<void>();
+
 	public onSessionsChanged: EventEmitter<void> = new EventEmitter<void>();
+
 	public onSubscriptionsChanged: EventEmitter<void> =
 		new EventEmitter<void>();
 
 	public filtersTask: Promise<AzureResourceFilter[]> = Promise.resolve(
 		<AzureResourceFilter[]>[],
 	);
+
 	public subscriptionsTask: Promise<AzureSubscription[]> = Promise.resolve(
 		<AzureSubscription[]>[],
 	);
+
 	public tenantsTask: Promise<TenantIdDescription[]> = Promise.resolve(
 		<TenantIdDescription[]>[],
 	);
 
 	public api: AzureAccountExtensionApi;
+
 	public legacyApi: AzureAccountExtensionLegacyApi;
 
 	constructor(
@@ -118,13 +127,16 @@ export class AzureAccountLoginHelper {
 		actionContext: IActionContext,
 	) {
 		this.adalAuthProvider = new AdalAuthProvider();
+
 		this.msalAuthProvider = new MsalAuthProvider();
+
 		this.authProvider =
 			getAuthLibrary() === "ADAL"
 				? this.adalAuthProvider
 				: this.msalAuthProvider;
 
 		this.api = new AzureAccountExtensionApi(this);
+
 		this.legacyApi = new AzureAccountExtensionLegacyApi(this.api);
 
 		registerCommand(
@@ -133,6 +145,7 @@ export class AzureAccountLoginHelper {
 				this.login(context, "login").catch(logErrorMessage),
 			1000,
 		);
+
 		registerCommand(
 			"azure-account.loginWithDeviceCode",
 			(context: IActionContext) =>
@@ -140,9 +153,11 @@ export class AzureAccountLoginHelper {
 					logErrorMessage,
 				),
 		);
+
 		registerCommand("azure-account.logout", () =>
 			this.logout().catch(logErrorMessage),
 		);
+
 		context.subscriptions.push(
 			workspace.onDidChangeConfiguration(async (e) => {
 				if (
@@ -152,6 +167,7 @@ export class AzureAccountLoginHelper {
 				) {
 					actionContext.telemetry.properties.changeResourceFilter =
 						"true";
+
 					updateFilters(true);
 				} else if (
 					cachedSettingKeys.some((k) =>
@@ -205,6 +221,7 @@ export class AzureAccountLoginHelper {
 				}
 			}),
 		);
+
 		this.initialize("activation").catch(logErrorMessage);
 	}
 
@@ -223,6 +240,7 @@ export class AzureAccountLoginHelper {
 
 		try {
 			const environment: Environment = await getSelectedEnvironment();
+
 			environmentName = environment.name;
 
 			const environmentLabel: string =
@@ -242,7 +260,9 @@ export class AzureAccountLoginHelper {
 				async (_progress, cancellationToken) => {
 					cancellationToken.onCancellationRequested(async () => {
 						await this.logout(true /* forceLogout */);
+
 						context.telemetry.properties.signInCancelled = "true";
+
 						ext.outputChannel.appendLog(
 							localize(
 								"azure-account.signInCancelled",
@@ -265,6 +285,7 @@ export class AzureAccountLoginHelper {
 						const cancel: MessageItem = {
 							title: localize("azure-account.cancel", "Cancel"),
 						};
+
 						await Promise.race([
 							onlineTask,
 							window
@@ -286,6 +307,7 @@ export class AzureAccountLoginHelper {
 									}
 								}),
 						]);
+
 						await onlineTask;
 					}
 
@@ -299,6 +321,7 @@ export class AzureAccountLoginHelper {
 					const useCodeFlow: boolean =
 						trigger !== "loginWithDeviceCode" &&
 						(await checkRedirectServer(isAdfs));
+
 					codePath = useCodeFlow
 						? "newLoginCodeFlow"
 						: "newLoginDeviceCode";
@@ -320,11 +343,13 @@ export class AzureAccountLoginHelper {
 								tenantId,
 								cancellationToken,
 							);
+
 					await this.updateSessions(
 						this.authProvider,
 						environment,
 						loginResult,
 					);
+
 					void this.sendLoginTelemetry(context, {
 						trigger,
 						codePath,
@@ -336,6 +361,7 @@ export class AzureAccountLoginHelper {
 		} catch (err) {
 			if (err instanceof AzureLoginError && err.reason) {
 				ext.outputChannel.appendLog(err.reason);
+
 				void this.sendLoginTelemetry(context, {
 					trigger,
 					codePath,
@@ -353,10 +379,13 @@ export class AzureAccountLoginHelper {
 					message: getErrorMessage(err),
 				});
 			}
+
 			throw err;
 		} finally {
 			cancelSource.cancel();
+
 			cancelSource.dispose();
+
 			this.updateLoginStatus();
 		}
 	}
@@ -365,9 +394,13 @@ export class AzureAccountLoginHelper {
 		context: IActionContext,
 		properties: {
 			trigger: LoginTrigger;
+
 			codePath: CodePath;
+
 			environmentName: string;
+
 			outcome: string;
+
 			message?: string;
 		},
 	) {
@@ -380,9 +413,12 @@ export class AzureAccountLoginHelper {
 	public async logout(forceLogout?: boolean): Promise<void> {
 		if (!forceLogout) {
 			await this.api.waitForLogin();
+
 			promptToClearTenant();
 		}
+
 		await this.clearSessions();
+
 		this.updateLoginStatus();
 	}
 
@@ -399,22 +435,27 @@ export class AzureAccountLoginHelper {
 
 					const environment: Environment =
 						await getSelectedEnvironment();
+
 					environmentName = environment.name;
 
 					const tenantId: string =
 						getSettingValue(tenantSetting) || commonTenantId;
+
 					await waitUntilOnline(environment, 5000);
+
 					this.beginLoggingIn();
 
 					const loginResult = await this.authProvider.loginSilent(
 						environment,
 						tenantId,
 					);
+
 					await this.updateSessions(
 						this.authProvider,
 						environment,
 						loginResult,
 					);
+
 					void this.sendLoginTelemetry(context, {
 						trigger,
 						codePath,
@@ -476,20 +517,26 @@ export class AzureAccountLoginHelper {
 						};
 					},
 				);
+
 			this.subscriptionsTask = Promise.resolve(subscriptions);
+
 			this.api.subscriptions.push(...subscriptions);
+
 			this.tenantsTask = Promise.resolve(cache.tenants);
 
 			const resourceFilter: string[] | undefined = getSettingValue(
 				resourceFilterSetting,
 			);
+
 			this.oldResourceFilter = JSON.stringify(resourceFilter);
 
 			const newFilters: AzureResourceFilter[] = getNewFilters(
 				subscriptions,
 				resourceFilter,
 			);
+
 			this.filtersTask = Promise.resolve(newFilters);
+
 			this.api.filters.push(...newFilters);
 		}
 	}
@@ -497,6 +544,7 @@ export class AzureAccountLoginHelper {
 	private beginLoggingIn(): void {
 		if (this.api.status !== "LoggedIn") {
 			(<IAzureAccountWriteable>this.api).status = "LoggingIn";
+
 			this.onStatusChanged.fire(this.api.status);
 		}
 	}
@@ -508,6 +556,7 @@ export class AzureAccountLoginHelper {
 
 		if (this.api.status !== status) {
 			(<IAzureAccountWriteable>this.api).status = status;
+
 			this.onStatusChanged.fire(this.api.status);
 		}
 	}
@@ -522,16 +571,20 @@ export class AzureAccountLoginHelper {
 			loginResult,
 			this.api.sessions,
 		);
+
 		this.onSessionsChanged.fire();
 	}
 
 	private async clearSessions(): Promise<void> {
 		// Clear cache from all libraries: https://github.com/microsoft/vscode-azure-account/issues/309
 		await this.adalAuthProvider.clearTokenCache();
+
 		await this.msalAuthProvider.clearTokenCache();
 
 		const sessions: AzureSession[] = this.api.sessions;
+
 		sessions.length = 0;
+
 		this.onSessionsChanged.fire();
 	}
 }
@@ -553,6 +606,7 @@ function promptToClearTenant(): void {
 					"azure-account.clearTenant",
 					"Clear tenant ID",
 				);
+
 				void window
 					.showInformationMessage(
 						clearTenantPrompt,
@@ -563,6 +617,7 @@ function promptToClearTenant(): void {
 						if (response === clearTenant) {
 							context.telemetry.properties.clearTenantAfterSignOut =
 								"true";
+
 							await updateSettingValue(tenantSetting, "");
 						}
 					});

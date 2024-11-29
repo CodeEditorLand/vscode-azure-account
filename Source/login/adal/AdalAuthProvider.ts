@@ -59,12 +59,14 @@ const ADALLogLevel: Record<string, LoggingLevel> = {
 
 export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 	private tokenCache: MemoryCache = new MemoryCache();
+
 	private delayedTokenCache: ProxyTokenCache = new ProxyTokenCache(
 		this.tokenCache,
 	);
 
 	constructor() {
 		super();
+
 		Logging.setLoggingOptions({
 			level: ADALLogLevel.Verbose,
 			log: (level: LoggingLevel, message: string, error?: Error) => {
@@ -133,6 +135,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		const timeout = setTimeout(() => {
 			context.errorHandling.suppressDisplay = true;
+
 			deferredTaskRegulator.reject(
 				new Error(
 					localize(
@@ -145,6 +148,7 @@ export class AdalAuthProvider extends AuthProviderBase<TokenResponse[]> {
 
 		cancellationToken.onCancellationRequested(() => {
 			clearTimeout(timeout);
+
 			deferredTaskRegulator.reject(new Error(stoppedAuthTaskMessage));
 		});
 

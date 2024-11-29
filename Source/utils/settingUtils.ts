@@ -25,6 +25,7 @@ export async function updateSettingValue<T>(
 ): Promise<void> {
 	const config: WorkspaceConfiguration =
 		workspace.getConfiguration(extensionPrefix);
+
 	await config.update(
 		settingName,
 		value,

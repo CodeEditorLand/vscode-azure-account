@@ -11,7 +11,9 @@ export function addFilter(
 	item: ISubscriptionItem,
 ): void {
 	const { session, subscription } = item.subscription;
+
 	resourceFilter.push(`${session.tenantId}/${subscription.subscriptionId}`);
+
 	item.picked = true;
 }
 
@@ -24,7 +26,9 @@ export function removeFilter(
 	const indexToRemove: number = resourceFilter.indexOf(
 		`${session.tenantId}/${subscription.subscriptionId}`,
 	);
+
 	resourceFilter.splice(indexToRemove, 1);
+
 	item.picked = false;
 }
 
@@ -35,6 +39,7 @@ export function getNewFilters(
 	if (resourceFilter && !Array.isArray(resourceFilter)) {
 		resourceFilter = [];
 	}
+
 	const filters =
 		resourceFilter &&
 		resourceFilter.reduce(
@@ -42,6 +47,7 @@ export function getNewFilters(
 				if (typeof s === "string") {
 					f[s] = true;
 				}
+
 				return f;
 			},
 			<Record<string, boolean>>{},

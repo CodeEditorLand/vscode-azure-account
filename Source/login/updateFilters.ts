@@ -20,22 +20,26 @@ export function updateFilters(configChange = false): void {
 	) {
 		return;
 	}
+
 	ext.loginHelper.filtersTask = (async () => {
 		await ext.loginHelper.api.waitForSubscriptions();
 
 		const subscriptions: AzureSubscription[] =
 			await ext.loginHelper.subscriptionsTask;
+
 		ext.loginHelper.oldResourceFilter = JSON.stringify(resourceFilter);
 
 		const newFilters: AzureResourceFilter[] = getNewFilters(
 			subscriptions,
 			resourceFilter,
 		);
+
 		ext.loginHelper.api.filters.splice(
 			0,
 			ext.loginHelper.api.filters.length,
 			...newFilters,
 		);
+
 		ext.loginHelper.onFiltersChanged.fire();
 
 		return ext.loginHelper.api.filters;

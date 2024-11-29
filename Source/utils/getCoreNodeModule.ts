@@ -22,5 +22,6 @@ export function getCoreNodeModule<T>(moduleName: string): T | undefined {
 	} catch (err) {
 		// ignore
 	}
+
 	return undefined;
 }

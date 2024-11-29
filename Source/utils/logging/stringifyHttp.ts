@@ -7,6 +7,7 @@ import { NormalizedHttpRequest, NormalizedHttpResponse } from "./HttpLogger";
 
 export interface HttpStringifier {
 	stringifyRequest(request: NormalizedHttpRequest, source: string): string;
+
 	stringifyResponse(request: NormalizedHttpRequest, source: string): string;
 }
 
@@ -22,17 +23,21 @@ function stringifyRequest(
 	verbose?: boolean,
 ): string {
 	let message = `[${source} Request]`;
+
 	message = `\n┌────── ${source} Request ${request.method} ${request.url}`;
 
 	if (verbose) {
 		message += stringifyRecord(request.headers ?? {}, "Headers");
+
 		message += stringifyRecord(request.query ?? {}, "Query parameters");
 	}
+
 	message += stringifyRecord(
 		request.proxy ?? {},
 		"Proxy configuration",
 		true,
 	);
+
 	message += `\n└───────────────────────────────────────────────────`;
 
 	return message;
@@ -51,10 +56,13 @@ function stringifyResponse(
 	hideBody?: string,
 ): string {
 	let message = `[${source} Response]`;
+
 	message += `\n┌────── ${source} Response ${response.request.method} - ${response.request.url}`;
+
 	message += stringifyRecord(response.headers ?? {}, "Headers");
 	// only show the body if the log level is trace
 	message += `\n\tBody: ${hideBody ?? `\n\t${response.bodyAsText?.split("\n").join("\n\t")}`}`;
+
 	message += `\n└───────────────────────────────────────────────────`;
 
 	return message;

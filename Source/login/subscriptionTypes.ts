@@ -18,11 +18,16 @@ export interface SubscriptionTenantCache {
 	subscriptions: {
 		session: {
 			environment: string;
+
 			userId: string;
+
 			tenantId: string;
+
 			accountInfo?: AccountInfo;
 		};
+
 		subscription: SubscriptionModels.Subscription;
 	}[];
+
 	tenants: TenantIdDescription[];
 }

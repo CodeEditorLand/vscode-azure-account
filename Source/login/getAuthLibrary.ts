@@ -20,6 +20,7 @@ export function getAuthLibrary(): AuthLibrary {
 
 			if (!authLibrary) {
 				authLibrary = "ADAL";
+
 				context.telemetry.properties.failedToReadAuthLibrarySetting =
 					"true";
 			}

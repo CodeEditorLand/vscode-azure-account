@@ -13,14 +13,20 @@ export class AzureAccountExtensionLegacyApi
 	implements legacyTypes.AzureAccount
 {
 	public onStatusChanged: Event<legacyTypes.AzureLoginStatus>;
+
 	public onFiltersChanged: Event<void>;
+
 	public onSessionsChanged: Event<void>;
+
 	public onSubscriptionsChanged: Event<void>;
 
 	constructor(private api: AzureAccountExtensionApi) {
 		this.onStatusChanged = api.onStatusChanged;
+
 		this.onFiltersChanged = api.onFiltersChanged;
+
 		this.onSessionsChanged = api.onSessionsChanged;
+
 		this.onSubscriptionsChanged = api.onSubscriptionsChanged;
 	}
 
