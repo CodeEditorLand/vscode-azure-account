@@ -243,7 +243,6 @@
 		"build": "tsc",
 		"cleanReadme": "gulp cleanReadme",
 		"compile": "tsc -watch",
-		"prepare": "husky install",
 		"webpack": "npm run build && gulp webpack-dev",
 		"webpack-prod": "npm run build && gulp webpack-prod",
 		"which": "which tsc"
