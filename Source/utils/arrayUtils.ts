@@ -15,9 +15,7 @@ export async function listAll<T>(
 
 	for (
 		let list = await first;
-
 		list.length || list.nextLink;
-
 		list = list.nextLink ? await client.listNext(list.nextLink) : []
 	) {
 		all.push(...list);

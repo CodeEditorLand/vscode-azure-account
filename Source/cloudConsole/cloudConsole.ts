@@ -1178,9 +1178,7 @@ export async function provisionConsole(
 
 	for (
 		let i = 0;
-
 		i < 10;
-
 		i++,
 			response = await createTerminal(
 				accessToken,
